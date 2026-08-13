@@ -1,0 +1,6 @@
+[
+    {
+        "merged": "com.example.voicecontrol.app-debug-24:/xml_accessibility_service_config.xml.flat",
+        "source": "com.example.voicecontrol.app-main-26:/xml/accessibility_service_config.xml"
+    }
+]

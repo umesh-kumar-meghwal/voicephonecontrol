@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">
+        Voice Phone Control screenshot service
+    </string>
+    <string name="app_name">Voice Phone Control</string>
+    <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+    </style>
+</resources>

@@ -1,0 +1,10 @@
+node_modules
+.git
+.idea
+.vscode
+build
+.gradle
+__pycache__
+*.pyc
+*.apk
+screenshots
