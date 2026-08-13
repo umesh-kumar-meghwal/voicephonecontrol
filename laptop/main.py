@@ -232,16 +232,16 @@ while True:
 
       if command == "LIVE_SCREEN":
 
-    print()
-    print("Starting live phone screen...")
-    print("Waiting for Android MediaProjection permission...")
+    	print()
+    	print("Starting live phone screen...")
+   	 print("Waiting for Android MediaProjection permission...")
 
-    start_live_viewer()
+   	 start_live_viewer()
 
-    print("Live viewer is running.")
-    print("Close the Live Screen window when finished.")
+    	print("Live viewer is running.")
+    	print("Close the Live Screen window when finished.")
 
-    continue
+    	continue
 
 
         # =================================
