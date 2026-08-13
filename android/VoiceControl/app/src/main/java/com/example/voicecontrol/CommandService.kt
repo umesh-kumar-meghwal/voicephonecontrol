@@ -1,139 +1,294 @@
 package com.example.voicecontrol
 
-import android.content.Context
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
+import android.content.Intent
+import android.os.Build
+import android.os.Handler
+import android.os.IBinder
+import android.os.Looper
 import android.util.Log
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.util.concurrent.Executors
 
-class CommandService(
-    private val context: Context
-) {
+class CommandService : Service() {
+
+    companion object {
+        private const val TAG = "CommandService"
+
+        private const val CHANNEL_ID =
+            "voice_command_service"
+
+        private const val NOTIFICATION_ID = 1001
+
+        private const val POLL_INTERVAL = 2000L
+    }
+
+    private val handler =
+        Handler(Looper.getMainLooper())
+
+    private val executor =
+        Executors.newSingleThreadExecutor()
 
     private var running = false
-    private var serviceJob: Job? = null
 
-    fun start() {
+    private val commandRunnable =
+        object : Runnable {
 
-        if (running) {
-            return
-        }
+            override fun run() {
 
-        running = true
-
-        serviceJob = CoroutineScope(
-            Dispatchers.IO
-        ).launch {
-
-            while (isActive && running) {
-
-                try {
-
-                    val command =
-                        ApiClient.getCommand()
-
-                    if (command != null) {
-
-                        val commandName =
-                            command.optString(
-                                "command",
-                                ""
-                            )
-
-                        // =========================
-                        // GET PAYLOAD
-                        // =========================
-
-                        val payloadJson = command.optJSONObject("payload")
-
-                        val payload = mutableMapOf<String, String>()
-
-                        payloadJson?.keys()?.forEach { key ->
-                            payload[key] = payloadJson.optString(key)
-                        }
-
-                        Log.d("CommandService", "COMMAND = $commandName")
-                        Log.d("CommandService", "PAYLOAD = $payload")
-
-                        withContext(Dispatchers.Main) {
-                            CommandHandler.handle(
-                                context,
-                                commandName,
-                                payload
-                            )
-                        }
-                    }
-
-                } catch (e: Exception) {
-
-                    Log.e(
-                        "CommandService",
-                        "COMMAND ERROR",
-                        e
-                    )
+                if (!running) {
+                    return
                 }
 
-                delay(2000)
+                executor.execute {
+
+                    try {
+
+                        val command =
+                            ApiClient.getCommandSync()
+
+                        if (command != null) {
+
+                            val commandName =
+                                command.optString(
+                                    "command",
+                                    ""
+                                )
+
+                            val payloadJson =
+                                command.optJSONObject(
+                                    "payload"
+                                )
+
+                            val payload =
+                                mutableMapOf<String, String>()
+
+                            payloadJson
+                                ?.keys()
+                                ?.forEach { key ->
+
+                                    payload[key] =
+                                        payloadJson.optString(
+                                            key
+                                        )
+                                }
+
+                            Log.d(
+                                TAG,
+                                "================================="
+                            )
+
+                            Log.d(
+                                TAG,
+                                "COMMAND RECEIVED = $commandName"
+                            )
+
+                            Log.d(
+                                TAG,
+                                "PAYLOAD = $payload"
+                            )
+
+                            Log.d(
+                                TAG,
+                                "================================="
+                            )
+
+                            handler.post {
+
+                                try {
+
+                                    CommandHandler.handle(
+                                        applicationContext,
+                                        commandName,
+                                        payload
+                                    )
+
+                                } catch (e: Exception) {
+
+                                    Log.e(
+                                        TAG,
+                                        "CommandHandler ERROR",
+                                        e
+                                    )
+                                }
+                            }
+                        }
+
+                    } catch (e: Exception) {
+
+                        Log.e(
+                            TAG,
+                            "COMMAND POLLING ERROR",
+                            e
+                        )
+                    }
+                }
+
+                handler.postDelayed(
+                    this,
+                    POLL_INTERVAL
+                )
             }
         }
+
+
+    override fun onCreate() {
+
+        super.onCreate()
+
+        Log.d(
+            TAG,
+            "================================="
+        )
+
+        Log.d(
+            TAG,
+            "COMMAND SERVICE CREATED"
+        )
+
+        Log.d(
+            TAG,
+            "================================="
+        )
+
+        createNotificationChannel()
+
+        val notification =
+            createNotification()
+
+        startForeground(
+            NOTIFICATION_ID,
+            notification
+        )
+
+        Log.d(
+            TAG,
+            "FOREGROUND SERVICE STARTED"
+        )
     }
 
-    // =========================================
-    // JSONObject -> Map<String, String>
-    // =========================================
 
-    private fun jsonToMap(
-        json: JSONObject?
-    ): Map<String, String> {
+    override fun onStartCommand(
+        intent: Intent?,
+        flags: Int,
+        startId: Int
+    ): Int {
 
-        if (json == null) {
-            return emptyMap()
+        if (!running) {
+
+            running = true
+
+            Log.d(
+                TAG,
+                "COMMAND POLLING STARTED"
+            )
+
+            handler.post(
+                commandRunnable
+            )
         }
 
-        val map =
-            mutableMapOf<String, String>()
-
-        val keys =
-            json.keys()
-
-        while (keys.hasNext()) {
-
-            val key =
-                keys.next()
-
-            val value =
-                json.opt(key)
-
-            if (value != null) {
-
-                map[key] =
-                    value.toString()
-            }
-        }
-
-        return map
+        return START_STICKY
     }
 
-    // =========================================
-    // STOP
-    // =========================================
 
-    fun stop() {
+    override fun onDestroy() {
+
+        Log.d(
+            TAG,
+            "COMMAND SERVICE DESTROYED"
+        )
 
         running = false
 
-        serviceJob?.cancel()
-
-        serviceJob = null
-
-        Log.d(
-            "CommandService",
-            "SERVICE STOPPED"
+        handler.removeCallbacksAndMessages(
+            null
         )
+
+        executor.shutdownNow()
+
+        super.onDestroy()
+    }
+
+
+    override fun onBind(
+        intent: Intent?
+    ): IBinder? {
+
+        return null
+    }
+
+
+    private fun createNotificationChannel() {
+
+        if (
+            Build.VERSION.SDK_INT >=
+            Build.VERSION_CODES.O
+        ) {
+
+            val channel =
+                NotificationChannel(
+                    CHANNEL_ID,
+                    "Voice Command Control",
+                    NotificationManager.IMPORTANCE_LOW
+                )
+
+            channel.description =
+                "Voice Phone Control command service"
+
+            val manager =
+                getSystemService(
+                    NotificationManager::class.java
+                )
+
+            manager.createNotificationChannel(
+                channel
+            )
+        }
+    }
+
+
+    private fun createNotification(): Notification {
+
+        return if (
+            Build.VERSION.SDK_INT >=
+            Build.VERSION_CODES.O
+        ) {
+
+            Notification.Builder(
+                this,
+                CHANNEL_ID
+            )
+                .setContentTitle(
+                    "Voice Phone Control"
+                )
+                .setContentText(
+                    "Waiting for commands..."
+                )
+                .setSmallIcon(
+                    android.R.drawable.ic_media_play
+                )
+                .setOngoing(true)
+                .build()
+
+        } else {
+
+            @Suppress("DEPRECATION")
+            Notification.Builder(this)
+                .setContentTitle(
+                    "Voice Phone Control"
+                )
+                .setContentText(
+                    "Waiting for commands..."
+                )
+                .setSmallIcon(
+                    android.R.drawable.ic_media_play
+                )
+                .setOngoing(true)
+                .build()
+        }
     }
 }

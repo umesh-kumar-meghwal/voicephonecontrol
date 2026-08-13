@@ -26,6 +26,7 @@ class MainActivity : Activity() {
     ) {
 
         super.onCreate(savedInstanceState)
+        startCommandService()
 
         Log.d(TAG, "========== ON CREATE ==========")
 
@@ -53,6 +54,42 @@ class MainActivity : Activity() {
             )
 
             requestLiveScreenPermission()
+        }
+    }
+    private fun startCommandService() {
+
+        try {
+
+            val intent =
+                Intent(
+                    this,
+                    CommandService::class.java
+                )
+
+            if (
+                android.os.Build.VERSION.SDK_INT >=
+                android.os.Build.VERSION_CODES.O
+            ) {
+
+                startForegroundService(intent)
+
+            } else {
+
+                startService(intent)
+            }
+
+            Log.d(
+                "MainActivity",
+                "COMMAND SERVICE START REQUESTED"
+            )
+
+        } catch (e: Exception) {
+
+            Log.e(
+                "MainActivity",
+                "COMMAND SERVICE START FAILED",
+                e
+            )
         }
     }
 
