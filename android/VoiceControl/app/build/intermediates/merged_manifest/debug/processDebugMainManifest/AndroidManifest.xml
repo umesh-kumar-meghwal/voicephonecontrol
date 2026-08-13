@@ -34,7 +34,6 @@
         android:debuggable="true"
         android:extractNativeLibs="false"
         android:label="Voice Phone Control"
-        android:testOnly="true"
         android:theme="@style/AppTheme" >
 
         <!-- MAIN ACTIVITY -->

@@ -34,7 +34,7 @@ from network.client import (
 
 
 # =========================================
-# COMMANDS
+# COMMANDS FOR UMESH DEVELOPER
 # =========================================
 
 COMMANDS = {
@@ -50,7 +50,7 @@ COMMANDS = {
 
 
 # =========================================
-# SAVE SCREENSHOT
+# SAVE SCREENSHOT FOR UMESH DEVELOPER
 # =========================================
 
 def save_screenshot(image_data, filename):
@@ -86,7 +86,7 @@ def save_screenshot(image_data, filename):
 
 
 # =========================================
-# WAIT FOR PHONE STATUS
+# WAIT FOR PHONE STATUS FOR UMESH DEVELOPER
 # =========================================
 
 def wait_for_phone_status(
@@ -113,9 +113,9 @@ def wait_for_phone_status(
 while True:
 
     print()
-    print("==============================")
-    print("      VOICE PHONE CONTROL")
-    print("==============================")
+    print("================================================")
+    print("      PHONE CONTROL FOR UMESH DEVELOPER")
+    print("================================================")
 
     print("1. HOME")
     print("2. BACK")
@@ -192,7 +192,7 @@ while True:
 
 
     # =====================================
-    # COMMAND VALIDATION
+    # COMMAND VALIDATION FOR UMESH DEVELOPER
     # =====================================
 
     if choice not in COMMANDS:
@@ -230,22 +230,23 @@ while True:
         # LIVE SCREEN
         # =================================
 
-      if command == "LIVE_SCREEN":
+        if command == "LIVE_SCREEN":
+            print()
+            print("Starting live phone screen...")
+            print("Waiting for Android MediaProjection permission...")
 
-    	print()
-    	print("Starting live phone screen...")
-   	 print("Waiting for Android MediaProjection permission...")
+            start_live_viewer()
 
-   	 start_live_viewer()
+            print("Live viewer is running.")
+            print("Close the Live Screen window when finished.")
 
-    	print("Live viewer is running.")
-    	print("Close the Live Screen window when finished.")
-
-    	continue
+            continue
+          
+        
 
 
         # =================================
-        # SCREENSHOT
+        # SCREENSHOT FOR UMESH DEVELOPER
         # =================================
 
         if command == "TAKE_SCREENSHOT":
@@ -285,7 +286,7 @@ while True:
 
 
         # =================================
-        # PHONE STATUS
+        # PHONE STATUS FOR UMESH DEVELOPER
         # =================================
 
         elif command == "PHONE_STATUS":

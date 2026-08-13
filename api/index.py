@@ -4,7 +4,7 @@ import os
 
 
 # =========================================================
-# APP
+# APP FOR UMESH DEVELOPER
 # =========================================================
 
 app = FastAPI(
@@ -13,7 +13,7 @@ app = FastAPI(
 
 
 # =========================================================
-# API TOKEN
+# API TOKEN FOR UMESH DEVELOPER
 # =========================================================
 
 API_TOKEN = os.getenv(
@@ -47,7 +47,7 @@ class PhoneStatus(BaseModel):
 
 
 # =========================================================
-# ALLOWED COMMANDS
+# ALLOWED COMMANDS FOR UMESH DEVELOPER
 # =========================================================
 ALLOWED_COMMANDS = {
     "OPEN_APP",
@@ -111,7 +111,7 @@ def health():
 
 # =========================================================
 # LAPTOP -> SERVER
-# SEND COMMAND
+# SEND COMMAND FOR UMESH DEVELOPER
 # =========================================================
 
 @app.post("/api/command")
@@ -129,14 +129,14 @@ def send_command(
     global pending_status
 
 
-    # Authentication
+    # Authentication FOR UMESH DEVELOPER
 
     check_auth(
         authorization
     )
 
 
-    # Check command
+    # Check command FOR UMESH DEVELOPER
 
     if body.command not in ALLOWED_COMMANDS:
 
@@ -146,7 +146,7 @@ def send_command(
         )
 
 
-    # Queue command
+    # Queue command FOR UMESH DEVELOPER
 
     pending_command = {
 
@@ -156,8 +156,8 @@ def send_command(
     }
 
 
-    # New status request
-    # Remove old status
+    # New status request FOR UMESH DEVELOPER
+    # Remove old status FOR UMESH DEVELOPER
 
     if body.command == "PHONE_STATUS":
 
@@ -178,7 +178,7 @@ def send_command(
 
 # =========================================================
 # ANDROID -> SERVER
-# GET COMMAND
+# GET COMMAND FOR UMESH DEVELOPER
 # =========================================================
 
 @app.get("/api/command")
@@ -193,24 +193,24 @@ def get_command(
     global pending_command
 
 
-    # Authentication
+    # Authentication FOR UMESH DEVELOPER
 
     check_auth(
         authorization
     )
 
 
-    # Get command
+    # Get command FOR UMESH DEVELOPER
 
     command = pending_command
 
 
-    # Consume command
+    # Consume command FOR UMESH DEVELOPER
 
     pending_command = None
 
 
-    # No command
+    # No command FOR UMESH DEVELOPER
 
     if command is None:
 
@@ -224,7 +224,7 @@ def get_command(
         }
 
 
-    # Return command
+    # Return command FOR UMESH DEVELOPER
 
     return {
 
@@ -236,7 +236,7 @@ def get_command(
 
 # =========================================================
 # ANDROID -> SERVER
-# UPLOAD SCREENSHOT
+# UPLOAD SCREENSHOT FOR UMESH DEVELOPER
 # =========================================================
 
 @app.post("/api/screenshot")
@@ -253,14 +253,14 @@ def upload_screenshot(
     global pending_screenshot
 
 
-    # Authentication
+    # Authentication FOR UMESH DEVELOPER
 
     check_auth(
         authorization
     )
 
 
-    # Store screenshot
+    # Store screenshot FOR UMESH DEVELOPER
 
     pending_screenshot = {
 
@@ -282,7 +282,7 @@ def upload_screenshot(
 
 # =========================================================
 # LAPTOP -> SERVER
-# DOWNLOAD SCREENSHOT
+# DOWNLOAD SCREENSHOT  FOR UMESH DEVELOPER
 # =========================================================
 
 @app.get("/api/screenshot")
@@ -297,14 +297,14 @@ def get_screenshot(
     global pending_screenshot
 
 
-    # Authentication
+    # Authentication FOR UMESH DEVELOPER
 
     check_auth(
         authorization
     )
 
 
-    # Screenshot not available
+    # Screenshot not available FOR UMESH DEVELOPER
 
     if pending_screenshot is None:
 
@@ -318,12 +318,12 @@ def get_screenshot(
         }
 
 
-    # Get screenshot
+    # Get screenshot  FOR UMESH DEVELOPER
 
     screenshot = pending_screenshot
 
 
-    # Consume screenshot
+    # Consume screenshot   FOR UMESH DEVELOPER
 
     pending_screenshot = None
 
@@ -340,7 +340,7 @@ def get_screenshot(
 
 # =========================================================
 # ANDROID -> SERVER
-# UPLOAD PHONE STATUS
+# UPLOAD PHONE STATUS   FOR UMESH DEVELOPER
 # =========================================================
 
 @app.post("/api/status")
@@ -357,14 +357,14 @@ def upload_status(
     global pending_status
 
 
-    # Authentication
+    # Authentication FOR UMESH DEVELOPER
 
     check_auth(
         authorization
     )
 
 
-    # Store phone status
+    # Store phone status   FOR UMESH DEVELOPER
 
     pending_status = {
 
@@ -388,7 +388,7 @@ def upload_status(
 
 # =========================================================
 # LAPTOP -> SERVER
-# GET PHONE STATUS
+# GET PHONE STATUS FOR UMESH DEVELOPER
 # =========================================================
 
 @app.get("/api/status")
@@ -403,14 +403,14 @@ def get_status(
     global pending_status
 
 
-    # Authentication
+    # Authentication FOR UMESH DEVELOPER
 
     check_auth(
         authorization
     )
 
 
-    # Status not available
+    # Status not available FOR UMESH DEVELOPER
 
     if pending_status is None:
 
@@ -421,13 +421,13 @@ def get_status(
             "status": None
         }
 
-
-    # Get status
+ 
+    # Get status FOR UMESH DEVELOPER
 
     status = pending_status
 
 
-    # Consume status
+    # Consume status FOR UMESH DEVELOPER
 
     pending_status = None
 
