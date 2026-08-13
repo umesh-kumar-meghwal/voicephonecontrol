@@ -1,7 +1,31 @@
 import os
 import base64
+import subprocess
+import sys
 import time
 
+def start_live_viewer():
+    viewer_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "live_viewer.py"
+    )
+
+    if not os.path.exists(viewer_path):
+        print("Live viewer file not found:", viewer_path)
+        return False
+
+    try:
+        subprocess.Popen(
+            [sys.executable, viewer_path],
+            cwd=os.path.dirname(viewer_path)
+        )
+
+        print("Live viewer window opened.")
+        return True
+
+    except Exception as e:
+        print("Live viewer start failed:", e)
+        return False
 from network.client import (
     send_command,
     get_screenshot,
@@ -206,26 +230,18 @@ while True:
         # LIVE SCREEN
         # =================================
 
-        if command == "LIVE_SCREEN":
+      if command == "LIVE_SCREEN":
 
-            print()
-            print(
-                "Starting live phone screen..."
-            )
+    print()
+    print("Starting live phone screen...")
+    print("Waiting for Android MediaProjection permission...")
 
-            print(
-                "Waiting for Android..."
-            )
+    start_live_viewer()
 
-            print(
-                "Live streaming setup requested."
-            )
+    print("Live viewer is running.")
+    print("Close the Live Screen window when finished.")
 
-            # Actual live viewer will be
-            # started after Android MediaProjection
-            # streaming is implemented.
-
-            continue
+    continue
 
 
         # =================================
