@@ -8,7 +8,7 @@ import java.net.URL
 object ApiClient {
 
     private const val SERVER_URL =
-        "https://phonecontrol-gircra40r-ins13.vercel.app"
+        "https://phonecontrol-black.vercel.app"
 
     private const val API_TOKEN =
         "VPC-a8F3xK91-pQ7L2mZ6-4NwR8tY5U"
