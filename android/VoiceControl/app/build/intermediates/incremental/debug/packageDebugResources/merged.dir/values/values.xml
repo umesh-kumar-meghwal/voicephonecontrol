@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="accessibility_description">
-        Voice Phone Control screenshot service
-    </string>
+    <string name="accessibility_service_description">
+    Voice Control accessibility service for user-requested device navigation and interaction.
+</string>
     <string name="app_name">Voice Phone Control</string>
     <style name="Theme.VoiceControl" parent="Theme.AppCompat.Light.NoActionBar">
 

@@ -1,7 +1,6 @@
 package com.example.voicecontrol
 
 import android.content.Context
-import android.content.Intent
 import android.media.AudioManager
 import android.util.Log
 
@@ -12,268 +11,196 @@ object CommandHandler {
     fun handle(
         context: Context,
         command: String,
-        payload: Map<String, String> = emptyMap()
+        payload: Map<String, String>
     ) {
 
-        val cmd = command.trim().uppercase()
+        val cmd = command
+            .trim()
+            .uppercase()
 
         Log.d(TAG, "=================================")
-        Log.d(TAG, "COMMAND = $cmd")
-        Log.d(TAG, "PAYLOAD = $payload")
+        Log.d(TAG, "COMMAND RECEIVED = $cmd")
         Log.d(TAG, "=================================")
 
-        when (cmd) {
+        when {
 
-            // ==============================
+            // =================================================
             // HOME
-            // ==============================
-            "HOME" -> {
-                Log.d(TAG, "HOME requested")
+            // =================================================
 
-                if (ScreenshotService.performHome()) {
-                    Log.d(TAG, "HOME executed successfully")
+            cmd == "HOME" ||
+                    cmd == "GO HOME" ||
+                    cmd == "OPEN HOME" -> {
+
+                Log.d(TAG, "Executing HOME")
+
+                val success =
+                    ScreenshotService.performHome()
+
+                if (success) {
+                    Log.d(TAG, "HOME SUCCESS")
                 } else {
-                    Log.e(
-                        TAG,
-                        "HOME failed: AccessibilityService not connected"
-                    )
+                    Log.e(TAG, "HOME FAILED")
                 }
             }
 
-
-            // ==============================
+            // =================================================
             // BACK
-            // ==============================
-            "BACK" -> {
-                Log.d(TAG, "BACK requested")
+            // =================================================
 
-                if (ScreenshotService.performBack()) {
-                    Log.d(TAG, "BACK executed successfully")
+            cmd == "BACK" ||
+                    cmd == "GO BACK" ||
+                    cmd == "PRESS BACK" -> {
+
+                Log.d(TAG, "Executing BACK")
+
+                val success =
+                    ScreenshotService.performBack()
+
+                if (success) {
+                    Log.d(TAG, "BACK SUCCESS")
                 } else {
-                    Log.e(TAG, "BACK failed: AccessibilityService not connected")
+                    Log.e(TAG, "BACK FAILED")
                 }
             }
-            "ENTER" -> {
 
-                Log.d(
-                    TAG,
-                    "ENTER requested"
-                )
+            // =================================================
+            // RECENTS
+            // =================================================
 
-                if (ScreenshotService.pressEnter()) {
+            cmd == "RECENTS" ||
+                    cmd == "RECENT" ||
+                    cmd == "RECENT APPS" ||
+                    cmd == "OPEN RECENTS" ||
+                    cmd == "SHOW RECENTS" -> {
 
-                    Log.d(
-                        TAG,
-                        "ENTER executed successfully"
-                    )
+                Log.d(TAG, "Executing RECENTS")
 
+                val success =
+                    ScreenshotService.performRecentApps()
+
+                if (success) {
+                    Log.d(TAG, "RECENTS SUCCESS")
                 } else {
-
-                    Log.e(
-                        TAG,
-                        "ENTER failed"
-                    )
-                }
-            }
-            // ==============================
-            // VOLUME UP
-            // ==============================
-            "VOLUME_UP" -> {
-
-                try {
-
-                    val audioManager =
-                        context.getSystemService(
-                            Context.AUDIO_SERVICE
-                        ) as AudioManager
-
-                    audioManager.adjustVolume(
-                        AudioManager.ADJUST_RAISE,
-                        AudioManager.FLAG_SHOW_UI
-                    )
-
-                    Log.d(TAG, "VOLUME UP SUCCESS")
-
-                } catch (e: Exception) {
-
-                    Log.e(TAG, "VOLUME UP FAILED", e)
+                    Log.e(TAG, "RECENTS FAILED")
                 }
             }
 
-
-            // ==============================
-            // VOLUME DOWN
-            // ==============================
-            "VOLUME_DOWN" -> {
-
-                try {
-
-                    val audioManager =
-                        context.getSystemService(
-                            Context.AUDIO_SERVICE
-                        ) as AudioManager
-
-                    audioManager.adjustVolume(
-                        AudioManager.ADJUST_LOWER,
-                        AudioManager.FLAG_SHOW_UI
-                    )
-
-                    Log.d(TAG, "VOLUME DOWN SUCCESS")
-
-                } catch (e: Exception) {
-
-                    Log.e(TAG, "VOLUME DOWN FAILED", e)
-                }
-            }
-
-
-            // ==============================
+            // =================================================
             // SCREENSHOT
-            // ==============================
-            "SCREENSHOT",
-            "TAKE_SCREENSHOT" -> {
-                Log.d(TAG, "SCREENSHOT requested")
+            // =================================================
 
-                try {
-                    ScreenshotService.takeScreenshot()
+            cmd == "SCREENSHOT" ||
+                    cmd == "TAKE SCREENSHOT" ||
+                    cmd == "CAPTURE SCREEN" ||
+                    cmd == "TAKE A SCREENSHOT" -> {
 
-                    Log.d(
-                        TAG,
-                        "Screenshot request sent"
-                    )
-                } catch (e: Exception) {
-                    Log.e(
-                        TAG,
-                        "SCREENSHOT failed",
-                        e
-                    )
-                }
-            }
+                Log.d(TAG, "Executing SCREENSHOT")
 
+                val success =
+                    ScreenshotService.performScreenshot()
 
-            // ==============================
-            // PHONE STATUS
-            // ==============================
-            "PHONE_STATUS" -> {
-
-                Log.d(TAG, "PHONE STATUS REQUESTED")
-
-                try {
-
-                    PhoneStatus.send(context)
-
-                    Log.d(
-                        TAG,
-                        "PHONE STATUS REQUEST SENT"
-                    )
-
-                } catch (e: Exception) {
-
-                    Log.e(
-                        TAG,
-                        "PHONE STATUS FAILED",
-                        e
-                    )
-                }
-            }
-
-
-            // ==============================
-            // OPEN APP
-            // ==============================
-            "OPEN_APP" -> {
-
-                val appName =
-                    payload["app"]
-                        ?.trim()
-                        ?.lowercase()
-
-                if (appName.isNullOrEmpty()) {
-
-                    Log.e(
-                        TAG,
-                        "APP NAME MISSING"
-                    )
-
+                if (success) {
+                    Log.d(TAG, "SCREENSHOT REQUEST SENT")
                 } else {
-
-                    openApp(
-                        context,
-                        appName
-                    )
+                    Log.e(TAG, "SCREENSHOT FAILED")
                 }
             }
-            "NOTIFICATION_STATUS" -> {
 
-                Log.d(
-                    TAG,
-                    "NOTIFICATION_STATUS requested"
+            // =================================================
+            // ENTER
+            // =================================================
+
+            cmd == "ENTER" ||
+                    cmd == "PRESS ENTER" ||
+                    cmd == "OK" ||
+                    cmd == "PRESS OK" -> {
+
+                Log.d(TAG, "Executing ENTER")
+
+                val success =
+                    ScreenshotService.performEnter()
+
+                if (success) {
+                    Log.d(TAG, "ENTER SUCCESS")
+                } else {
+                    Log.e(TAG, "ENTER FAILED")
+                }
+            }
+
+            // =================================================
+            // VOLUME UP
+            // =================================================
+
+            cmd == "VOLUME UP" ||
+                    cmd == "INCREASE VOLUME" ||
+                    cmd == "VOLUME INCREASE" ||
+                    cmd == "TURN VOLUME UP" -> {
+
+                Log.d(TAG, "Executing VOLUME UP")
+
+                val audioManager =
+                    context.getSystemService(
+                        Context.AUDIO_SERVICE
+                    ) as AudioManager
+
+                audioManager.adjustVolume(
+                    AudioManager.ADJUST_RAISE,
+                    AudioManager.FLAG_SHOW_UI
                 )
 
-                try {
-
-                    val status =
-                        NotificationService.getStatus()
-
-                    Log.d(
-                        TAG,
-                        "Notification status = $status"
-                    )
-
-
-                } catch (e: Exception) {
-
-                    Log.e(
-                        TAG,
-                        "Notification status failed",
-                        e
-                    )
-                }
+                Log.d(TAG, "VOLUME UP SUCCESS")
             }
 
+            // =================================================
+            // VOLUME DOWN
+            // =================================================
 
-            // ==============================
-            // LIVE SCREEN
-            // ==============================
-            "LIVE_SCREEN" -> {
+            cmd == "VOLUME DOWN" ||
+                    cmd == "DECREASE VOLUME" ||
+                    cmd == "VOLUME DECREASE" ||
+                    cmd == "TURN VOLUME DOWN" -> {
 
-                try {
+                Log.d(TAG, "Executing VOLUME DOWN")
 
-                    val intent =
-                        Intent(
-                            context,
-                            MainActivity::class.java
-                        ).apply {
+                val audioManager =
+                    context.getSystemService(
+                        Context.AUDIO_SERVICE
+                    ) as AudioManager
 
-                            putExtra(
-                                "START_LIVE_SCREEN",
-                                true
-                            )
+                audioManager.adjustVolume(
+                    AudioManager.ADJUST_LOWER,
+                    AudioManager.FLAG_SHOW_UI
+                )
 
-                            addFlags(
-                                Intent.FLAG_ACTIVITY_NEW_TASK or
-                                        Intent.FLAG_ACTIVITY_SINGLE_TOP or
-                                        Intent.FLAG_ACTIVITY_CLEAR_TOP
-                            )
-                        }
-
-                    context.startActivity(intent)
-
-                    Log.d(
-                        TAG,
-                        "LIVE SCREEN REQUEST SENT"
-                    )
-
-                } catch (e: Exception) {
-
-                    Log.e(
-                        TAG,
-                        "LIVE SCREEN FAILED",
-                        e
-                    )
-                }
+                Log.d(TAG, "VOLUME DOWN SUCCESS")
             }
 
+            // =================================================
+            // MUTE
+            // =================================================
+
+            cmd == "MUTE" ||
+                    cmd == "MUTE VOLUME" -> {
+
+                Log.d(TAG, "Executing MUTE")
+
+                val audioManager =
+                    context.getSystemService(
+                        Context.AUDIO_SERVICE
+                    ) as AudioManager
+
+                audioManager.adjustVolume(
+                    AudioManager.ADJUST_MUTE,
+                    AudioManager.FLAG_SHOW_UI
+                )
+
+                Log.d(TAG, "MUTE SUCCESS")
+            }
+
+            // =================================================
+            // UNKNOWN
+            // =================================================
 
             else -> {
 
@@ -282,89 +209,6 @@ object CommandHandler {
                     "UNKNOWN COMMAND = $cmd"
                 )
             }
-        }
-    }
-
-
-
-    // ==============================
-    // OPEN APP
-    // ==============================
-
-    private fun openApp(
-        context: Context,
-        appName: String
-    ) {
-
-        val packageName =
-            when (appName) {
-
-                "whatsapp" ->
-                    "com.whatsapp"
-
-
-                "youtube" ->
-                    "com.google.android.youtube"
-
-                "chrome",
-                "google chrome" ->
-                    "com.android.chrome"
-
-                "settings" ->
-                    "com.android.settings"
-
-                "camera" ->
-                    "com.android.camera"
-
-                else -> {
-
-                    Log.e(
-                        TAG,
-                        "UNSUPPORTED APP = $appName"
-                    )
-
-                    return
-                }
-            }
-
-        try {
-
-            val launchIntent =
-                context.packageManager
-                    .getLaunchIntentForPackage(
-                        packageName
-                    )
-
-            if (launchIntent == null) {
-
-                Log.e(
-                    TAG,
-                    "LAUNCH INTENT NOT FOUND = $packageName"
-                )
-
-                return
-            }
-
-            launchIntent.addFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK
-            )
-
-            context.startActivity(
-                launchIntent
-            )
-
-            Log.d(
-                TAG,
-                "APP OPEN SUCCESS = $appName"
-            )
-
-        } catch (e: Exception) {
-
-            Log.e(
-                TAG,
-                "APP OPEN FAILED = $appName",
-                e
-            )
         }
     }
 }

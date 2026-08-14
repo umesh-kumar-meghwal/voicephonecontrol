@@ -1,196 +1,42 @@
 package com.example.voicecontrol
 
 import android.accessibilityservice.AccessibilityService
-import android.graphics.Bitmap
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.os.Build
-import android.os.Environment
-import android.util.Base64
 import android.util.Log
 import android.view.Display
+import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.net.HttpURLConnection
-import java.net.URL
-import kotlin.concurrent.thread
-import org.json.JSONObject
-
-private const val SERVER_URL =
-    "https://phonecontrol-black.vercel.app"
-
-// IMPORTANT:
-// Production app me token ko source code me hard-code mat rakhna.
-private const val API_TOKEN =
-    "VPC-a8F3xK91-pQ7L2mZ6-4NwR8tY5U"
-
 
 class ScreenshotService : AccessibilityService() {
 
     companion object {
 
-        private var instance: ScreenshotService? = null
+        private const val TAG = "ScreenshotService"
 
-        // =========================================
-        // SCREENSHOT
-        // =========================================
+        @Volatile
+        private var serviceInstance: ScreenshotService? = null
 
-        fun takeScreenshot() {
+        // =====================================================
+        // SERVICE STATUS
+        // =====================================================
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-
-                Log.e(
-                    "ScreenshotService",
-                    "Android 11+ required"
-                )
-
-                return
-            }
-
-            val service = instance
-
-            if (service == null) {
-
-                Log.e(
-                    "ScreenshotService",
-                    "SCREENSHOT FAILED: SERVICE NOT CONNECTED"
-                )
-
-                return
-            }
-
-            Log.d(
-                "ScreenshotService",
-                "Starting screenshot..."
-            )
-
-            service.captureScreen()
+        fun isRunning(): Boolean {
+            return serviceInstance != null
         }
 
-
-        // =========================================
-        // BACK
-        // =========================================
-
-        fun performBack(): Boolean {
-
-            val service = instance
-
-            if (service == null) {
-
-                Log.e(
-                    "ScreenshotService",
-                    "BACK FAILED: SERVICE NOT CONNECTED"
-                )
-
-                return false
-            }
-
-            return try {
-
-                val result =
-                    service.performGlobalAction(
-                        GLOBAL_ACTION_BACK
-                    )
-
-                Log.d(
-                    "ScreenshotService",
-                    "BACK result = $result"
-                )
-
-                result
-
-            } catch (e: Exception) {
-
-                Log.e(
-                    "ScreenshotService",
-                    "BACK ERROR",
-                    e
-                )
-
-                false
-            }
-        }
-
-        fun pressEnter(): Boolean {
-
-            val service = instance
-
-            if (service == null) {
-                Log.e(
-                    "ScreenshotService",
-                    "ENTER FAILED: SERVICE NOT CONNECTED"
-                )
-                return false
-            }
-
-            return try {
-
-                val root = service.rootInActiveWindow
-
-                if (root == null) {
-                    Log.e(
-                        "ScreenshotService",
-                        "ENTER FAILED: ROOT WINDOW IS NULL"
-                    )
-                    return false
-                }
-
-                val focused = root.findFocus(
-                    AccessibilityNodeInfo.FOCUS_INPUT
-                )
-
-                if (focused != null && focused.isClickable) {
-
-                    val result =
-                        focused.performAction(
-                            AccessibilityNodeInfo.ACTION_CLICK
-                        )
-
-                    Log.d(
-                        "ScreenshotService",
-                        "ENTER/CLICK result = $result"
-                    )
-
-                    focused.recycle()
-
-                    result
-
-                } else {
-
-                    Log.d(
-                        "ScreenshotService",
-                        "No clickable focused node found"
-                    )
-
-                    false
-                }
-
-            } catch (e: Exception) {
-
-                Log.e(
-                    "ScreenshotService",
-                    "ENTER ERROR",
-                    e
-                )
-
-                false
-            }
-        }
-
-
-        // =========================================
+        // =====================================================
         // HOME
-        // =========================================
+        // =====================================================
 
         fun performHome(): Boolean {
 
-            val service = instance
+            val service = serviceInstance
 
             if (service == null) {
 
                 Log.e(
-                    "ScreenshotService",
+                    TAG,
                     "HOME FAILED: SERVICE NOT CONNECTED"
                 )
 
@@ -205,8 +51,8 @@ class ScreenshotService : AccessibilityService() {
                     )
 
                 Log.d(
-                    "ScreenshotService",
-                    "HOME result = $result"
+                    TAG,
+                    "HOME RESULT = $result"
                 )
 
                 result
@@ -214,7 +60,7 @@ class ScreenshotService : AccessibilityService() {
             } catch (e: Exception) {
 
                 Log.e(
-                    "ScreenshotService",
+                    TAG,
                     "HOME ERROR",
                     e
                 )
@@ -222,50 +68,647 @@ class ScreenshotService : AccessibilityService() {
                 false
             }
         }
+
+        // =====================================================
+        // BACK
+        // =====================================================
+
+        fun performBack(): Boolean {
+
+            val service = serviceInstance
+
+            if (service == null) {
+
+                Log.e(
+                    TAG,
+                    "BACK FAILED: SERVICE NOT CONNECTED"
+                )
+
+                return false
+            }
+
+            return try {
+
+                val result =
+                    service.performGlobalAction(
+                        GLOBAL_ACTION_BACK
+                    )
+
+                Log.d(
+                    TAG,
+                    "BACK RESULT = $result"
+                )
+
+                result
+
+            } catch (e: Exception) {
+
+                Log.e(
+                    TAG,
+                    "BACK ERROR",
+                    e
+                )
+
+                false
+            }
+        }
+
+        // =====================================================
+        // RECENTS
+        // =====================================================
+
+        fun performRecentApps(): Boolean {
+
+            val service = serviceInstance
+
+            if (service == null) {
+
+                Log.e(
+                    TAG,
+                    "RECENTS FAILED: SERVICE NOT CONNECTED"
+                )
+
+                return false
+            }
+
+            return try {
+
+                val result =
+                    service.performGlobalAction(
+                        GLOBAL_ACTION_RECENTS
+                    )
+
+                Log.d(
+                    TAG,
+                    "RECENTS RESULT = $result"
+                )
+
+                result
+
+            } catch (e: Exception) {
+
+                Log.e(
+                    TAG,
+                    "RECENTS ERROR",
+                    e
+                )
+
+                false
+            }
+        }
+
+        // =====================================================
+        // SCREENSHOT
+        // =====================================================
+
+        fun performScreenshot(): Boolean {
+
+            val service = serviceInstance
+
+            if (service == null) {
+
+                Log.e(
+                    TAG,
+                    "SCREENSHOT FAILED: SERVICE NOT CONNECTED"
+                )
+
+                return false
+            }
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+
+                Log.e(
+                    TAG,
+                    "SCREENSHOT FAILED: Android 11/API 30+ required"
+                )
+
+                return false
+            }
+
+            return service.takeScreenshotInternal()
+        }
+
+        // =====================================================
+        // ENTER
+        // =====================================================
+
+        fun performEnter(): Boolean {
+
+            val service = serviceInstance
+
+            if (service == null) {
+
+                Log.e(
+                    TAG,
+                    "ENTER FAILED: SERVICE NOT CONNECTED"
+                )
+
+                return false
+            }
+
+            return service.performEnterInternal()
+        }
     }
 
-
-    // =========================================
+    // =========================================================
     // SERVICE CONNECTED
-    // =========================================
+    // =========================================================
 
     override fun onServiceConnected() {
 
         super.onServiceConnected()
 
-        instance = this
+        serviceInstance = this
+
+        val info =
+            serviceInfo ?: AccessibilityServiceInfo()
+
+        info.eventTypes =
+            AccessibilityEvent.TYPES_ALL_MASK
+
+        info.feedbackType =
+            AccessibilityServiceInfo.FEEDBACK_GENERIC
+
+        info.notificationTimeout = 100
+
+        /*
+         * IMPORTANT:
+         *
+         * flags ko yahan manually set nahi kar rahe.
+         *
+         * accessibility_service_config.xml se
+         * flags configure honge.
+         */
+
+        serviceInfo = info
+
+        Log.d(TAG, "=================================")
 
         Log.d(
-            "ScreenshotService",
-            "================================="
-        )
-
-        Log.d(
-            "ScreenshotService",
+            TAG,
             "SERVICE CONNECTED SUCCESSFULLY"
         )
 
         Log.d(
-            "ScreenshotService",
-            "BACK / HOME / SCREENSHOT READY"
+            TAG,
+            "CAN RETRIEVE WINDOW CONTENT = ${
+                canRetrieveWindowContent()
+            }"
         )
 
         Log.d(
-            "ScreenshotService",
-            "================================="
+            TAG,
+            "BACK / HOME / RECENTS / SCREENSHOT / ENTER READY"
+        )
+
+        Log.d(TAG, "=================================")
+    }
+
+    // =========================================================
+    // CHECK WINDOW CONTENT
+    // =========================================================
+
+    private fun canRetrieveWindowContent(): Boolean {
+
+        val info =
+            serviceInfo ?: return false
+
+        return (
+                info.capabilities and
+                        AccessibilityServiceInfo
+                            .CAPABILITY_CAN_RETRIEVE_WINDOW_CONTENT
+                ) != 0
+    }
+
+    // =========================================================
+    // ACCESSIBILITY EVENTS
+    // =========================================================
+
+    override fun onAccessibilityEvent(
+        event: AccessibilityEvent?
+    ) {
+
+        if (event == null) {
+            return
+        }
+
+        val packageName =
+            event.packageName?.toString()
+
+        Log.d(
+            TAG,
+            "EVENT = ${event.eventType}, PACKAGE = $packageName"
+        )
+
+        /*
+         * Root sirf relevant events par check kar rahe hain.
+         */
+
+        if (
+            event.eventType ==
+            AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED ||
+
+            event.eventType ==
+            AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED ||
+
+            event.eventType ==
+            AccessibilityEvent.TYPE_VIEW_FOCUSED
+        ) {
+
+            val root =
+                rootInActiveWindow
+
+            if (root != null) {
+
+                Log.d(
+                    TAG,
+                    "ROOT FOUND = ${root.className}"
+                )
+
+                Log.d(
+                    TAG,
+                    "ROOT PACKAGE = ${root.packageName}"
+                )
+
+            } else {
+
+                Log.d(
+                    TAG,
+                    "ROOT = NULL"
+                )
+            }
+        }
+    }
+
+    // =========================================================
+    // INTERRUPT
+    // =========================================================
+
+    override fun onInterrupt() {
+
+        Log.d(
+            TAG,
+            "ACCESSIBILITY SERVICE INTERRUPTED"
         )
     }
 
+    // =========================================================
+    // DESTROY
+    // =========================================================
 
-    // =========================================
-    // CAPTURE SCREEN
-    // =========================================
+    override fun onDestroy() {
 
-    private fun captureScreen() {
+        Log.d(
+            TAG,
+            "SERVICE DESTROYED"
+        )
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            return
+        serviceInstance = null
+
+        super.onDestroy()
+    }
+
+    // =========================================================
+    // ENTER
+    // =========================================================
+
+    private fun performEnterInternal(): Boolean {
+
+        Log.d(
+            TAG,
+            "ENTER requested"
+        )
+
+        val root =
+            rootInActiveWindow
+
+        if (root == null) {
+
+            Log.e(
+                TAG,
+                "ENTER FAILED: NO ACCESSIBILITY ROOT"
+            )
+
+            return false
         }
+
+        Log.d(
+            TAG,
+            "ENTER: accessibility root found"
+        )
+
+        /*
+         * First try currently focused input node.
+         */
+
+        val focusedInput =
+            root.findFocus(
+                AccessibilityNodeInfo.FOCUS_INPUT
+            )
+
+        if (focusedInput != null) {
+
+            Log.d(
+                TAG,
+                "ENTER: focused input = ${
+                    focusedInput.className
+                }"
+            )
+
+            if (
+                tryPerformClick(
+                    focusedInput
+                )
+            ) {
+
+                Log.d(
+                    TAG,
+                    "ENTER SUCCESS: focused input clicked"
+                )
+
+                return true
+            }
+        }
+
+        /*
+         * Try accessibility-focused node.
+         */
+
+        val focusedAccessibility =
+            root.findFocus(
+                AccessibilityNodeInfo
+                    .FOCUS_ACCESSIBILITY
+            )
+
+        if (focusedAccessibility != null) {
+
+            Log.d(
+                TAG,
+                "ENTER: accessibility focused node = ${
+                    focusedAccessibility.className
+                }"
+            )
+
+            if (
+                tryPerformClick(
+                    focusedAccessibility
+                )
+            ) {
+
+                Log.d(
+                    TAG,
+                    "ENTER SUCCESS: accessibility focused node clicked"
+                )
+
+                return true
+            }
+        }
+
+        /*
+         * Search clickable node.
+         */
+
+        val clickableNode =
+            findClickableNode(root)
+
+        if (clickableNode != null) {
+
+            Log.d(
+                TAG,
+                "ENTER: clickable node = ${
+                    clickableNode.className
+                }"
+            )
+
+            Log.d(
+                TAG,
+                "ENTER: text = ${
+                    clickableNode.text
+                }"
+            )
+
+            Log.d(
+                TAG,
+                "ENTER: description = ${
+                    clickableNode.contentDescription
+                }"
+            )
+
+            if (
+                tryPerformClick(
+                    clickableNode
+                )
+            ) {
+
+                Log.d(
+                    TAG,
+                    "ENTER SUCCESS: clickable node"
+                )
+
+                return true
+            }
+        }
+
+        /*
+         * Search focusable node.
+         */
+
+        val focusableNode =
+            findFocusableNode(root)
+
+        if (focusableNode != null) {
+
+            Log.d(
+                TAG,
+                "ENTER: focusable node = ${
+                    focusableNode.className
+                }"
+            )
+
+            if (
+                tryPerformClick(
+                    focusableNode
+                )
+            ) {
+
+                Log.d(
+                    TAG,
+                    "ENTER SUCCESS: focusable node"
+                )
+
+                return true
+            }
+        }
+
+        Log.e(
+            TAG,
+            "ENTER FAILED: NO ACTIVATABLE NODE FOUND"
+        )
+
+        return false
+    }
+
+    // =========================================================
+    // FIND CLICKABLE NODE
+    // =========================================================
+
+    private fun findClickableNode(
+        node: AccessibilityNodeInfo
+    ): AccessibilityNodeInfo? {
+
+        if (
+            node.isClickable &&
+            node.isEnabled &&
+            node.isVisibleToUser
+        ) {
+
+            return node
+        }
+
+        for (
+        i in 0 until node.childCount
+        ) {
+
+            val child =
+                node.getChild(i)
+                    ?: continue
+
+            val result =
+                findClickableNode(child)
+
+            if (result != null) {
+                return result
+            }
+        }
+
+        return null
+    }
+
+    // =========================================================
+    // FIND FOCUSABLE NODE
+    // =========================================================
+
+    private fun findFocusableNode(
+        node: AccessibilityNodeInfo
+    ): AccessibilityNodeInfo? {
+
+        if (
+            node.isFocusable &&
+            node.isEnabled &&
+            node.isVisibleToUser
+        ) {
+
+            return node
+        }
+
+        for (
+        i in 0 until node.childCount
+        ) {
+
+            val child =
+                node.getChild(i)
+                    ?: continue
+
+            val result =
+                findFocusableNode(child)
+
+            if (result != null) {
+                return result
+            }
+        }
+
+        return null
+    }
+
+    // =========================================================
+    // CLICK NODE / PARENT
+    // =========================================================
+
+    private fun tryPerformClick(
+        node: AccessibilityNodeInfo
+    ): Boolean {
+
+        /*
+         * Direct click.
+         */
+
+        if (
+            node.isClickable &&
+            node.isEnabled
+        ) {
+
+            val result =
+                node.performAction(
+                    AccessibilityNodeInfo.ACTION_CLICK
+                )
+
+            if (result) {
+                return true
+            }
+        }
+
+        /*
+         * Parent click.
+         */
+
+        var parent =
+            node.parent
+
+        while (parent != null) {
+
+            Log.d(
+                TAG,
+                "ENTER: checking parent = ${
+                    parent.className
+                }"
+            )
+
+            if (
+                parent.isClickable &&
+                parent.isEnabled &&
+                parent.isVisibleToUser
+            ) {
+
+                val result =
+                    parent.performAction(
+                        AccessibilityNodeInfo.ACTION_CLICK
+                    )
+
+                if (result) {
+                    return true
+                }
+            }
+
+            parent =
+                parent.parent
+        }
+
+        return false
+    }
+
+    // =========================================================
+    // SCREENSHOT
+    // =========================================================
+
+    private fun takeScreenshotInternal(): Boolean {
+
+        if (
+            Build.VERSION.SDK_INT <
+            Build.VERSION_CODES.R
+        ) {
+
+            Log.e(
+                TAG,
+                "SCREENSHOT FAILED: Android 11/API 30+ required"
+            )
+
+            return false
+        }
+
+        Log.d(
+            TAG,
+            "Starting screenshot..."
+        )
 
         try {
 
@@ -279,366 +722,52 @@ class ScreenshotService : AccessibilityService() {
                     ) {
 
                         Log.d(
-                            "ScreenshotService",
+                            TAG,
                             "SCREENSHOT CAPTURE SUCCESS"
                         )
+
+                        /*
+                         * ScreenshotResult itself does NOT
+                         * have close().
+                         *
+                         * HardwareBuffer ownership is handled
+                         * by the framework according to the API.
+                         */
 
                         val buffer =
                             screenshot.hardwareBuffer
 
-                        try {
-
-                            val bitmap =
-                                Bitmap.wrapHardwareBuffer(
-                                    buffer,
-                                    screenshot.colorSpace
-                                )
-
-                            if (bitmap == null) {
-
-                                Log.e(
-                                    "ScreenshotService",
-                                    "BITMAP CREATION FAILED"
-                                )
-
-                                return
-                            }
-
-                            try {
-
-                                // =================================
-                                // SAVE LOCAL COPY
-                                // =================================
-
-                                saveScreenshot(bitmap)
-
-
-                                // =================================
-                                // COPY FOR UPLOAD
-                                // =================================
-
-                                val uploadBitmap =
-                                    bitmap.copy(
-                                        Bitmap.Config.ARGB_8888,
-                                        false
-                                    )
-
-                                if (uploadBitmap == null) {
-
-                                    Log.e(
-                                        "ScreenshotService",
-                                        "UPLOAD BITMAP COPY FAILED"
-                                    )
-
-                                    return
-                                }
-
-
-                                // =================================
-                                // UPLOAD
-                                // =================================
-
-                                uploadScreenshot(
-                                    uploadBitmap
-                                )
-
-                            } finally {
-
-                                if (!bitmap.isRecycled) {
-                                    bitmap.recycle()
-                                }
-                            }
-
-                        } catch (e: Exception) {
-
-                            Log.e(
-                                "ScreenshotService",
-                                "SCREENSHOT PROCESSING ERROR",
-                                e
-                            )
-
-                        } finally {
-
-                            buffer.close()
-                        }
+                        Log.d(
+                            TAG,
+                            "SCREENSHOT BUFFER RECEIVED = ${
+                                buffer != null
+                            }"
+                        )
                     }
-
 
                     override fun onFailure(
                         errorCode: Int
                     ) {
 
                         Log.e(
-                            "ScreenshotService",
-                            "SCREENSHOT FAILED: $errorCode"
+                            TAG,
+                            "SCREENSHOT FAILED, ERROR CODE = $errorCode"
                         )
                     }
                 }
             )
+
+            return true
 
         } catch (e: Exception) {
 
             Log.e(
-                "ScreenshotService",
-                "SCREENSHOT START ERROR",
+                TAG,
+                "SCREENSHOT EXCEPTION",
                 e
             )
+
+            return false
         }
-    }
-
-
-    // =========================================
-    // SAVE SCREENSHOT
-    // =========================================
-
-    private fun saveScreenshot(
-        bitmap: Bitmap
-    ) {
-
-        try {
-
-            val picturesDirectory =
-                Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_PICTURES
-                )
-
-            val folder =
-                File(
-                    picturesDirectory,
-                    "VoicePhoneControl"
-                )
-
-            if (!folder.exists()) {
-                folder.mkdirs()
-            }
-
-            val file =
-                File(
-                    folder,
-                    "Screenshot_${System.currentTimeMillis()}.png"
-                )
-
-            FileOutputStream(file).use { output ->
-
-                bitmap.compress(
-                    Bitmap.CompressFormat.PNG,
-                    100,
-                    output
-                )
-            }
-
-            Log.d(
-                "ScreenshotService",
-                "SCREENSHOT SAVED = ${file.absolutePath}"
-            )
-
-        } catch (e: Exception) {
-
-            Log.e(
-                "ScreenshotService",
-                "SAVE ERROR",
-                e
-            )
-        }
-    }
-
-
-    // =========================================
-    // UPLOAD SCREENSHOT
-    // =========================================
-
-    private fun uploadScreenshot(
-        bitmap: Bitmap
-    ) {
-
-        thread {
-
-            try {
-
-                Log.d(
-                    "ScreenshotService",
-                    "Preparing screenshot upload..."
-                )
-
-                val outputStream =
-                    ByteArrayOutputStream()
-
-                bitmap.compress(
-                    Bitmap.CompressFormat.PNG,
-                    100,
-                    outputStream
-                )
-
-                val imageBytes =
-                    outputStream.toByteArray()
-
-                outputStream.close()
-
-
-                val imageBase64 =
-                    Base64.encodeToString(
-                        imageBytes,
-                        Base64.NO_WRAP
-                    )
-
-
-                val filename =
-                    "Screenshot_${System.currentTimeMillis()}.png"
-
-
-                val json =
-                    JSONObject().apply {
-
-                        put(
-                            "filename",
-                            filename
-                        )
-
-                        put(
-                            "image",
-                            imageBase64
-                        )
-                    }
-
-
-                Log.d(
-                    "ScreenshotService",
-                    "Uploading screenshot..."
-                )
-
-
-                val url =
-                    URL(
-                        "$SERVER_URL/api/screenshot"
-                    )
-
-
-                val connection =
-                    url.openConnection()
-                            as HttpURLConnection
-
-
-                try {
-
-                    connection.requestMethod =
-                        "POST"
-
-                    connection.setRequestProperty(
-                        "Authorization",
-                        "Bearer $API_TOKEN"
-                    )
-
-                    connection.setRequestProperty(
-                        "Content-Type",
-                        "application/json"
-                    )
-
-                    connection.doOutput =
-                        true
-
-                    connection.connectTimeout =
-                        15000
-
-                    connection.readTimeout =
-                        30000
-
-
-                    connection.outputStream.use { output ->
-
-                        output.write(
-                            json.toString()
-                                .toByteArray(
-                                    Charsets.UTF_8
-                                )
-                        )
-                    }
-
-
-                    val responseCode =
-                        connection.responseCode
-
-
-                    Log.d(
-                        "ScreenshotService",
-                        "UPLOAD RESPONSE: $responseCode"
-                    )
-
-
-                    if (responseCode in 200..299) {
-
-                        Log.d(
-                            "ScreenshotService",
-                            "SCREENSHOT UPLOAD SUCCESS"
-                        )
-
-                    } else {
-
-                        Log.e(
-                            "ScreenshotService",
-                            "SCREENSHOT UPLOAD FAILED: HTTP $responseCode"
-                        )
-                    }
-
-                } finally {
-
-                    connection.disconnect()
-                }
-
-            } catch (e: Exception) {
-
-                Log.e(
-                    "ScreenshotService",
-                    "UPLOAD ERROR",
-                    e
-                )
-
-            } finally {
-
-                if (!bitmap.isRecycled) {
-                    bitmap.recycle()
-                }
-            }
-        }
-    }
-
-
-    // =========================================
-    // ACCESSIBILITY EVENT
-    // =========================================
-
-    override fun onAccessibilityEvent(
-        event: android.view.accessibility.AccessibilityEvent?
-    ) {
-        // No event processing required
-    }
-
-
-    // =========================================
-    // INTERRUPTED
-    // =========================================
-
-    override fun onInterrupt() {
-
-        Log.d(
-            "ScreenshotService",
-            "SERVICE INTERRUPTED"
-        )
-    }
-
-
-    // =========================================
-    // DESTROYED
-    // =========================================
-
-    override fun onDestroy() {
-
-        instance = null
-
-        Log.d(
-            "ScreenshotService",
-            "SERVICE DESTROYED"
-        )
-
-        super.onDestroy()
     }
 }

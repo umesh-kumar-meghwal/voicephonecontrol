@@ -11,7 +11,7 @@ id statusText
 layout activity_permission
 mipmap ic_launcher
 mipmap ic_launcher_round
-string accessibility_description
+string accessibility_service_description
 string app_name
 style Theme.VoiceControl
 style Theme.VoiceControl.NoActionBar

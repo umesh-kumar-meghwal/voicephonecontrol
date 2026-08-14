@@ -4,8 +4,8 @@
 
     <string name="app_name">Voice Phone Control</string>
 
-    <string name="accessibility_description">
-        Voice Phone Control screenshot service
-    </string>
+    <string name="accessibility_service_description">
+    Voice Control accessibility service for user-requested device navigation and interaction.
+</string>
 
 </resources>

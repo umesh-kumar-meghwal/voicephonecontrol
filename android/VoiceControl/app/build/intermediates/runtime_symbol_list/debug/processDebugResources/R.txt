@@ -909,7 +909,7 @@ int string abc_searchview_description_voice 0x7f0d0017
 int string abc_shareactionprovider_share_with 0x7f0d0018
 int string abc_shareactionprovider_share_with_application 0x7f0d0019
 int string abc_toolbar_collapse_description 0x7f0d001a
-int string accessibility_description 0x7f0d001b
+int string accessibility_service_description 0x7f0d001b
 int string androidx_startup 0x7f0d001c
 int string app_name 0x7f0d001d
 int string call_notification_answer_action 0x7f0d001e
