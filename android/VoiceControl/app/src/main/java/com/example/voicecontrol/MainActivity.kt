@@ -20,9 +20,7 @@ class MainActivity : Activity() {
 
     private lateinit var projectionManager: MediaProjectionManager
 
-    override fun onCreate(
-        savedInstanceState: Bundle?
-    ) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         Log.d(
@@ -35,9 +33,28 @@ class MainActivity : Activity() {
                 MEDIA_PROJECTION_SERVICE
             ) as MediaProjectionManager
 
+        // IMPORTANT
+        startCommandService()
+
         handleIntent(intent)
     }
 
+    private fun startCommandService() {
+        try {
+            val intent = Intent(this, CommandService::class.java)
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {
+                startService(intent)
+            }
+
+            Log.d(TAG, "COMMAND SERVICE START REQUESTED")
+
+        } catch (e: Exception) {
+            Log.e(TAG, "FAILED TO START COMMAND SERVICE", e)
+        }
+    }
     override fun onNewIntent(
         intent: Intent?
     ) {
