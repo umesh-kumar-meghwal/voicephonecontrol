@@ -16,7 +16,7 @@ import org.json.JSONObject
 import kotlin.concurrent.thread
 
 private const val SERVER_URL =
-    "https://voice-phone-control-five.vercel.app"
+    "https://phonecontrol-black.vercel.app/"
 
 // IMPORTANT:
 // Production app me token ko source code me hard-code mat rakhna.
