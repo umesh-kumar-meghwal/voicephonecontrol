@@ -1,5 +1,12 @@
 R_DEF: Internal format may change without notice
 local
+id btnAccessibility
+id btnBattery
+id btnContinue
+id btnLocation
+id btnNotification
+id statusText
+layout activity_permission
 string accessibility_description
 string app_name
 style AppTheme

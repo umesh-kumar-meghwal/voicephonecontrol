@@ -705,6 +705,11 @@ id async
 id beginning
 id blocking
 id bottom
+id btnAccessibility
+id btnBattery
+id btnContinue
+id btnLocation
+id btnNotification
 id buttonPanel
 id center_vertical
 id checkbox
@@ -783,6 +788,7 @@ id split_action_bar
 id src_atop
 id src_in
 id src_over
+id statusText
 id submenuarrow
 id submit_area
 id tabMode
@@ -860,6 +866,7 @@ layout abc_search_dropdown_item_icons_2line
 layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
+layout activity_permission
 layout custom_dialog
 layout ime_base_split_test_activity
 layout ime_secondary_split_test_activity

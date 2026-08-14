@@ -26,181 +26,211 @@
 16    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 16-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:21:5-22:64
 16-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:22:9-61
-17
-18    <queries>
-18-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:25:5-39:15
-19        <package android:name="com.whatsapp" />
-19-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:27:9-28:43
-19-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:28:13-40
-20        <package android:name="com.google.android.youtube" />
-20-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:30:9-31:57
-20-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:31:13-54
-21        <package android:name="com.android.chrome" />
-21-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:33:9-34:49
-21-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:34:13-46
-22        <package android:name="com.android.settings" />
-22-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:36:9-37:51
-22-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:37:13-48
-23    </queries>
-24
-25    <permission
-25-->[androidx.core:core:1.15.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f8adde4797a327b68dc7fa2656bed48f\workspace\transformed\core-1.15.0\AndroidManifest.xml:22:5-24:47
-26        android:name="com.example.voicecontrol.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-26-->[androidx.core:core:1.15.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f8adde4797a327b68dc7fa2656bed48f\workspace\transformed\core-1.15.0\AndroidManifest.xml:23:9-81
-27        android:protectionLevel="signature" />
-27-->[androidx.core:core:1.15.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f8adde4797a327b68dc7fa2656bed48f\workspace\transformed\core-1.15.0\AndroidManifest.xml:24:9-44
-28
-29    <uses-permission android:name="com.example.voicecontrol.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-29-->[androidx.core:core:1.15.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f8adde4797a327b68dc7fa2656bed48f\workspace\transformed\core-1.15.0\AndroidManifest.xml:26:5-97
-29-->[androidx.core:core:1.15.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f8adde4797a327b68dc7fa2656bed48f\workspace\transformed\core-1.15.0\AndroidManifest.xml:26:22-94
-30
-31    <application
-31-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:42:5-105:19
-32        android:allowBackup="true"
-32-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:45:9-35
-33        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-33-->[androidx.core:core:1.15.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f8adde4797a327b68dc7fa2656bed48f\workspace\transformed\core-1.15.0\AndroidManifest.xml:28:18-86
-34        android:debuggable="true"
-35        android:extractNativeLibs="false"
-36        android:label="Voice Phone Control"
-36-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:44:9-44
-37        android:theme="@style/AppTheme" >
-37-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:43:9-40
-38
-39        <!-- MAIN ACTIVITY -->
-40
-41        <activity
-41-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:50:9-65:20
-42            android:name="com.example.voicecontrol.MainActivity"
-42-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:51:13-41
-43            android:exported="true"
-43-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:52:13-36
-44            android:launchMode="singleTop" >
-44-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:53:13-43
+17    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+17-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:23:5-24:66
+17-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:24:9-63
+18    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+18-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:26:5-27:68
+18-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:27:9-65
+19    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+19-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:29:5-30:82
+19-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:30:9-79
+20
+21    <queries>
+21-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:33:5-47:15
+22        <package android:name="com.whatsapp" />
+22-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:35:9-36:43
+22-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:36:13-40
+23        <package android:name="com.google.android.youtube" />
+23-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:38:9-39:57
+23-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:39:13-54
+24        <package android:name="com.android.chrome" />
+24-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:41:9-42:49
+24-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:42:13-46
+25        <package android:name="com.android.settings" />
+25-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:44:9-45:51
+25-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:45:13-48
+26    </queries>
+27
+28    <permission
+28-->[androidx.core:core:1.15.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f8adde4797a327b68dc7fa2656bed48f\workspace\transformed\core-1.15.0\AndroidManifest.xml:22:5-24:47
+29        android:name="com.example.voicecontrol.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+29-->[androidx.core:core:1.15.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f8adde4797a327b68dc7fa2656bed48f\workspace\transformed\core-1.15.0\AndroidManifest.xml:23:9-81
+30        android:protectionLevel="signature" />
+30-->[androidx.core:core:1.15.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f8adde4797a327b68dc7fa2656bed48f\workspace\transformed\core-1.15.0\AndroidManifest.xml:24:9-44
+31
+32    <uses-permission android:name="com.example.voicecontrol.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+32-->[androidx.core:core:1.15.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f8adde4797a327b68dc7fa2656bed48f\workspace\transformed\core-1.15.0\AndroidManifest.xml:26:5-97
+32-->[androidx.core:core:1.15.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f8adde4797a327b68dc7fa2656bed48f\workspace\transformed\core-1.15.0\AndroidManifest.xml:26:22-94
+33
+34    <application
+34-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:50:5-124:19
+35        android:allowBackup="true"
+35-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:53:9-35
+36        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+36-->[androidx.core:core:1.15.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f8adde4797a327b68dc7fa2656bed48f\workspace\transformed\core-1.15.0\AndroidManifest.xml:28:18-86
+37        android:debuggable="true"
+38        android:extractNativeLibs="false"
+39        android:label="Phone Control"
+39-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:52:9-38
+40        android:testOnly="true"
+41        android:theme="@style/AppTheme" >
+41-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:51:9-40
+42        <activity
+42-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:55:9-69:20
+43            android:name="com.example.voicecontrol.PermissionActivity"
+43-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:56:13-47
+44            android:exported="true" >
+44-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:57:13-36
 45            <intent-filter>
-45-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:55:13-63:29
+45-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:59:13-67:29
 46                <action android:name="android.intent.action.MAIN" />
-46-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:57:17-58:65
-46-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:58:21-62
+46-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:61:17-62:65
+46-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:62:21-62
 47
 48                <category android:name="android.intent.category.LAUNCHER" />
-48-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:60:17-61:71
-48-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:61:21-68
+48-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:64:17-65:71
+48-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:65:21-68
 49            </intent-filter>
 50        </activity>
-51
-52        <!-- COMMAND SERVICE -->
-53
-54        <service
-54-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:70:9-73:56
-55            android:name="com.example.voicecontrol.CommandService"
-55-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:71:13-43
-56            android:exported="false"
-56-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:72:13-37
-57            android:foregroundServiceType="dataSync" />
-57-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:73:13-53
-58
-59        <!-- ACCESSIBILITY SERVICE -->
-60
-61        <service
-61-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:78:9-94:19
-62            android:name="com.example.voicecontrol.ScreenshotService"
-62-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:79:13-46
-63            android:exported="false"
-63-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:81:13-37
-64            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
-64-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:80:13-79
-65            <intent-filter>
-65-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:83:13-88:29
-66                <action android:name="android.accessibilityservice.AccessibilityService" />
-66-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:85:17-86:88
-66-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:86:21-85
-67            </intent-filter>
-68
-69            <meta-data
-69-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:90:13-92:72
-70                android:name="android.accessibilityservice"
-70-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:91:17-60
-71                android:resource="@xml/accessibility_service_config" />
-71-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:92:17-69
-72        </service>
-73
-74        <!-- LIVE SCREEN -->
-75
-76        <service
-76-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:99:9-102:63
-77            android:name="com.example.voicecontrol.LiveScreenService"
-77-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:100:13-46
-78            android:exported="false"
-78-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:101:13-37
-79            android:foregroundServiceType="mediaProjection" />
-79-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:102:13-60
-80
-81        <provider
-81-->[androidx.emoji2:emoji2:1.3.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f3092570bb6e1cc8fe46f82d2d4d10d0\workspace\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
-82            android:name="androidx.startup.InitializationProvider"
-82-->[androidx.emoji2:emoji2:1.3.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f3092570bb6e1cc8fe46f82d2d4d10d0\workspace\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:25:13-67
-83            android:authorities="com.example.voicecontrol.androidx-startup"
-83-->[androidx.emoji2:emoji2:1.3.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f3092570bb6e1cc8fe46f82d2d4d10d0\workspace\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:26:13-68
-84            android:exported="false" >
-84-->[androidx.emoji2:emoji2:1.3.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f3092570bb6e1cc8fe46f82d2d4d10d0\workspace\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:27:13-37
-85            <meta-data
-85-->[androidx.emoji2:emoji2:1.3.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f3092570bb6e1cc8fe46f82d2d4d10d0\workspace\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
-86                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-86-->[androidx.emoji2:emoji2:1.3.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f3092570bb6e1cc8fe46f82d2d4d10d0\workspace\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:30:17-75
-87                android:value="androidx.startup" />
-87-->[androidx.emoji2:emoji2:1.3.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f3092570bb6e1cc8fe46f82d2d4d10d0\workspace\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:31:17-49
-88            <meta-data
-88-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\umesh\.gradle\caches\9.3.0\transforms\eb54f35d14bf3032cfe4d19b8e62625c\workspace\transformed\jetified-lifecycle-process-2.6.2\AndroidManifest.xml:29:13-31:52
-89                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-89-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\umesh\.gradle\caches\9.3.0\transforms\eb54f35d14bf3032cfe4d19b8e62625c\workspace\transformed\jetified-lifecycle-process-2.6.2\AndroidManifest.xml:30:17-78
-90                android:value="androidx.startup" />
-90-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\umesh\.gradle\caches\9.3.0\transforms\eb54f35d14bf3032cfe4d19b8e62625c\workspace\transformed\jetified-lifecycle-process-2.6.2\AndroidManifest.xml:31:17-49
-91            <meta-data
-91-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
-92                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-92-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
-93                android:value="androidx.startup" />
-93-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
-94        </provider>
-95
-96        <receiver
-96-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
-97            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-97-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
-98            android:directBootAware="false"
-98-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
-99            android:enabled="true"
-99-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
-100            android:exported="true"
-100-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
-101            android:permission="android.permission.DUMP" >
-101-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
-102            <intent-filter>
-102-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
-103                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-103-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
-103-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
-104            </intent-filter>
-105            <intent-filter>
-105-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
-106                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-106-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
-106-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
-107            </intent-filter>
-108            <intent-filter>
-108-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
-109                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-109-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
-109-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
-110            </intent-filter>
-111            <intent-filter>
-111-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
-112                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-112-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
-112-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
-113            </intent-filter>
-114        </receiver>
-115    </application>
-116
-117</manifest>
+51        <activity
+51-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:71:9-74:46
+52            android:name="com.example.voicecontrol.MainActivity"
+52-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:72:13-41
+53            android:exported="false"
+53-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:73:13-37
+54            android:launchMode="singleTop" />
+54-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:74:13-43
+55
+56        <!-- COMMAND SERVICE -->
+57
+58        <service
+58-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:79:9-82:56
+59            android:name="com.example.voicecontrol.CommandService"
+59-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:80:13-43
+60            android:exported="false"
+60-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:81:13-37
+61            android:foregroundServiceType="dataSync" />
+61-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:82:13-53
+62
+63        <!-- ACCESSIBILITY SERVICE -->
+64
+65        <service
+65-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:87:9-103:19
+66            android:name="com.example.voicecontrol.ScreenshotService"
+66-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:88:13-46
+67            android:exported="false"
+67-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:90:13-37
+68            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
+68-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:89:13-79
+69            <intent-filter>
+69-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:92:13-97:29
+70                <action android:name="android.accessibilityservice.AccessibilityService" />
+70-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:94:17-95:88
+70-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:95:21-85
+71            </intent-filter>
+72
+73            <meta-data
+73-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:99:13-101:72
+74                android:name="android.accessibilityservice"
+74-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:100:17-60
+75                android:resource="@xml/accessibility_service_config" />
+75-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:101:17-69
+76        </service>
+77        <service
+77-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:104:9-114:19
+78            android:name="com.example.voicecontrol.NotificationService"
+78-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:105:13-48
+79            android:exported="true"
+79-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:108:13-36
+80            android:label="Phone Control Notifications"
+80-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:106:13-56
+81            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" >
+81-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:107:13-87
+82            <intent-filter>
+82-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:110:13-112:29
+83                <action android:name="android.service.notification.NotificationListenerService" />
+83-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:111:17-99
+83-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:111:25-96
+84            </intent-filter>
+85        </service>
+86
+87        <!-- LIVE SCREEN -->
+88
+89        <service
+89-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:118:9-121:63
+90            android:name="com.example.voicecontrol.LiveScreenService"
+90-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:119:13-46
+91            android:exported="false"
+91-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:120:13-37
+92            android:foregroundServiceType="mediaProjection" />
+92-->C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:121:13-60
+93
+94        <provider
+94-->[androidx.emoji2:emoji2:1.3.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f3092570bb6e1cc8fe46f82d2d4d10d0\workspace\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+95            android:name="androidx.startup.InitializationProvider"
+95-->[androidx.emoji2:emoji2:1.3.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f3092570bb6e1cc8fe46f82d2d4d10d0\workspace\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:25:13-67
+96            android:authorities="com.example.voicecontrol.androidx-startup"
+96-->[androidx.emoji2:emoji2:1.3.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f3092570bb6e1cc8fe46f82d2d4d10d0\workspace\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:26:13-68
+97            android:exported="false" >
+97-->[androidx.emoji2:emoji2:1.3.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f3092570bb6e1cc8fe46f82d2d4d10d0\workspace\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:27:13-37
+98            <meta-data
+98-->[androidx.emoji2:emoji2:1.3.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f3092570bb6e1cc8fe46f82d2d4d10d0\workspace\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+99                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+99-->[androidx.emoji2:emoji2:1.3.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f3092570bb6e1cc8fe46f82d2d4d10d0\workspace\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:30:17-75
+100                android:value="androidx.startup" />
+100-->[androidx.emoji2:emoji2:1.3.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f3092570bb6e1cc8fe46f82d2d4d10d0\workspace\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:31:17-49
+101            <meta-data
+101-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\umesh\.gradle\caches\9.3.0\transforms\eb54f35d14bf3032cfe4d19b8e62625c\workspace\transformed\jetified-lifecycle-process-2.6.2\AndroidManifest.xml:29:13-31:52
+102                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+102-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\umesh\.gradle\caches\9.3.0\transforms\eb54f35d14bf3032cfe4d19b8e62625c\workspace\transformed\jetified-lifecycle-process-2.6.2\AndroidManifest.xml:30:17-78
+103                android:value="androidx.startup" />
+103-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\umesh\.gradle\caches\9.3.0\transforms\eb54f35d14bf3032cfe4d19b8e62625c\workspace\transformed\jetified-lifecycle-process-2.6.2\AndroidManifest.xml:31:17-49
+104            <meta-data
+104-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+105                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+105-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+106                android:value="androidx.startup" />
+106-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+107        </provider>
+108
+109        <receiver
+109-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+110            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+110-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+111            android:directBootAware="false"
+111-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+112            android:enabled="true"
+112-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+113            android:exported="true"
+113-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+114            android:permission="android.permission.DUMP" >
+114-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+115            <intent-filter>
+115-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+116                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+116-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+116-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+117            </intent-filter>
+118            <intent-filter>
+118-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+119                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+119-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+119-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+120            </intent-filter>
+121            <intent-filter>
+121-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+122                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+122-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+122-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+123            </intent-filter>
+124            <intent-filter>
+124-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+125                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+125-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+125-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+126            </intent-filter>
+127        </receiver>
+128    </application>
+129
+130</manifest>

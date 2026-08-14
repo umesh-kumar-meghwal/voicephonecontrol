@@ -14,6 +14,9 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <queries>
         <package android:name="com.whatsapp" />
@@ -33,21 +36,22 @@
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:debuggable="true"
         android:extractNativeLibs="false"
-        android:label="Voice Phone Control"
+        android:label="Phone Control"
+        android:testOnly="true"
         android:theme="@style/AppTheme" >
-
-        <!-- MAIN ACTIVITY -->
-
         <activity
-            android:name="com.example.voicecontrol.MainActivity"
-            android:exported="true"
-            android:launchMode="singleTop" >
+            android:name="com.example.voicecontrol.PermissionActivity"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.example.voicecontrol.MainActivity"
+            android:exported="false"
+            android:launchMode="singleTop" />
 
         <!-- COMMAND SERVICE -->
 
@@ -69,6 +73,15 @@
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility_service_config" />
+        </service>
+        <service
+            android:name="com.example.voicecontrol.NotificationService"
+            android:exported="true"
+            android:label="Phone Control Notifications"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" >
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
         </service>
 
         <!-- LIVE SCREEN -->

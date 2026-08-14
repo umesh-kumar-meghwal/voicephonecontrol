@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Phone Control</title>
+</head>
+<body>
+
+<h1>Phone Control</h1>
+
+<button onclick="sendCommand('HOME')">HOME</button>
+<button onclick="sendCommand('BACK')">BACK</button>
+<button onclick="sendCommand('VOLUME_UP')">VOLUME +</button>
+<button onclick="sendCommand('VOLUME_DOWN')">VOLUME -</button>
+<button onclick="sendCommand('TAKE_SCREENSHOT')">SCREENSHOT</button>
+<button onclick="sendCommand('PHONE_STATUS')">PHONE STATUS</button>
+<button onclick="openApp('whatsapp')">WHATSAPP</button>
+
+<pre id="result"></pre>
+
+<script>
+const API_URL =
+    "https://voice-phone-control-b9hj849pm-umeshmeghwa605-gmailcoms-projects.vercel.app";
+
+async function sendCommand(command, payload = {}) {
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/api/command`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+
+                    // Apna token yahan directly production website
+                    // mein mat rakhna.
+                    "Authorization": "Bearer  VPC-a8F3xK91-pQ7L2mZ6-4NwR8tY5U"
+                },
+                body: JSON.stringify({
+                    command: command,
+                    payload: payload
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        document.getElementById("result").textContent =
+            JSON.stringify(data, null, 2);
+
+    } catch (error) {
+
+        document.getElementById("result").textContent =
+            error.toString();
+    }
+}
+
+function openApp(app) {
+    sendCommand("OPEN_APP", {
+        app: app
+    });
+}
+</script>
+
+</body>
+</html>

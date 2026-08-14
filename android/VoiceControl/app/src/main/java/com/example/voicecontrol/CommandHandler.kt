@@ -28,13 +28,14 @@ object CommandHandler {
             // HOME
             // ==============================
             "HOME" -> {
+                Log.d(TAG, "HOME requested")
 
                 if (ScreenshotService.performHome()) {
-                    Log.d(TAG, "HOME SUCCESS")
+                    Log.d(TAG, "HOME executed successfully")
                 } else {
                     Log.e(
                         TAG,
-                        "HOME FAILED - Accessibility Service not connected"
+                        "HOME failed: AccessibilityService not connected"
                     )
                 }
             }
@@ -44,17 +45,17 @@ object CommandHandler {
             // BACK
             // ==============================
             "BACK" -> {
+                Log.d(TAG, "BACK requested")
 
                 if (ScreenshotService.performBack()) {
-                    Log.d(TAG, "BACK SUCCESS")
+                    Log.d(TAG, "BACK executed successfully")
                 } else {
                     Log.e(
                         TAG,
-                        "BACK FAILED - Accessibility Service not connected"
+                        "BACK failed: AccessibilityService not connected"
                     )
                 }
             }
-
 
             // ==============================
             // VOLUME UP
@@ -113,23 +114,19 @@ object CommandHandler {
             // ==============================
             "SCREENSHOT",
             "TAKE_SCREENSHOT" -> {
-
-                Log.d(TAG, "SCREENSHOT REQUESTED")
+                Log.d(TAG, "SCREENSHOT requested")
 
                 try {
-
                     ScreenshotService.takeScreenshot()
 
                     Log.d(
                         TAG,
-                        "SCREENSHOT REQUEST SENT"
+                        "Screenshot request sent"
                     )
-
                 } catch (e: Exception) {
-
                     Log.e(
                         TAG,
-                        "SCREENSHOT FAILED",
+                        "SCREENSHOT failed",
                         e
                     )
                 }
