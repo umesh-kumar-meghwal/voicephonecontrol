@@ -42,6 +42,8 @@ class MainActivity : Activity() {
                 MEDIA_PROJECTION_SERVICE
             ) as MediaProjectionManager
 
+        startCommandService()
+
         val startLive =
             intent.getBooleanExtra(
                 EXTRA_START_LIVE,
