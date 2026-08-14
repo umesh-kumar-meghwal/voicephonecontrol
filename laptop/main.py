@@ -46,6 +46,7 @@ COMMANDS = {
     "6": ("PHONE_STATUS", {}),
     "7": ("OPEN_APP", {}),
     "8": ("LIVE_SCREEN", {}),
+    "9": ("NOTIFICATION_STATUS", {}),
 }
 
 
@@ -125,6 +126,7 @@ while True:
     print("6. PHONE STATUS")
     print("7. OPEN APP")
     print("8. LIVE SCREEN")
+    print("9. NOTIFICATION STATUS")
     print("q. EXIT")
 
     print("==============================")
@@ -241,7 +243,8 @@ while True:
             print("Close the Live Screen window when finished.")
 
             continue
-          
+        if command == "NOTIFICATION_STATUS":
+            send_command("NOTIFICATION_STATUS",{})
         
 
 

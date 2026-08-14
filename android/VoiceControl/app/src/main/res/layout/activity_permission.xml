@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Voice Phone Control"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginBottom="20dp" />
+
+    <Button
+        android:id="@+id/btnNotification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Allow Notifications" />
+
+    <Button
+        android:id="@+id/btnLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Allow Location" />
+
+    <Button
+        android:id="@+id/btnAccessibility"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enable Accessibility Service" />
+
+    <Button
+        android:id="@+id/btnBattery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Allow Background / Battery" />
+
+    <Button
+        android:id="@+id/btnContinue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CONTINUE"
+        android:layout_marginTop="24dp" />
+
+</LinearLayout>

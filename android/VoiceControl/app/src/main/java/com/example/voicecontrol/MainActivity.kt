@@ -26,7 +26,14 @@ class MainActivity : Activity() {
     ) {
 
         super.onCreate(savedInstanceState)
-        startCommandService()
+
+        val intent = Intent(
+            this,
+            PermissionActivity::class.java
+        )
+
+        startActivity(intent)
+        finish()
 
         Log.d(TAG, "========== ON CREATE ==========")
 

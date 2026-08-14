@@ -188,6 +188,33 @@ object CommandHandler {
                     )
                 }
             }
+            "NOTIFICATION_STATUS" -> {
+
+                Log.d(
+                    TAG,
+                    "NOTIFICATION_STATUS requested"
+                )
+
+                try {
+
+                    val status =
+                        NotificationService.getStatus()
+
+                    Log.d(
+                        TAG,
+                        "Notification status = $status"
+                    )
+
+
+                } catch (e: Exception) {
+
+                    Log.e(
+                        TAG,
+                        "Notification status failed",
+                        e
+                    )
+                }
+            }
 
 
             // ==============================
@@ -242,6 +269,7 @@ object CommandHandler {
             }
         }
     }
+
 
 
     // ==============================
