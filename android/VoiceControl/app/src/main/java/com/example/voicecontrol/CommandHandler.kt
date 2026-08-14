@@ -53,6 +53,28 @@ object CommandHandler {
                     Log.e(TAG, "BACK failed: AccessibilityService not connected")
                 }
             }
+            "ENTER" -> {
+
+                Log.d(
+                    TAG,
+                    "ENTER requested"
+                )
+
+                if (ScreenshotService.pressEnter()) {
+
+                    Log.d(
+                        TAG,
+                        "ENTER executed successfully"
+                    )
+
+                } else {
+
+                    Log.e(
+                        TAG,
+                        "ENTER failed"
+                    )
+                }
+            }
             // ==============================
             // VOLUME UP
             // ==============================

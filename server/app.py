@@ -14,6 +14,7 @@ class Command(BaseModel):
 
 ALLOWED = {
     "OPEN_APP",
+    "ENTER",
     "BACK",
     "HOME",
     "VOLUME_UP",

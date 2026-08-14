@@ -7,16 +7,17 @@ import android.os.Environment
 import android.util.Base64
 import android.util.Log
 import android.view.Display
+import android.view.accessibility.AccessibilityNodeInfo
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
-import org.json.JSONObject
 import kotlin.concurrent.thread
+import org.json.JSONObject
 
 private const val SERVER_URL =
-    "https://phonecontrol-black.vercel.app/"
+    "https://phonecontrol-black.vercel.app"
 
 // IMPORTANT:
 // Production app me token ko source code me hard-code mat rakhna.
@@ -104,6 +105,72 @@ class ScreenshotService : AccessibilityService() {
                 Log.e(
                     "ScreenshotService",
                     "BACK ERROR",
+                    e
+                )
+
+                false
+            }
+        }
+
+        fun pressEnter(): Boolean {
+
+            val service = instance
+
+            if (service == null) {
+                Log.e(
+                    "ScreenshotService",
+                    "ENTER FAILED: SERVICE NOT CONNECTED"
+                )
+                return false
+            }
+
+            return try {
+
+                val root = service.rootInActiveWindow
+
+                if (root == null) {
+                    Log.e(
+                        "ScreenshotService",
+                        "ENTER FAILED: ROOT WINDOW IS NULL"
+                    )
+                    return false
+                }
+
+                val focused = root.findFocus(
+                    AccessibilityNodeInfo.FOCUS_INPUT
+                )
+
+                if (focused != null && focused.isClickable) {
+
+                    val result =
+                        focused.performAction(
+                            AccessibilityNodeInfo.ACTION_CLICK
+                        )
+
+                    Log.d(
+                        "ScreenshotService",
+                        "ENTER/CLICK result = $result"
+                    )
+
+                    focused.recycle()
+
+                    result
+
+                } else {
+
+                    Log.d(
+                        "ScreenshotService",
+                        "No clickable focused node found"
+                    )
+
+                    false
+                }
+
+            } catch (e: Exception) {
+
+                Log.e(
+                    "ScreenshotService",
+                    "ENTER ERROR",
                     e
                 )
 

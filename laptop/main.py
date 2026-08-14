@@ -36,7 +36,6 @@ from network.client import (
 # =========================================
 # COMMANDS FOR UMESH DEVELOPER
 # =========================================
-
 COMMANDS = {
     "1": ("HOME", {}),
     "2": ("BACK", {}),
@@ -47,8 +46,8 @@ COMMANDS = {
     "7": ("OPEN_APP", {}),
     "8": ("LIVE_SCREEN", {}),
     "9": ("NOTIFICATION_STATUS", {}),
+    "10": ("ENTER", {}),
 }
-
 
 # =========================================
 # SAVE SCREENSHOT FOR UMESH DEVELOPER
@@ -127,13 +126,19 @@ while True:
     print("7. OPEN APP")
     print("8. LIVE SCREEN")
     print("9. NOTIFICATION STATUS")
+    print("10. ENTER")
     print("q. EXIT")
 
     print("==============================")
 
-    choice = input(
-        "Command type karo: "
-    ).strip().lower()
+    choice = input("Command type karo: ").strip()
+    if choice.lower() == "q":
+        break
+    if choice not in COMMANDS:
+        print("Invalid command")
+        continue
+
+    command, payload = COMMANDS[choice]
 
 
     # =====================================

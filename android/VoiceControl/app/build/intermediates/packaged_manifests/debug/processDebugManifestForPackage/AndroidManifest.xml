@@ -45,7 +45,7 @@
             android:name="com.example.voicecontrol.PermissionActivity"
             android:excludeFromRecents="true"
             android:exported="true"
-            android:noHistory="true" >
+            android:theme="@style/Theme.VoiceControl.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

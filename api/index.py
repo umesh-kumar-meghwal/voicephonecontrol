@@ -51,6 +51,7 @@ class PhoneStatus(BaseModel):
 # =========================================================
 ALLOWED_COMMANDS = {
     "OPEN_APP",
+    "ENTER",
     "BACK",
     "HOME",
     "VOLUME_UP",

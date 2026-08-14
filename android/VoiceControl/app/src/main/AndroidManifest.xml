@@ -58,7 +58,8 @@
             android:name=".PermissionActivity"
             android:exported="true"
             android:excludeFromRecents="true"
-            android:noHistory="true">
+            android:theme="@style/Theme.VoiceControl.NoActionBar">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
