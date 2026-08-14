@@ -18,94 +18,29 @@ class MainActivity : Activity() {
             "START_LIVE_SCREEN"
     }
 
-    private lateinit var projectionManager:
-            MediaProjectionManager
+    private lateinit var projectionManager: MediaProjectionManager
 
     override fun onCreate(
         savedInstanceState: Bundle?
     ) {
-
         super.onCreate(savedInstanceState)
 
-        val intent = Intent(
-            this,
-            PermissionActivity::class.java
+        Log.d(
+            TAG,
+            "========== MAIN ACTIVITY CREATED =========="
         )
-
-        startActivity(intent)
-        finish()
-
-        Log.d(TAG, "========== ON CREATE ==========")
 
         projectionManager =
             getSystemService(
                 MEDIA_PROJECTION_SERVICE
             ) as MediaProjectionManager
 
-        startCommandService()
-
-        val startLive =
-            intent.getBooleanExtra(
-                EXTRA_START_LIVE,
-                false
-            )
-
-        Log.d(
-            TAG,
-            "START_LIVE_SCREEN = $startLive"
-        )
-
-        if (startLive) {
-
-            Log.d(
-                TAG,
-                "LIVE SCREEN REQUEST RECEIVED"
-            )
-
-            requestLiveScreenPermission()
-        }
-    }
-    private fun startCommandService() {
-
-        try {
-
-            val intent =
-                Intent(
-                    this,
-                    CommandService::class.java
-                )
-
-            if (
-                android.os.Build.VERSION.SDK_INT >=
-                android.os.Build.VERSION_CODES.O
-            ) {
-
-                startForegroundService(intent)
-
-            } else {
-
-                startService(intent)
-            }
-
-            Log.d(
-                "MainActivity",
-                "COMMAND SERVICE START REQUESTED"
-            )
-
-        } catch (e: Exception) {
-
-            Log.e(
-                "MainActivity",
-                "COMMAND SERVICE START FAILED",
-                e
-            )
-        }
+        handleIntent(intent)
     }
 
     override fun onNewIntent(
         intent: Intent?
     ) {
-
         super.onNewIntent(intent)
 
         if (intent == null) {
@@ -116,8 +51,15 @@ class MainActivity : Activity() {
 
         Log.d(
             TAG,
-            "========== ON NEW INTENT =========="
+            "========== NEW INTENT RECEIVED =========="
         )
+
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(
+        intent: Intent
+    ) {
 
         val startLive =
             intent.getBooleanExtra(
@@ -130,15 +72,20 @@ class MainActivity : Activity() {
             "START_LIVE_SCREEN = $startLive"
         )
 
-        if (startLive) {
-
+        if (!startLive) {
             Log.d(
                 TAG,
-                "LIVE SCREEN REQUEST RECEIVED"
+                "No LIVE_SCREEN request"
             )
-
-            requestLiveScreenPermission()
+            return
         }
+
+        Log.d(
+            TAG,
+            "LIVE SCREEN REQUEST RECEIVED"
+        )
+
+        requestLiveScreenPermission()
     }
 
     private fun requestLiveScreenPermission() {
@@ -204,11 +151,27 @@ class MainActivity : Activity() {
                 "SCREEN CAPTURE PERMISSION GRANTED"
             )
 
-            LiveScreenService.start(
-                this,
-                resultCode,
-                data
-            )
+            try {
+
+                LiveScreenService.start(
+                    this,
+                    resultCode,
+                    data
+                )
+
+                Log.d(
+                    TAG,
+                    "LIVE SCREEN SERVICE START REQUESTED"
+                )
+
+            } catch (e: Exception) {
+
+                Log.e(
+                    TAG,
+                    "FAILED TO START LIVE SCREEN SERVICE",
+                    e
+                )
+            }
 
         } else {
 
