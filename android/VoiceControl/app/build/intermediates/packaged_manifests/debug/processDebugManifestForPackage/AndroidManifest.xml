@@ -43,8 +43,7 @@
         android:theme="@style/Theme.VoiceControl" >
         <activity
             android:name="com.example.voicecontrol.PermissionActivity"
-            android:exported="true"
-            android:theme="@style/Theme.VoiceControl" >
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
