@@ -1,5 +1,11 @@
 <resources>
-    <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
-        <item name="android:fontFamily">sans</item>
+
+    <style name="Theme.VoiceControl"
+        parent="Theme.AppCompat.Light.NoActionBar">
+
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowNoTitle">true</item>
+
     </style>
+
 </resources>

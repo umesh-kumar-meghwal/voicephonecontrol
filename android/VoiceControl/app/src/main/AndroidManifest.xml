@@ -48,16 +48,16 @@
 
 
     <application
-        android:theme="@style/AppTheme"
+        android:theme="@style/Theme.VoiceControl"
         android:label="Phone Control"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:allowBackup="true">
 
-
-
         <activity
-            android:name=".MainActivity"
+            android:name=".PermissionActivity"
             android:exported="true"
-            android:launchMode="singleTop">
+            android:theme="@style/Theme.VoiceControl">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -65,6 +65,12 @@
             </intent-filter>
 
         </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+
+
 
 
         <!-- COMMAND SERVICE -->

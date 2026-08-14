@@ -50,13 +50,9 @@ object CommandHandler {
                 if (ScreenshotService.performBack()) {
                     Log.d(TAG, "BACK executed successfully")
                 } else {
-                    Log.e(
-                        TAG,
-                        "BACK failed: AccessibilityService not connected"
-                    )
+                    Log.e(TAG, "BACK failed: AccessibilityService not connected")
                 }
             }
-
             // ==============================
             // VOLUME UP
             // ==============================

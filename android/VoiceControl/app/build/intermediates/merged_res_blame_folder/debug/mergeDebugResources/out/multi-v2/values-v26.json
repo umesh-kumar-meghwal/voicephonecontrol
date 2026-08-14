@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.voicecontrol.app-mergeDebugResources-22:/values-v26/values-v26.xml",
+            "outputFile": "com.example.voicecontrol.app-mergeDebugResources-21:/values-v26/values-v26.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\umesh\\.gradle\\caches\\9.3.0\\transforms\\9ec71f81acd67da47b4c0e61cbe35518\\workspace\\transformed\\appcompat-1.7.0\\res\\values-v26\\values-v26.xml",
+                    "source": "C:\\Users\\umesh\\.gradle\\caches\\9.3.0\\transforms\\481f5639746a4f08900c9db3db0db207\\workspace\\transformed\\appcompat-1.7.1\\res\\values-v26\\values-v26.xml",
                     "from": {
                         "startLines": "2,3,4,8,12,16",
                         "startColumns": "4,4,4,4,4,4",

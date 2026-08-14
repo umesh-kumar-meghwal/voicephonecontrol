@@ -1,5 +1,7 @@
 R_DEF: Internal format may change without notice
 local
+drawable ic_launcher_background
+drawable ic_launcher_foreground
 id btnAccessibility
 id btnBattery
 id btnContinue
@@ -7,7 +9,9 @@ id btnLocation
 id btnNotification
 id statusText
 layout activity_permission
+mipmap ic_launcher
+mipmap ic_launcher_round
 string accessibility_description
 string app_name
-style AppTheme
+style Theme.VoiceControl
 xml accessibility_service_config
