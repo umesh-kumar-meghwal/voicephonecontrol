@@ -86,7 +86,7 @@ ALLOWED_COMMANDS = {
     "LEFT",
     "RIGHT",
     "MUTE",
-    "RECENTS"
+    "RECENTS",
 }
 
 
