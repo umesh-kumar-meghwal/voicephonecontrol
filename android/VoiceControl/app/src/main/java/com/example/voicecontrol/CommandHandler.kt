@@ -46,17 +46,14 @@ object CommandHandler {
             }
 
             // =================================================
-// PHONE STATUS
-// =================================================
+            // PHONE STATUS
+            // =================================================
 
             cmd == "PHONE STATUS" ||
                     cmd == "STATUS" ||
                     cmd == "PHONE BATTERY" -> {
 
-                Log.d(
-                    TAG,
-                    "Executing PHONE STATUS"
-                )
+                Log.d(TAG, "Executing PHONE STATUS")
 
                 try {
 
@@ -69,8 +66,6 @@ object CommandHandler {
                         batteryManager.getIntProperty(
                             android.os.BatteryManager.BATTERY_PROPERTY_CAPACITY
                         )
-
-
 
                     val chargingIntent =
                         context.registerReceiver(
@@ -90,13 +85,203 @@ object CommandHandler {
                         status == android.os.BatteryManager.BATTERY_STATUS_CHARGING ||
                                 status == android.os.BatteryManager.BATTERY_STATUS_FULL
 
+                    val connectivityManager =
+                        context.getSystemService(
+                            Context.CONNECTIVITY_SERVICE
+                        ) as android.net.ConnectivityManager
+
+                    val network =
+                        if (
+                            android.os.Build.VERSION.SDK_INT >=
+                            android.os.Build.VERSION_CODES.M
+                        ) {
+
+                            val activeNetwork =
+                                connectivityManager.activeNetwork
+
+                            val capabilities =
+                                connectivityManager.getNetworkCapabilities(
+                                    activeNetwork
+                                )
+
+                            capabilities != null &&
+                                    (
+                                            capabilities.hasTransport(
+                                                android.net.NetworkCapabilities.TRANSPORT_WIFI
+                                            ) ||
+                                                    capabilities.hasTransport(
+                                                        android.net.NetworkCapabilities.TRANSPORT_CELLULAR
+                                                    ) ||
+                                                    capabilities.hasTransport(
+                                                        android.net.NetworkCapabilities.TRANSPORT_ETHERNET
+                                                    )
+                                            )
+
+                        } else {
+
+                            @Suppress("DEPRECATION")
+                            connectivityManager.activeNetworkInfo?.isConnected == true
+                        }
+
+                    val androidVersion =
+                        android.os.Build.VERSION.RELEASE
+
+                    val apiVersion =
+                        android.os.Build.VERSION.SDK_INT
+
                     Log.d(TAG, "==============================")
                     Log.d(TAG, "PHONE STATUS")
                     Log.d(TAG, "Battery  = $battery%")
                     Log.d(TAG, "Charging = $charging")
-                    Log.d(TAG, "Android  = ${android.os.Build.VERSION.RELEASE}")
-                    Log.d(TAG, "API      = ${android.os.Build.VERSION.SDK_INT}")
+                    Log.d(TAG, "Network  = $network")
+                    Log.d(TAG, "Android  = $androidVersion")
+                    Log.d(TAG, "API      = $apiVersion")
                     Log.d(TAG, "==============================")
+
+                    // -----------------------------------------
+                    // UPLOAD STATUS TO SERVER
+                    // -----------------------------------------
+
+                    Thread {
+
+                        var connection:
+                                java.net.HttpURLConnection? = null
+
+                        try {
+
+                            val url =
+                                java.net.URL(
+                                    "https://phonecontrol-black.vercel.app/api/status"
+                                )
+
+                            connection =
+                                url.openConnection()
+                                        as java.net.HttpURLConnection
+
+                            connection.requestMethod =
+                                "POST"
+
+                            connection.connectTimeout =
+                                10000
+
+                            connection.readTimeout =
+                                15000
+
+                            connection.doOutput =
+                                true
+
+                            connection.useCaches =
+                                false
+
+                            connection.setRequestProperty(
+                                "Authorization",
+                                "Bearer VPC-a8F3xK91-pQ7L2mZ6-4NwR8tY5U"
+                            )
+
+                            connection.setRequestProperty(
+                                "Content-Type",
+                                "application/json"
+                            )
+
+                            connection.setRequestProperty(
+                                "Accept",
+                                "application/json"
+                            )
+
+                            /*
+                             * IMPORTANT:
+                             *
+                             * Python get_phone_status() expects:
+                             *
+                             * {
+                             *   "ok": true,
+                             *   "status": {
+                             *      ...
+                             *   }
+                             * }
+                             */
+
+                            val json =
+                                """
+                                {
+                                    "ok": true,
+                                    "status": {
+                                        "battery": $battery,
+                                        "charging": $charging,
+                                        "network": $network,
+                                        "android": "$androidVersion",
+                                        "api": $apiVersion
+                                    }
+                                }
+                                """.trimIndent()
+
+                            Log.d(
+                                TAG,
+                                "STATUS JSON = $json"
+                            )
+
+                            connection.outputStream.use { output ->
+
+                                output.write(
+                                    json.toByteArray(
+                                        Charsets.UTF_8
+                                    )
+                                )
+
+                                output.flush()
+                            }
+
+                            val responseCode =
+                                connection.responseCode
+
+                            Log.d(
+                                TAG,
+                                "STATUS UPLOAD RESPONSE = $responseCode"
+                            )
+
+                            val response =
+                                try {
+
+                                    val stream =
+                                        if (
+                                            responseCode in 200..299
+                                        ) {
+                                            connection.inputStream
+                                        } else {
+                                            connection.errorStream
+                                        }
+
+                                    stream
+                                        ?.bufferedReader()
+                                        ?.use {
+                                            it.readText()
+                                        }
+
+                                } catch (e: Exception) {
+
+                                    "Unable to read response: ${e.message}"
+                                }
+
+                            Log.d(
+                                TAG,
+                                "STATUS SERVER RESPONSE = $response"
+                            )
+
+                        } catch (e: Exception) {
+
+                            Log.e(
+                                TAG,
+                                "PHONE STATUS UPLOAD ERROR",
+                                e
+                            )
+
+                        } finally {
+
+                            connection?.disconnect()
+                        }
+
+                    }.start()
+
                 } catch (e: Exception) {
 
                     Log.e(
@@ -108,8 +293,8 @@ object CommandHandler {
             }
 
             // =================================================
-// OPEN APP
-// =================================================
+            // OPEN APP
+            // =================================================
 
             cmd == "OPEN APP" -> {
 
@@ -253,8 +438,8 @@ object CommandHandler {
             }
 
             // =================================================
-// SCREENSHOT
-// =================================================
+            // SCREENSHOT
+            // =================================================
 
             cmd == "SCREENSHOT" ||
                     cmd == "TAKE SCREENSHOT" ||
@@ -284,9 +469,10 @@ object CommandHandler {
                     )
                 }
             }
+
             // =================================================
-// UP
-// =================================================
+            // UP
+            // =================================================
 
             cmd == "UP" ||
                     cmd == "ARROW UP" ||
@@ -317,10 +503,9 @@ object CommandHandler {
                 }
             }
 
-
-// =================================================
-// DOWN
-// =================================================
+            // =================================================
+            // DOWN
+            // =================================================
 
             cmd == "DOWN" ||
                     cmd == "ARROW DOWN" ||
@@ -351,10 +536,9 @@ object CommandHandler {
                 }
             }
 
-
-// =================================================
-// TAB
-// =================================================
+            // =================================================
+            // TAB
+            // =================================================
 
             cmd == "TAB" ||
                     cmd == "PRESS TAB" ||
@@ -384,17 +568,37 @@ object CommandHandler {
                     )
                 }
             }
-            cmd == "LEFT"
-             -> {
-                val success = ScreenshotService.performLeft()
-                Log.d("CommandHandler", "LEFT = $success")
+
+            // =================================================
+            // LEFT
+            // =================================================
+
+            cmd == "LEFT" -> {
+
+                val success =
+                    ScreenshotService.performLeft()
+
+                Log.d(
+                    TAG,
+                    "LEFT = $success"
+                )
             }
 
-            cmd == "RIGHT"
-           -> {
-                val success = ScreenshotService.performRight()
-                Log.d("CommandHandler", "RIGHT = $success")
+            // =================================================
+            // RIGHT
+            // =================================================
+
+            cmd == "RIGHT" -> {
+
+                val success =
+                    ScreenshotService.performRight()
+
+                Log.d(
+                    TAG,
+                    "RIGHT = $success"
+                )
             }
+
             // =================================================
             // ENTER
             // =================================================
@@ -437,7 +641,10 @@ object CommandHandler {
                     AudioManager.FLAG_SHOW_UI
                 )
 
-                Log.d(TAG, "VOLUME UP SUCCESS")
+                Log.d(
+                    TAG,
+                    "VOLUME UP SUCCESS"
+                )
             }
 
             // =================================================
@@ -461,7 +668,10 @@ object CommandHandler {
                     AudioManager.FLAG_SHOW_UI
                 )
 
-                Log.d(TAG, "VOLUME DOWN SUCCESS")
+                Log.d(
+                    TAG,
+                    "VOLUME DOWN SUCCESS"
+                )
             }
 
             // =================================================
@@ -483,7 +693,10 @@ object CommandHandler {
                     AudioManager.FLAG_SHOW_UI
                 )
 
-                Log.d(TAG, "MUTE SUCCESS")
+                Log.d(
+                    TAG,
+                    "MUTE SUCCESS"
+                )
             }
 
             // =================================================

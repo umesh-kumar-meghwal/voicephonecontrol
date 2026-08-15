@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
 
@@ -8,287 +9,975 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Phone Control</title>
+    <title>Voice Phone Control</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
 
+        :root {
+            --bg: #080b12;
+            --card: #101622;
+            --card2: #151d2b;
+            --border: rgba(255,255,255,0.08);
+            --text: #f5f7fb;
+            --muted: #929bad;
+            --accent: #6c63ff;
+            --accent2: #8b5cf6;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
         body {
             margin: 0;
-            padding: 30px 15px;
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            color: #222;
+            min-height: 100vh;
+
+            font-family:
+                Inter,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at top left,
+                    rgba(108,99,255,0.18),
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at top right,
+                    rgba(139,92,246,0.12),
+                    transparent 30%
+                ),
+                var(--bg);
+
+            color: var(--text);
         }
 
         .container {
-            max-width: 700px;
+            width: min(1100px, 94%);
             margin: auto;
-            background: white;
-            padding: 25px;
-            border-radius: 14px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            padding: 35px 0 50px;
         }
 
-        h1 {
-            text-align: center;
+        /* ================= HEADER ================= */
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+
             margin-bottom: 25px;
+        }
+
+        .brand h1 {
+            margin: 0;
+
+            font-size: clamp(25px, 4vw, 38px);
+            font-weight: 800;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #ffffff,
+                    #a99cff
+                );
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand p {
+            margin: 7px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .online {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 9px 13px;
+
+            border: 1px solid var(--border);
+            border-radius: 999px;
+
+            background: rgba(255,255,255,0.04);
+
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+
+            border-radius: 50%;
+            background: var(--success);
+
+            box-shadow:
+                0 0 12px rgba(34,197,94,0.7);
+        }
+
+        /* ================= STATUS ================= */
+
+        .status-card {
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,0.055),
+                    rgba(255,255,255,0.025)
+                );
+
+            border: 1px solid var(--border);
+
+            border-radius: 20px;
+
+            padding: 22px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 20px 50px rgba(0,0,0,0.25);
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+
+            margin-bottom: 18px;
+        }
+
+        .status-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .refresh-btn {
+            border: 1px solid var(--border);
+            background: var(--card2);
+            color: white;
+
+            padding: 9px 13px;
+
+            border-radius: 9px;
+
+            cursor: pointer;
+        }
+
+        .refresh-btn:hover {
+            background: #202a3c;
+        }
+
+        .status-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 12px;
+        }
+
+        .status-item {
+            background: rgba(255,255,255,0.035);
+
+            border:
+                1px solid
+                rgba(255,255,255,0.06);
+
+            border-radius: 14px;
+
+            padding: 16px;
+        }
+
+        .status-icon {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .status-label {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .status-value {
+            margin-top: 4px;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        /* ================= COMMAND CARD ================= */
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            margin: 30px 0 14px;
+        }
+
+        .section-title h2 {
+            margin: 0;
+            font-size: 20px;
         }
 
         .commands {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
             gap: 12px;
         }
 
-        button {
-            border: none;
-            padding: 15px 10px;
-            border-radius: 9px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            background: #222;
+        button.command {
+            position: relative;
+
+            border:
+                1px solid
+                rgba(255,255,255,0.07);
+
+            border-radius: 15px;
+
+            padding: 17px 14px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #151d2b,
+                    #101622
+                );
+
             color: white;
-            transition: 0.15s;
+
+            cursor: pointer;
+
+            text-align: left;
+
+            transition:
+                transform 0.15s,
+                border-color 0.15s,
+                background 0.15s;
+
+            min-height: 75px;
         }
 
-        button:hover {
-            opacity: 0.85;
-            transform: translateY(-1px);
+        button.command:hover {
+            transform: translateY(-2px);
+
+            border-color:
+                rgba(139,92,246,0.5);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #1b2537,
+                    #131b29
+                );
         }
 
-        button:active {
+        button.command:active {
             transform: scale(0.97);
         }
 
-        .number {
-            display: inline-block;
-            margin-right: 5px;
-            opacity: 0.7;
+        .command-number {
+            display: block;
+
+            color: var(--accent);
+
+            font-size: 11px;
+            font-weight: 800;
+
+            margin-bottom: 6px;
         }
 
-        .open-app {
-            margin-top: 20px;
+        .command-name {
+            font-size: 14px;
+            font-weight: 700;
         }
 
-        .open-app h2 {
-            font-size: 18px;
-            margin-bottom: 12px;
+        .command-desc {
+            margin-top: 4px;
+
+            color: var(--muted);
+
+            font-size: 11px;
         }
+
+        /* ================= SPECIAL BUTTONS ================= */
+
+        .danger {
+            border-color:
+                rgba(239,68,68,0.18) !important;
+        }
+
+        .special {
+            border-color:
+                rgba(34,197,94,0.18) !important;
+        }
+
+        /* ================= APPS ================= */
 
         .apps {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+
+            grid-template-columns:
+                repeat(5, 1fr);
+
+            gap: 12px;
         }
 
-        .apps button {
-            background: #444;
+        .app-button {
+            border:
+                1px solid
+                rgba(255,255,255,0.07);
+
+            background: var(--card);
+
+            color: white;
+
+            border-radius: 14px;
+
+            padding: 17px 10px;
+
+            cursor: pointer;
+
+            transition: 0.15s;
+        }
+
+        .app-button:hover {
+            transform: translateY(-2px);
+            background: #182235;
+        }
+
+        .app-icon {
+            display: block;
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .app-name {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* ================= LOG ================= */
+
+        .log-card {
+            margin-top: 25px;
+
+            background: #070a10;
+
+            border:
+                1px solid
+                rgba(255,255,255,0.07);
+
+            border-radius: 16px;
+
+            overflow: hidden;
+        }
+
+        .log-title {
+            padding: 13px 16px;
+
+            border-bottom:
+                1px solid
+                rgba(255,255,255,0.07);
+
+            color: #cbd5e1;
+
+            font-size: 13px;
+            font-weight: 700;
         }
 
         #status {
-            margin-top: 20px;
-            padding: 15px;
-            background: #111;
-            color: #fff;
-            border-radius: 8px;
+            min-height: 90px;
+
+            padding: 16px;
+
+            color: #b8c1d1;
+
+            font-family:
+                Consolas,
+                monospace;
+
+            font-size: 12px;
+
             white-space: pre-wrap;
+
             word-break: break-word;
-            min-height: 50px;
-            font-family: monospace;
         }
 
-        @media (max-width: 500px) {
+        /* ================= LOADING ================= */
+
+        .loading {
+            opacity: 0.65;
+            pointer-events: none;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 850px) {
+
             .commands {
-                grid-template-columns: 1fr;
+                grid-template-columns:
+                    repeat(3, 1fr);
+            }
+
+            .status-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
             }
 
             .apps {
-                grid-template-columns: 1fr;
+                grid-template-columns:
+                    repeat(3, 1fr);
             }
         }
+
+        @media (max-width: 550px) {
+
+            .container {
+                width: 92%;
+                padding-top: 22px;
+            }
+
+            .header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .commands {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .apps {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .status-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            button.command {
+                min-height: 70px;
+            }
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
 <div class="container">
 
-    <h1>📱 Voice Phone Control</h1>
+    <!-- ================= HEADER ================= -->
 
-    <div class="commands">
+    <div class="header">
 
-        <button onclick="sendCommand('HOME')">
-            <span class="number">1.</span>
-            HOME
-        </button>
+        <div class="brand">
 
-        <button onclick="sendCommand('BACK')">
-            <span class="number">2.</span>
-            BACK
-        </button>
+            <h1>📱 Voice Phone Control</h1>
 
-        <button onclick="sendCommand('VOLUME_UP')">
-            <span class="number">3.</span>
-            VOLUME UP
-        </button>
+            <p>
+                Remote control dashboard
+            </p>
 
-        <button onclick="sendCommand('VOLUME_DOWN')">
-            <span class="number">4.</span>
-            VOLUME DOWN
-        </button>
+        </div>
 
-        <button onclick="sendCommand('TAKE_SCREENSHOT')">
-            <span class="number">5.</span>
-            SCREENSHOT
-        </button>
+        <div class="online">
 
-        <button onclick="sendCommand('PHONE_STATUS')">
-            <span class="number">6.</span>
-            PHONE STATUS
-        </button>
+            <span class="dot"></span>
 
-        <button onclick="openApp('WhatsApp')">
-            <span class="number">7.</span>
-            OPEN APP
-        </button>
-
-        <button onclick="sendCommand('LIVE_SCREEN')">
-            <span class="number">8.</span>
-            LIVE SCREEN
-        </button>
-
-        <button onclick="sendCommand('NOTIFICATION_STATUS')">
-            <span class="number">9.</span>
-            NOTIFICATION STATUS
-        </button>
-
-        <button onclick="sendCommand('ENTER')">
-            <span class="number">10.</span>
-            ENTER
-        </button>
-
-        <button onclick="sendCommand('UP')">
-            <span class="number">11.</span>
-            UP
-        </button>
-
-        <button onclick="sendCommand('DOWN')">
-            <span class="number">12.</span>
-            DOWN
-        </button>
-
-        <button onclick="sendCommand('TAB')">
-            <span class="number">13.</span>
-            TAB
-        </button>
-
-        <button onclick="sendCommand('LEFT')">
-            <span class="number">14.</span>
-            LEFT
-        </button>
-
-        <button onclick="sendCommand('RIGHT')">
-            <span class="number">15.</span>
-            RIGHT
-        </button>
-<button onclick="sendCommand('MUTE')">
-    <span class="number">16.</span>
-    MUTE
-</button>
-
-<button onclick="sendCommand('RECENTS')">
-    <span class="number">17.</span>
-    RECENT APPS
-</button>
-
-    </div>
-
-
-    <div class="open-app">
-
-        <h2>🚀 Open App</h2>
-
-        <div class="apps">
-
-            <button onclick="openApp('WhatsApp')">
-                WhatsApp
-            </button>
-
-            <button onclick="openApp('YouTube')">
-                YouTube
-            </button>
-
-            <button onclick="openApp('Chrome')">
-                Chrome
-            </button>
-
-            <button onclick="openApp('Settings')">
-                Settings
-            </button>
-
-            <button onclick="openApp('Camera')">
-                Camera
-            </button>
+            API Online
 
         </div>
 
     </div>
 
 
-    <div id="status">
-        Ready...
+    <!-- ================= PHONE STATUS ================= -->
+
+    <div class="status-card">
+
+        <div class="status-header">
+
+            <h2>
+                📊 Phone Status
+            </h2>
+
+            <button
+                class="refresh-btn"
+                onclick="requestPhoneStatus()"
+            >
+                ↻ Refresh
+            </button>
+
+        </div>
+
+
+        <div class="status-grid">
+
+            <div class="status-item">
+
+                <div class="status-icon">
+                    🔋
+                </div>
+
+                <div class="status-label">
+                    Battery
+                </div>
+
+                <div
+                    class="status-value"
+                    id="battery"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <div class="status-item">
+
+                <div class="status-icon">
+                    ⚡
+                </div>
+
+                <div class="status-label">
+                    Charging
+                </div>
+
+                <div
+                    class="status-value"
+                    id="charging"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <div class="status-item">
+
+                <div class="status-icon">
+                    🌐
+                </div>
+
+                <div class="status-label">
+                    Network
+                </div>
+
+                <div
+                    class="status-value"
+                    id="network"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <div class="status-item">
+
+                <div class="status-icon">
+                    🤖
+                </div>
+
+                <div class="status-label">
+                    Android
+                </div>
+
+                <div
+                    class="status-value"
+                    id="android"
+                >
+                    --
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
+
+
+    <!-- ================= COMMANDS ================= -->
+
+    <div class="section-title">
+
+        <h2>
+            🎮 Commands
+        </h2>
+
+    </div>
+
+
+    <div class="commands">
+
+
+        <button
+            class="command"
+            onclick="sendCommand('HOME')"
+        >
+            <span class="command-number">01</span>
+            <span class="command-name">🏠 HOME</span>
+            <span class="command-desc">
+                Go to home screen
+            </span>
+        </button>
+
+
+        <button
+            class="command"
+            onclick="sendCommand('BACK')"
+        >
+            <span class="command-number">02</span>
+            <span class="command-name">↩️ BACK</span>
+            <span class="command-desc">
+                Go back
+            </span>
+        </button>
+
+
+        <button
+            class="command"
+            onclick="sendCommand('VOLUME_UP')"
+        >
+            <span class="command-number">03</span>
+            <span class="command-name">🔊 VOLUME UP</span>
+            <span class="command-desc">
+                Increase volume
+            </span>
+        </button>
+
+
+        <button
+            class="command"
+            onclick="sendCommand('VOLUME_DOWN')"
+        >
+            <span class="command-number">04</span>
+            <span class="command-name">🔉 VOLUME DOWN</span>
+            <span class="command-desc">
+                Decrease volume
+            </span>
+        </button>
+
+
+        <button
+            class="command special"
+            onclick="sendCommand('TAKE_SCREENSHOT')"
+        >
+            <span class="command-number">05</span>
+            <span class="command-name">📸 SCREENSHOT</span>
+            <span class="command-desc">
+                Capture phone screen
+            </span>
+        </button>
+
+
+        <button
+            class="command special"
+            onclick="requestPhoneStatus()"
+        >
+            <span class="command-number">06</span>
+            <span class="command-name">📊 PHONE STATUS</span>
+            <span class="command-desc">
+                Battery & network
+            </span>
+        </button>
+
+
+        <button
+            class="command"
+            onclick="openApp('WhatsApp')"
+        >
+            <span class="command-number">07</span>
+            <span class="command-name">🚀 OPEN APP</span>
+            <span class="command-desc">
+                Open selected app
+            </span>
+        </button>
+
+
+        <button
+            class="command"
+            onclick="sendCommand('LIVE_SCREEN')"
+        >
+            <span class="command-number">08</span>
+            <span class="command-name">🖥️ LIVE SCREEN</span>
+            <span class="command-desc">
+                Live screen control
+            </span>
+        </button>
+
+
+        <button
+            class="command"
+            onclick="sendCommand('NOTIFICATION_STATUS')"
+        >
+            <span class="command-number">09</span>
+            <span class="command-name">🔔 NOTIFICATIONS</span>
+            <span class="command-desc">
+                Notification status
+            </span>
+        </button>
+
+
+        <button
+            class="command"
+            onclick="sendCommand('ENTER')"
+        >
+            <span class="command-number">10</span>
+            <span class="command-name">⏎ ENTER</span>
+            <span class="command-desc">
+                Press enter
+            </span>
+        </button>
+
+
+        <button
+            class="command"
+            onclick="sendCommand('UP')"
+        >
+            <span class="command-number">11</span>
+            <span class="command-name">⬆️ UP</span>
+            <span class="command-desc">
+                Scroll up
+            </span>
+        </button>
+
+
+        <button
+            class="command"
+            onclick="sendCommand('DOWN')"
+        >
+            <span class="command-number">12</span>
+            <span class="command-name">⬇️ DOWN</span>
+            <span class="command-desc">
+                Scroll down
+            </span>
+        </button>
+
+
+        <button
+            class="command"
+            onclick="sendCommand('TAB')"
+        >
+            <span class="command-number">13</span>
+            <span class="command-name">↹ TAB</span>
+            <span class="command-desc">
+                Next field
+            </span>
+        </button>
+
+
+        <button
+            class="command"
+            onclick="sendCommand('LEFT')"
+        >
+            <span class="command-number">14</span>
+            <span class="command-name">⬅️ LEFT</span>
+            <span class="command-desc">
+                Move left
+            </span>
+        </button>
+
+
+        <button
+            class="command"
+            onclick="sendCommand('RIGHT')"
+        >
+            <span class="command-number">15</span>
+            <span class="command-name">➡️ RIGHT</span>
+            <span class="command-desc">
+                Move right
+            </span>
+        </button>
+
+
+        <button
+            class="command"
+            onclick="sendCommand('MUTE')"
+        >
+            <span class="command-number">16</span>
+            <span class="command-name">🔇 MUTE</span>
+            <span class="command-desc">
+                Mute volume
+            </span>
+        </button>
+
+
+        <button
+            class="command"
+            onclick="sendCommand('RECENTS')"
+        >
+            <span class="command-number">17</span>
+            <span class="command-name">📱 RECENT APPS</span>
+            <span class="command-desc">
+                Show recent apps
+            </span>
+        </button>
+
+
+    </div>
+
+
+    <!-- ================= APPS ================= -->
+
+    <div class="section-title">
+
+        <h2>
+            🚀 Open App
+        </h2>
+
+    </div>
+
+
+    <div class="apps">
+
+
+        <button
+            class="app-button"
+            onclick="openApp('WhatsApp')"
+        >
+
+            <span class="app-icon">
+                💬
+            </span>
+
+            <span class="app-name">
+                WhatsApp
+            </span>
+
+        </button>
+
+
+        <button
+            class="app-button"
+            onclick="openApp('YouTube')"
+        >
+
+            <span class="app-icon">
+                ▶️
+            </span>
+
+            <span class="app-name">
+                YouTube
+            </span>
+
+        </button>
+
+
+        <button
+            class="app-button"
+            onclick="openApp('Chrome')"
+        >
+
+            <span class="app-icon">
+                🌐
+            </span>
+
+            <span class="app-name">
+                Chrome
+            </span>
+
+        </button>
+
+
+        <button
+            class="app-button"
+            onclick="openApp('Settings')"
+        >
+
+            <span class="app-icon">
+                ⚙️
+            </span>
+
+            <span class="app-name">
+                Settings
+            </span>
+
+        </button>
+
+
+        <button
+            class="app-button"
+            onclick="openApp('Camera')"
+        >
+
+            <span class="app-icon">
+                📷
+            </span>
+
+            <span class="app-name">
+                Camera
+            </span>
+
+        </button>
+
+
+    </div>
+
+
+    <!-- ================= LOG ================= -->
+
+    <div class="log-card">
+
+        <div class="log-title">
+            📡 Command Log
+        </div>
+
+        <div id="status">
+            Ready...
+        </div>
+
+    </div>
+
 
 </div>
 
 
 <script>
 
-    /*
-     * =====================================================
-     * VERCEL API
-     * =====================================================
-     */
+
+    /* =====================================================
+       API
+    ===================================================== */
 
     const API_URL =
         "https://phonecontrol-black.vercel.app";
 
 
     /*
-     * =====================================================
-     * API TOKEN
-     * =====================================================
-     *
-     * NOTE:
-     * Browser me token expose karna production ke liye
-     * secure nahi hai.
-     *
-     * Temporary testing ke liye apna valid token yahan rakho.
+     * Apna existing API token yahan paste karo.
      */
 
     const API_TOKEN =
         "VPC-a8F3xK91-pQ7L2mZ6-4NwR8tY5U";
 
 
-    /*
-     * =====================================================
-     * STATUS ELEMENT
-     * =====================================================
-     */
-
     const statusElement =
         document.getElementById("status");
 
 
-    /*
-     * =====================================================
-     * SEND COMMAND
-     * =====================================================
-     */
+    /* =====================================================
+       SEND COMMAND
+    ===================================================== */
 
     async function sendCommand(
         command,
@@ -296,7 +985,8 @@
     ) {
 
         statusElement.textContent =
-            "Sending: " + command + "...";
+            "⏳ Sending command...\n\n" +
+            command;
 
 
         try {
@@ -305,56 +995,54 @@
                 await fetch(
                     `${API_URL}/api/command`,
                     {
+
                         method: "POST",
 
                         headers: {
+
                             "Content-Type":
                                 "application/json",
 
                             "Authorization":
                                 `Bearer ${API_TOKEN}`
+
                         },
 
                         body:
                             JSON.stringify({
-                                command: command,
-                                payload: payload
+
+                                command:
+                                    command,
+
+                                payload:
+                                    payload
+
                             })
+
                     }
                 );
 
-
-            /*
-             * Response JSON
-             */
 
             const data =
                 await response.json();
 
 
-            /*
-             * HTTP error
-             */
-
             if (!response.ok) {
 
                 statusElement.textContent =
-                    `Error ${response.status}\n\n` +
+                    `❌ Error ${response.status}\n\n` +
                     JSON.stringify(
                         data,
                         null,
                         2
                     );
 
-                return;
+                return null;
             }
 
 
-            /*
-             * Success
-             */
-
             statusElement.textContent =
+                "✅ Command sent\n\n" +
                 JSON.stringify(
                     data,
                     null,
@@ -362,22 +1050,24 @@
                 );
 
 
+            return data;
+
+
         } catch (error) {
 
             statusElement.textContent =
-                "Connection Error:\n\n" +
+                "❌ Connection Error\n\n" +
                 error.toString();
 
+            return null;
         }
 
     }
 
 
-    /*
-     * =====================================================
-     * OPEN APP
-     * =====================================================
-     */
+    /* =====================================================
+       OPEN APP
+    ===================================================== */
 
     function openApp(app) {
 
@@ -390,7 +1080,239 @@
 
     }
 
+
+    /* =====================================================
+       PHONE STATUS
+    ===================================================== */
+
+    async function requestPhoneStatus() {
+
+        statusElement.textContent =
+            "⏳ Requesting phone status...";
+
+
+        /*
+         * First tell Android to collect/upload status.
+         */
+
+        const commandResult =
+            await sendCommand(
+                "PHONE_STATUS",
+                {}
+            );
+
+
+        if (!commandResult) {
+            return;
+        }
+
+
+        statusElement.textContent =
+            "⏳ Waiting for Android status...";
+
+
+        /*
+         * Android needs a little time to upload
+         * the status to /api/status.
+         */
+
+        await sleep(2000);
+
+
+        await fetchPhoneStatus();
+
+    }
+
+
+    /* =====================================================
+       FETCH PHONE STATUS
+    ===================================================== */
+
+    async function fetchPhoneStatus() {
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_URL}/api/status`,
+                    {
+
+                        method: "GET",
+
+                        headers: {
+
+                            "Authorization":
+                                `Bearer ${API_TOKEN}`
+
+                        },
+
+                        cache:
+                            "no-store"
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                statusElement.textContent =
+                    `❌ Status Error ${response.status}\n\n` +
+                    JSON.stringify(
+                        data,
+                        null,
+                        2
+                    );
+
+                return;
+            }
+
+
+            /*
+             * Some APIs return:
+             *
+             * {
+             *   status: {...}
+             * }
+             *
+             * while others return the status
+             * object directly.
+             */
+
+            const status =
+                data.status || data;
+
+
+            updatePhoneStatus(
+                status
+            );
+
+
+            statusElement.textContent =
+                "✅ Phone status updated\n\n" +
+                JSON.stringify(
+                    status,
+                    null,
+                    2
+                );
+
+
+        } catch (error) {
+
+            statusElement.textContent =
+                "❌ Phone Status Error\n\n" +
+                error.toString();
+
+        }
+
+    }
+
+
+    /* =====================================================
+       UPDATE STATUS UI
+    ===================================================== */
+
+    function updatePhoneStatus(
+        status
+    ) {
+
+        const battery =
+            status.battery;
+
+
+        const charging =
+            status.charging;
+
+
+        const network =
+            status.network;
+
+
+        const android =
+            status.android;
+
+
+        document.getElementById(
+            "battery"
+        ).textContent =
+            battery !== undefined
+                ? `${battery}%`
+                : "--";
+
+
+        document.getElementById(
+            "charging"
+        ).textContent =
+            charging === true
+                ? "Yes"
+                : charging === false
+                    ? "No"
+                    : "--";
+
+
+        document.getElementById(
+            "network"
+        ).textContent =
+            network === true
+                ? "Connected"
+                : network === false
+                    ? "Disconnected"
+                    : "--";
+
+
+        document.getElementById(
+            "android"
+        ).textContent =
+            android !== undefined
+                ? android
+                : "--";
+
+    }
+
+
+    /* =====================================================
+       SLEEP
+    ===================================================== */
+
+    function sleep(
+        milliseconds
+    ) {
+
+        return new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    milliseconds
+                )
+        );
+
+    }
+
+
+    /* =====================================================
+       AUTO STATUS
+    ===================================================== */
+
+    /*
+     * Page open hone ke baad latest status
+     * automatically load karne ki koshish.
+     */
+
+    window.addEventListener(
+        "load",
+        function () {
+
+            fetchPhoneStatus();
+
+        }
+    );
+
+
 </script>
 
 </body>
+
 </html>
