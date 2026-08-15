@@ -44,6 +44,108 @@ object CommandHandler {
                     Log.e(TAG, "HOME FAILED")
                 }
             }
+            // =================================================
+// OPEN APP
+// =================================================
+
+            cmd == "OPEN APP" -> {
+
+                Log.d(
+                    TAG,
+                    "Executing OPEN APP"
+                )
+
+                val appName =
+                    payload["app"]
+                        ?.trim()
+                        ?.lowercase()
+
+                if (appName.isNullOrEmpty()) {
+
+                    Log.e(
+                        TAG,
+                        "OPEN APP FAILED: APP NAME MISSING"
+                    )
+
+                    return
+                }
+
+                Log.d(
+                    TAG,
+                    "Requested App = $appName"
+                )
+
+                val packageName =
+                    when (appName) {
+
+                        "whatsapp" ->
+                            "com.whatsapp"
+
+                        "youtube" ->
+                            "com.google.android.youtube"
+
+                        "chrome" ->
+                            "com.android.chrome"
+
+                        "settings" ->
+                            "com.android.settings"
+
+                        "camera" ->
+                            "com.android.camera2"
+
+                        else -> null
+                    }
+
+                if (packageName == null) {
+
+                    Log.e(
+                        TAG,
+                        "OPEN APP FAILED: UNKNOWN APP = $appName"
+                    )
+
+                    return
+                }
+
+                try {
+
+                    val launchIntent =
+                        context.packageManager
+                            .getLaunchIntentForPackage(
+                                packageName
+                            )
+
+                    if (launchIntent == null) {
+
+                        Log.e(
+                            TAG,
+                            "OPEN APP FAILED: APP NOT INSTALLED = $packageName"
+                        )
+
+                        return
+                    }
+
+                    launchIntent.addFlags(
+                        android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                    )
+
+                    context.startActivity(
+                        launchIntent
+                    )
+
+                    Log.d(
+                        TAG,
+                        "OPEN APP SUCCESS = $appName"
+                    )
+
+                } catch (e: Exception) {
+
+                    Log.e(
+                        TAG,
+                        "OPEN APP ERROR",
+                        e
+                    )
+                }
+            }
 
             // =================================================
             // BACK
