@@ -1197,6 +1197,12 @@
             <span class="dot"></span>
 
             API Online
+<button
+    class="refresh-btn"
+    onclick="logout()"
+>
+    🚪 Logout
+</button>
 
         </div>
 
@@ -1849,6 +1855,46 @@
 
 
 <script>
+/* =====================================================
+   AUTH GUARD
+===================================================== */
+
+async function checkLogin() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/auth/me",
+                {
+                    method: "GET",
+
+                    credentials: "include",
+
+                    cache: "no-store"
+                }
+            );
+
+        if (!response.ok) {
+
+            window.location.replace(
+                "/login.html"
+            );
+
+            return false;
+        }
+
+        return true;
+
+    } catch(error) {
+
+        window.location.replace(
+            "/web/login.html"
+        );
+
+        return false;
+    }
+}
 
 
     /* =====================================================
@@ -2067,6 +2113,28 @@
             );
 
     }
+
+async function logout() {
+
+    try {
+
+        await fetch(
+            "/api/logout",
+            {
+                method: "POST",
+                credentials: "include"
+            }
+        );
+
+    } finally {
+
+        window.location.replace(
+            "/login.html"
+        );
+
+    }
+
+}
 
 
     /* =====================================================
@@ -2788,16 +2856,23 @@
        AUTO LOAD
     ===================================================== */
 
-    window.addEventListener(
-        "load",
-        function () {
+   window.addEventListener(
+    "load",
+    async function () {
 
-            fetchPhoneStatus();
+        const authenticated =
+            await checkLogin();
 
-            loadScreenshots();
-
+        if (!authenticated) {
+            return;
         }
-    );
+
+        fetchPhoneStatus();
+
+        loadScreenshots();
+
+    }
+);
 
 
 </script>

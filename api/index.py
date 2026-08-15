@@ -1,9 +1,12 @@
-from fastapi import FastAPI, Header, HTTPException
+from fastapi import FastAPI, Header, HTTPException, Response, Request
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from fastapi.responses import FileResponse
 import os
 import requests
-
+import secrets
+import hashlib
+import time
 
 # =========================================================
 # APP FOR UMESH DEVELOPER
@@ -32,6 +35,8 @@ if os.path.isdir(WEB_DIR):
     )
 
 
+
+
 # =========================================================
 # API TOKEN FOR UMESH DEVELOPER
 # =========================================================
@@ -40,6 +45,72 @@ API_TOKEN = os.getenv(
     "API_TOKEN",
     ""
 )
+# =========================================================
+# LOGIN AUTHENTICATION
+# =========================================================
+
+SESSION_COOKIE = "vpc_session"
+
+SESSION_MAX_AGE = 60 * 60 * 24  # 24 hours
+
+LOGIN_TABLE = "login"
+
+# Temporary in-memory sessions.
+# For single Vercel instance this is simple,
+# but sessions can disappear on server restart.
+sessions = {}
+
+
+
+def create_session(username: str):
+    session_id = secrets.token_urlsafe(32)
+
+    sessions[session_id] = {
+        "username": username,
+        "expires": time.time() + SESSION_MAX_AGE
+    }
+
+    return session_id
+
+
+def get_current_user(request: Request):
+
+    session_id = request.cookies.get(
+        SESSION_COOKIE
+    )
+
+    if not session_id:
+        return None
+
+    session = sessions.get(session_id)
+
+    if not session:
+        return None
+
+    if session["expires"] < time.time():
+
+        sessions.pop(
+            session_id,
+            None
+        )
+
+        return None
+
+    return session["username"]
+
+
+def require_login(request: Request):
+
+    username = get_current_user(request)
+
+    if not username:
+
+        raise HTTPException(
+            status_code=401,
+            detail="Login required"
+        )
+
+    return username
 
 
 # =========================================================
@@ -83,6 +154,11 @@ class PhoneStatus(BaseModel):
     charging: bool
     network: bool
     android: str
+    
+class LoginRequest(BaseModel):
+
+    username: str
+    password: str
 
 
 # =========================================================
@@ -173,7 +249,205 @@ def supabase_headers():
         "Prefer": "return=representation"
     }
 
+# =========================================================
+# LOGIN
+# =========================================================
 
+@app.get("/login.html")
+def login_page():
+    from fastapi.responses import FileResponse
+
+    login_file = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "login.html"
+        )
+    )
+
+    if not os.path.isfile(login_file):
+        raise HTTPException(
+            status_code=404,
+            detail="login.html not found"
+        )
+
+    return FileResponse(login_file)
+
+
+@app.post("/api/login")
+def login(
+    body: LoginRequest,
+    response: Response
+):
+
+    username = body.username.strip()
+
+    password = body.password
+
+    if not username or not password:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Username and password are required"
+        )
+
+    try:
+
+        headers = supabase_headers()
+
+        response_db = requests.get(
+
+            f"{SUPABASE_URL}/rest/v1/{LOGIN_TABLE}"
+            "?select=id,username,password"
+            f"&username=eq.{requests.utils.quote(username, safe='')}"
+            "&limit=1",
+
+            headers=headers,
+
+            timeout=10
+        )
+
+        if response_db.status_code != 200:
+
+            raise HTTPException(
+                status_code=500,
+                detail="Login service unavailable"
+            )
+
+        rows = response_db.json()
+
+        if not rows:
+
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid username or password"
+            )
+
+        user = rows[0]
+
+        stored_hash = user.get("password")
+
+        if not stored_hash:
+
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid username or password"
+            )
+
+        password_hash = password
+
+        if not secrets.compare_digest(
+            password_hash,
+            stored_hash
+        ):
+
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid username or password"
+            )
+
+        session_id = create_session(username)
+
+        response.set_cookie(
+
+            key=SESSION_COOKIE,
+
+            value=session_id,
+
+            max_age=SESSION_MAX_AGE,
+
+            httponly=True,
+
+            secure=True,
+
+            samesite="lax",
+
+            path="/"
+
+        )
+
+        return {
+
+            "ok": True,
+
+            "message": "Login successful",
+
+            "username": username
+
+        }
+
+    except HTTPException:
+
+        raise
+
+    except Exception:
+
+        raise HTTPException(
+            status_code=500,
+            detail="Login service error"
+        )
+
+# =========================================================
+# CHECK LOGIN SESSION
+# =========================================================
+
+@app.get("/api/auth/me")
+def auth_me(
+    request: Request
+):
+
+    username = get_current_user(request)
+
+    if not username:
+
+        raise HTTPException(
+            status_code=401,
+            detail="Not authenticated"
+        )
+
+    return {
+
+        "ok": True,
+
+        "authenticated": True,
+
+        "username": username
+
+    }
+
+# =========================================================
+# LOGOUT
+# =========================================================
+
+@app.post("/api/logout")
+def logout(
+    request: Request,
+    response: Response
+):
+
+    session_id = request.cookies.get(
+        SESSION_COOKIE
+    )
+
+    if session_id:
+
+        sessions.pop(
+            session_id,
+            None
+        )
+
+    response.delete_cookie(
+        key=SESSION_COOKIE,
+        path="/"
+    )
+
+    return {
+
+        "ok": True,
+
+        "message": "Logged out"
+
+    }
 # =========================================================
 # HEALTH
 # =========================================================
