@@ -1,6 +1,7 @@
 package com.example.voicecontrol
 
 import android.content.Context
+import android.content.Intent
 import android.media.AudioManager
 import android.util.Log
 
@@ -42,6 +43,81 @@ object CommandHandler {
                     Log.d(TAG, "HOME SUCCESS")
                 } else {
                     Log.e(TAG, "HOME FAILED")
+                }
+            }
+            cmd == "START_MIC" -> {
+                Log.d("CommandHandler", "START_MIC received")
+
+                if (
+                    android.os.Build.VERSION.SDK_INT >=
+                    android.os.Build.VERSION_CODES.M &&
+                    context.checkSelfPermission(
+                        android.Manifest.permission.RECORD_AUDIO
+                    ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+                ) {
+                    Log.e(
+                        "CommandHandler",
+                        "RECORD_AUDIO permission not granted"
+                    )
+                    return
+                }
+
+                try {
+                    val intent = Intent(
+                        context,
+                        MicrophoneService::class.java
+                    )
+
+                    intent.action = "START_RECORDING"
+
+                    if (
+                        android.os.Build.VERSION.SDK_INT >=
+                        android.os.Build.VERSION_CODES.O
+                    ) {
+                        context.startForegroundService(intent)
+                    } else {
+                        context.startService(intent)
+                    }
+
+                    Log.d(
+                        "CommandHandler",
+                        "MICROPHONE SERVICE STARTED"
+                    )
+
+                } catch (e: Exception) {
+                    Log.e(
+                        "CommandHandler",
+                        "FAILED TO START MICROPHONE SERVICE",
+                        e
+                    )
+                }
+            }
+
+
+            cmd == "STOP_MIC" -> {
+                Log.d("CommandHandler", "STOP_MIC received")
+
+                try {
+                    val intent = Intent(
+                        context,
+                        MicrophoneService::class.java
+                    )
+
+                    intent.action = "STOP_RECORDING"
+
+                    context.startService(intent)
+
+                    Log.d(
+                        "CommandHandler",
+                        "MICROPHONE SERVICE STOP REQUESTED"
+                    )
+
+                } catch (e: Exception) {
+                    Log.e(
+                        "CommandHandler",
+                        "FAILED TO STOP MICROPHONE SERVICE",
+                        e
+                    )
                 }
             }
 

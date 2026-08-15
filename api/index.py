@@ -186,6 +186,8 @@ ALLOWED_COMMANDS = {
     "MUTE",
     "RECENTS",
     "WAKE_SCREEN",
+    "START_MIC",
+    "STOP_MIC",
 }
 
 

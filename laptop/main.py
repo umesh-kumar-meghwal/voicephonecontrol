@@ -56,6 +56,8 @@ COMMANDS = {
     "15": ("RIGHT", {}),
     "16": ("MUTE", {}),
     "17": ("RECENTS", {}),
+    "18": ("START_MIC", {}),
+    "19": ("STOP_MIC", {}),
 }
 
 # =========================================
@@ -143,6 +145,8 @@ while True:
     print("15. RIGHT")
     print("16. MUTE")
     print("17. RECENT APPS")
+    print("18. START MICROPHONE")
+    print("19. STOP MICROPHONE")
     print("q. EXIT")
 
     print("==============================")
