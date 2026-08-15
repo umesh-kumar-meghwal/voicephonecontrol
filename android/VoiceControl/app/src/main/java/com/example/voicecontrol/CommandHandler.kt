@@ -70,10 +70,7 @@ object CommandHandler {
                             android.os.BatteryManager.BATTERY_PROPERTY_CAPACITY
                         )
 
-                    val powerManager =
-                        context.getSystemService(
-                            Context.POWER_SERVICE
-                        ) as android.os.PowerManager
+
 
                     val chargingIntent =
                         context.registerReceiver(
