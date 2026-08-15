@@ -249,6 +249,25 @@ class ScreenshotService : AccessibilityService() {
 
             return service.performTabInternal()
         }
+        fun performLeft(): Boolean {
+
+            val service = serviceInstance ?: run {
+                Log.e(TAG, "LEFT FAILED: SERVICE NOT CONNECTED")
+                return false
+            }
+
+            return service.performLeftInternal()
+        }
+
+        fun performRight(): Boolean {
+
+            val service = serviceInstance ?: run {
+                Log.e(TAG, "RIGHT FAILED: SERVICE NOT CONNECTED")
+                return false
+            }
+
+            return service.performRightInternal()
+        }
     }
 
 
@@ -932,6 +951,45 @@ class ScreenshotService : AccessibilityService() {
         )
 
         Log.d(TAG, "TAB RESULT = $result")
+
+        return result
+    }
+    private fun performLeftInternal(): Boolean {
+
+        Log.d(TAG, "LEFT requested")
+
+        val root = rootInActiveWindow ?: run {
+            Log.e(TAG, "LEFT FAILED: ROOT NULL")
+            return false
+        }
+
+        val scrollable = findScrollableNode(root) ?: return false
+
+        val result = scrollable.performAction(
+            AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD
+        )
+
+        Log.d(TAG, "LEFT RESULT = $result")
+
+        return result
+    }
+
+    private fun performRightInternal(): Boolean {
+
+        Log.d(TAG, "RIGHT requested")
+
+        val root = rootInActiveWindow ?: run {
+            Log.e(TAG, "RIGHT FAILED: ROOT NULL")
+            return false
+        }
+
+        val scrollable = findScrollableNode(root) ?: return false
+
+        val result = scrollable.performAction(
+            AccessibilityNodeInfo.ACTION_SCROLL_FORWARD
+        )
+
+        Log.d(TAG, "RIGHT RESULT = $result")
 
         return result
     }

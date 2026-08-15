@@ -65,6 +65,8 @@ ALLOWED_COMMANDS = {
     "UP",
     "DOWN",
     "TAB",
+    "LEFT",
+    "RIGHT",
 }
 
 

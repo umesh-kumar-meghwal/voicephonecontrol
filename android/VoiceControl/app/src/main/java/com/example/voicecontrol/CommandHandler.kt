@@ -321,6 +321,17 @@ object CommandHandler {
                     )
                 }
             }
+            cmd == "LEFT"
+             -> {
+                val success = ScreenshotService.performLeft()
+                Log.d("CommandHandler", "LEFT = $success")
+            }
+
+            cmd == "RIGHT"
+           -> {
+                val success = ScreenshotService.performRight()
+                Log.d("CommandHandler", "RIGHT = $success")
+            }
             // =================================================
             // ENTER
             // =================================================
