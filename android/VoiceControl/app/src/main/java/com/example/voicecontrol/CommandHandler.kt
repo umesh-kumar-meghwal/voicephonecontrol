@@ -17,6 +17,7 @@ object CommandHandler {
         val cmd = command
             .trim()
             .uppercase()
+            .replace("_", " ")
 
         Log.d(TAG, "=================================")
         Log.d(TAG, "COMMAND RECEIVED = $cmd")
@@ -91,7 +92,7 @@ object CommandHandler {
             // =================================================
 
             cmd == "SCREENSHOT" ||
-                    cmd == "TAKE SCREENSHOT" ||
+                    cmd == "TAKE_SCREENSHOT" ||
                     cmd == "CAPTURE SCREEN" ||
                     cmd == "TAKE A SCREENSHOT" -> {
 
