@@ -85,6 +85,8 @@ ALLOWED_COMMANDS = {
     "TAB",
     "LEFT",
     "RIGHT",
+    "MUTE",
+    "RECENTS"
 }
 
 

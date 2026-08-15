@@ -44,6 +44,72 @@ object CommandHandler {
                     Log.e(TAG, "HOME FAILED")
                 }
             }
+
+            // =================================================
+// PHONE STATUS
+// =================================================
+
+            cmd == "PHONE STATUS" ||
+                    cmd == "STATUS" ||
+                    cmd == "PHONE BATTERY" -> {
+
+                Log.d(
+                    TAG,
+                    "Executing PHONE STATUS"
+                )
+
+                try {
+
+                    val batteryManager =
+                        context.getSystemService(
+                            Context.BATTERY_SERVICE
+                        ) as android.os.BatteryManager
+
+                    val battery =
+                        batteryManager.getIntProperty(
+                            android.os.BatteryManager.BATTERY_PROPERTY_CAPACITY
+                        )
+
+                    val powerManager =
+                        context.getSystemService(
+                            Context.POWER_SERVICE
+                        ) as android.os.PowerManager
+
+                    val chargingIntent =
+                        context.registerReceiver(
+                            null,
+                            android.content.IntentFilter(
+                                android.content.Intent.ACTION_BATTERY_CHANGED
+                            )
+                        )
+
+                    val status =
+                        chargingIntent?.getIntExtra(
+                            android.os.BatteryManager.EXTRA_STATUS,
+                            -1
+                        ) ?: -1
+
+                    val charging =
+                        status == android.os.BatteryManager.BATTERY_STATUS_CHARGING ||
+                                status == android.os.BatteryManager.BATTERY_STATUS_FULL
+
+                    Log.d(TAG, "==============================")
+                    Log.d(TAG, "PHONE STATUS")
+                    Log.d(TAG, "Battery  = $battery%")
+                    Log.d(TAG, "Charging = $charging")
+                    Log.d(TAG, "Android  = ${android.os.Build.VERSION.RELEASE}")
+                    Log.d(TAG, "API      = ${android.os.Build.VERSION.SDK_INT}")
+                    Log.d(TAG, "==============================")
+                } catch (e: Exception) {
+
+                    Log.e(
+                        TAG,
+                        "PHONE STATUS ERROR",
+                        e
+                    )
+                }
+            }
+
             // =================================================
 // OPEN APP
 // =================================================

@@ -54,6 +54,8 @@ COMMANDS = {
     "13": ("TAB", {}),
     "14": ("LEFT", {}),
     "15": ("RIGHT", {}),
+    "16": ("MUTE", {}),
+    "17": ("RECENTS", {}),
 }
 
 # =========================================
@@ -139,6 +141,8 @@ while True:
     print("13. TAB")
     print("14. LEFT")
     print("15. RIGHT")
+    print("16. MUTE")
+    print("17. RECENT APPS")
     print("q. EXIT")
 
     print("==============================")
