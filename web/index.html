@@ -1,65 +1,386 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Phone Control</title>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Voice Phone Control</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            color: #222;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .commands {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            border: none;
+            padding: 15px 10px;
+            border-radius: 9px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #222;
+            color: white;
+            transition: 0.15s;
+        }
+
+        button:hover {
+            opacity: 0.85;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        .number {
+            display: inline-block;
+            margin-right: 5px;
+            opacity: 0.7;
+        }
+
+        .open-app {
+            margin-top: 20px;
+        }
+
+        .open-app h2 {
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .apps {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .apps button {
+            background: #444;
+        }
+
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #111;
+            color: #fff;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            min-height: 50px;
+            font-family: monospace;
+        }
+
+        @media (max-width: 500px) {
+            .commands {
+                grid-template-columns: 1fr;
+            }
+
+            .apps {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-<h1>Phone Control</h1>
+<div class="container">
 
-<button onclick="sendCommand('HOME')">HOME</button>
-<button onclick="sendCommand('BACK')">BACK</button>
-<button onclick="sendCommand('VOLUME_UP')">VOLUME +</button>
-<button onclick="sendCommand('VOLUME_DOWN')">VOLUME -</button>
-<button onclick="sendCommand('TAKE_SCREENSHOT')">SCREENSHOT</button>
-<button onclick="sendCommand('PHONE_STATUS')">PHONE STATUS</button>
-<button onclick="openApp('whatsapp')">WHATSAPP</button>
+    <h1>📱 Voice Phone Control</h1>
 
-<pre id="result"></pre>
+    <div class="commands">
+
+        <button onclick="sendCommand('HOME')">
+            <span class="number">1.</span>
+            HOME
+        </button>
+
+        <button onclick="sendCommand('BACK')">
+            <span class="number">2.</span>
+            BACK
+        </button>
+
+        <button onclick="sendCommand('VOLUME_UP')">
+            <span class="number">3.</span>
+            VOLUME UP
+        </button>
+
+        <button onclick="sendCommand('VOLUME_DOWN')">
+            <span class="number">4.</span>
+            VOLUME DOWN
+        </button>
+
+        <button onclick="sendCommand('TAKE_SCREENSHOT')">
+            <span class="number">5.</span>
+            SCREENSHOT
+        </button>
+
+        <button onclick="sendCommand('PHONE_STATUS')">
+            <span class="number">6.</span>
+            PHONE STATUS
+        </button>
+
+        <button onclick="openApp('WhatsApp')">
+            <span class="number">7.</span>
+            OPEN APP
+        </button>
+
+        <button onclick="sendCommand('LIVE_SCREEN')">
+            <span class="number">8.</span>
+            LIVE SCREEN
+        </button>
+
+        <button onclick="sendCommand('NOTIFICATION_STATUS')">
+            <span class="number">9.</span>
+            NOTIFICATION STATUS
+        </button>
+
+        <button onclick="sendCommand('ENTER')">
+            <span class="number">10.</span>
+            ENTER
+        </button>
+
+        <button onclick="sendCommand('UP')">
+            <span class="number">11.</span>
+            UP
+        </button>
+
+        <button onclick="sendCommand('DOWN')">
+            <span class="number">12.</span>
+            DOWN
+        </button>
+
+        <button onclick="sendCommand('TAB')">
+            <span class="number">13.</span>
+            TAB
+        </button>
+
+        <button onclick="sendCommand('LEFT')">
+            <span class="number">14.</span>
+            LEFT
+        </button>
+
+        <button onclick="sendCommand('RIGHT')">
+            <span class="number">15.</span>
+            RIGHT
+        </button>
+
+    </div>
+
+
+    <div class="open-app">
+
+        <h2>🚀 Open App</h2>
+
+        <div class="apps">
+
+            <button onclick="openApp('WhatsApp')">
+                WhatsApp
+            </button>
+
+            <button onclick="openApp('YouTube')">
+                YouTube
+            </button>
+
+            <button onclick="openApp('Chrome')">
+                Chrome
+            </button>
+
+            <button onclick="openApp('Settings')">
+                Settings
+            </button>
+
+            <button onclick="openApp('Camera')">
+                Camera
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div id="status">
+        Ready...
+    </div>
+
+</div>
+
 
 <script>
-const API_URL =
-    "https://voice-phone-control-b9hj849pm-umeshmeghwa605-gmailcoms-projects.vercel.app";
 
-async function sendCommand(command, payload = {}) {
+    /*
+     * =====================================================
+     * VERCEL API
+     * =====================================================
+     */
 
-    try {
+    const API_URL =
+        "https://phonecontrol-black.vercel.app";
 
-        const response = await fetch(
-            `${API_URL}/api/command`,
+
+    /*
+     * =====================================================
+     * API TOKEN
+     * =====================================================
+     *
+     * NOTE:
+     * Browser me token expose karna production ke liye
+     * secure nahi hai.
+     *
+     * Temporary testing ke liye apna valid token yahan rakho.
+     */
+
+    const API_TOKEN =
+        "VPC-a8F3xK91-pQ7L2mZ6-4NwR8tY5U";
+
+
+    /*
+     * =====================================================
+     * STATUS ELEMENT
+     * =====================================================
+     */
+
+    const statusElement =
+        document.getElementById("status");
+
+
+    /*
+     * =====================================================
+     * SEND COMMAND
+     * =====================================================
+     */
+
+    async function sendCommand(
+        command,
+        payload = {}
+    ) {
+
+        statusElement.textContent =
+            "Sending: " + command + "...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_URL}/api/command`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+
+                            "Authorization":
+                                `Bearer ${API_TOKEN}`
+                        },
+
+                        body:
+                            JSON.stringify({
+                                command: command,
+                                payload: payload
+                            })
+                    }
+                );
+
+
+            /*
+             * Response JSON
+             */
+
+            const data =
+                await response.json();
+
+
+            /*
+             * HTTP error
+             */
+
+            if (!response.ok) {
+
+                statusElement.textContent =
+                    `Error ${response.status}\n\n` +
+                    JSON.stringify(
+                        data,
+                        null,
+                        2
+                    );
+
+                return;
+            }
+
+
+            /*
+             * Success
+             */
+
+            statusElement.textContent =
+                JSON.stringify(
+                    data,
+                    null,
+                    2
+                );
+
+
+        } catch (error) {
+
+            statusElement.textContent =
+                "Connection Error:\n\n" +
+                error.toString();
+
+        }
+
+    }
+
+
+    /*
+     * =====================================================
+     * OPEN APP
+     * =====================================================
+     */
+
+    function openApp(app) {
+
+        sendCommand(
+            "OPEN_APP",
             {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-
-                    // Apna token yahan directly production website
-                    // mein mat rakhna.
-                    "Authorization": "Bearer  VPC-a8F3xK91-pQ7L2mZ6-4NwR8tY5U"
-                },
-                body: JSON.stringify({
-                    command: command,
-                    payload: payload
-                })
+                app: app
             }
         );
 
-        const data = await response.json();
-
-        document.getElementById("result").textContent =
-            JSON.stringify(data, null, 2);
-
-    } catch (error) {
-
-        document.getElementById("result").textContent =
-            error.toString();
     }
-}
 
-function openApp(app) {
-    sendCommand("OPEN_APP", {
-        app: app
-    });
-}
 </script>
 
 </body>
