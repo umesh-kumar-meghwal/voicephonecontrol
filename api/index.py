@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Header, HTTPException
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import os
 
@@ -10,6 +11,23 @@ import os
 app = FastAPI(
     title="Voice Phone Control API"
 )
+WEB_DIR = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "web"
+    )
+)
+
+if os.path.isdir(WEB_DIR):
+    app.mount(
+        "/web",
+        StaticFiles(
+            directory=WEB_DIR,
+            html=True
+        ),
+        name="web"
+    )
 
 
 # =========================================================
