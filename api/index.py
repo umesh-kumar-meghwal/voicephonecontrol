@@ -50,16 +50,21 @@ class PhoneStatus(BaseModel):
 # ALLOWED COMMANDS FOR UMESH DEVELOPER
 # =========================================================
 ALLOWED_COMMANDS = {
-    "OPEN_APP",
-    "ENTER",
-    "BACK",
     "HOME",
+    "BACK",
     "VOLUME_UP",
     "VOLUME_DOWN",
     "TAKE_SCREENSHOT",
     "PHONE_STATUS",
+    "OPEN_APP",
     "LIVE_SCREEN",
     "NOTIFICATION_STATUS",
+    "ENTER",
+
+    # NEW
+    "UP",
+    "DOWN",
+    "TAB",
 }
 
 

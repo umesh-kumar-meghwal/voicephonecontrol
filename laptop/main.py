@@ -47,6 +47,11 @@ COMMANDS = {
     "8": ("LIVE_SCREEN", {}),
     "9": ("NOTIFICATION_STATUS", {}),
     "10": ("ENTER", {}),
+
+    # NEW
+    "11": ("UP", {}),
+    "12": ("DOWN", {}),
+    "13": ("TAB", {}),
 }
 
 # =========================================
@@ -127,6 +132,9 @@ while True:
     print("8. LIVE SCREEN")
     print("9. NOTIFICATION STATUS")
     print("10. ENTER")
+    print("11. UP")
+    print("12. DOWN")
+    print("13. TAB")
     print("q. EXIT")
 
     print("==============================")

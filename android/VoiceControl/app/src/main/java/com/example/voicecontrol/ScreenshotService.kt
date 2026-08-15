@@ -118,6 +118,7 @@ class ScreenshotService : AccessibilityService() {
             }
         }
 
+
         // =====================================================
         // RECENTS
         // =====================================================
@@ -219,7 +220,37 @@ class ScreenshotService : AccessibilityService() {
 
             return service.performEnterInternal()
         }
+        fun performUp(): Boolean {
+
+            val service = serviceInstance ?: run {
+                Log.e(TAG, "UP FAILED: SERVICE NOT CONNECTED")
+                return false
+            }
+
+            return service.performUpInternal()
+        }
+
+        fun performDown(): Boolean {
+
+            val service = serviceInstance ?: run {
+                Log.e(TAG, "DOWN FAILED: SERVICE NOT CONNECTED")
+                return false
+            }
+
+            return service.performDownInternal()
+        }
+
+        fun performTab(): Boolean {
+
+            val service = serviceInstance ?: run {
+                Log.e(TAG, "TAB FAILED: SERVICE NOT CONNECTED")
+                return false
+            }
+
+            return service.performTabInternal()
+        }
     }
+
 
     // =========================================================
     // SERVICE CONNECTED
@@ -310,6 +341,8 @@ class ScreenshotService : AccessibilityService() {
 
         super.onDestroy()
     }
+
+
 
     // =========================================================
     // SCREENSHOT
@@ -788,6 +821,171 @@ class ScreenshotService : AccessibilityService() {
         }
 
         return false
+    }
+    private fun performUpInternal(): Boolean {
+
+        Log.d(TAG, "UP requested")
+
+        val root = rootInActiveWindow
+
+        if (root == null) {
+            Log.e(TAG, "UP FAILED: ROOT NULL")
+            return false
+        }
+
+        val scrollable = findScrollableNode(root)
+
+        if (scrollable != null) {
+
+            val result = scrollable.performAction(
+                AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD
+            )
+
+            Log.d(TAG, "UP SCROLL RESULT = $result")
+
+            if (result) {
+                return true
+            }
+        }
+
+        return false
+    }
+    private fun performDownInternal(): Boolean {
+
+        Log.d(TAG, "DOWN requested")
+
+        val root = rootInActiveWindow
+
+        if (root == null) {
+            Log.e(TAG, "DOWN FAILED: ROOT NULL")
+            return false
+        }
+
+        val scrollable = findScrollableNode(root)
+
+        if (scrollable != null) {
+
+            val result = scrollable.performAction(
+                AccessibilityNodeInfo.ACTION_SCROLL_FORWARD
+            )
+
+            Log.d(TAG, "DOWN SCROLL RESULT = $result")
+
+            if (result) {
+                return true
+            }
+        }
+
+        return false
+    }
+    private fun performTabInternal(): Boolean {
+
+        Log.d(TAG, "TAB requested")
+
+        val root = rootInActiveWindow
+
+        if (root == null) {
+            Log.e(TAG, "TAB FAILED: ROOT NULL")
+            return false
+        }
+
+        val current = root.findFocus(
+            AccessibilityNodeInfo.FOCUS_ACCESSIBILITY
+        )
+
+        val focusables =
+            mutableListOf<AccessibilityNodeInfo>()
+
+        collectFocusableNodes(
+            root,
+            focusables
+        )
+
+        if (focusables.isEmpty()) {
+            Log.e(TAG, "TAB FAILED: NO FOCUSABLE NODES")
+            return false
+        }
+
+        val currentIndex =
+            if (current != null) {
+                focusables.indexOfFirst {
+                    it == current
+                }
+            } else {
+                -1
+            }
+
+        val nextIndex =
+            if (
+                currentIndex >= 0 &&
+                currentIndex < focusables.size - 1
+            ) {
+                currentIndex + 1
+            } else {
+                0
+            }
+
+        val next = focusables[nextIndex]
+
+        val result = next.performAction(
+            AccessibilityNodeInfo.ACTION_FOCUS
+        )
+
+        Log.d(TAG, "TAB RESULT = $result")
+
+        return result
+    }
+    private fun collectFocusableNodes(
+        node: AccessibilityNodeInfo,
+        list: MutableList<AccessibilityNodeInfo>
+    ) {
+
+        if (
+            node.isFocusable &&
+            node.isEnabled &&
+            node.isVisibleToUser
+        ) {
+            list.add(node)
+        }
+
+        for (i in 0 until node.childCount) {
+
+            val child =
+                node.getChild(i)
+                    ?: continue
+
+            collectFocusableNodes(
+                child,
+                list
+            )
+        }
+    }
+    private fun findScrollableNode(
+        node: AccessibilityNodeInfo
+    ): AccessibilityNodeInfo? {
+
+        if (
+            node.isScrollable &&
+            node.isEnabled &&
+            node.isVisibleToUser
+        ) {
+            return node
+        }
+
+        for (i in 0 until node.childCount) {
+
+            val child = node.getChild(i)
+                ?: continue
+
+            val result =
+                findScrollableNode(child)
+
+            if (result != null) {
+                return result
+            }
+        }
+
+        return null
     }
 
     // =========================================================

@@ -222,6 +222,106 @@ object CommandHandler {
                 }
             }
             // =================================================
+// UP
+// =================================================
+
+            cmd == "UP" ||
+                    cmd == "ARROW UP" ||
+                    cmd == "MOVE UP" ||
+                    cmd == "GO UP" -> {
+
+                Log.d(
+                    TAG,
+                    "Executing UP"
+                )
+
+                val success =
+                    ScreenshotService.performUp()
+
+                if (success) {
+
+                    Log.d(
+                        TAG,
+                        "UP SUCCESS"
+                    )
+
+                } else {
+
+                    Log.e(
+                        TAG,
+                        "UP FAILED"
+                    )
+                }
+            }
+
+
+// =================================================
+// DOWN
+// =================================================
+
+            cmd == "DOWN" ||
+                    cmd == "ARROW DOWN" ||
+                    cmd == "MOVE DOWN" ||
+                    cmd == "GO DOWN" -> {
+
+                Log.d(
+                    TAG,
+                    "Executing DOWN"
+                )
+
+                val success =
+                    ScreenshotService.performDown()
+
+                if (success) {
+
+                    Log.d(
+                        TAG,
+                        "DOWN SUCCESS"
+                    )
+
+                } else {
+
+                    Log.e(
+                        TAG,
+                        "DOWN FAILED"
+                    )
+                }
+            }
+
+
+// =================================================
+// TAB
+// =================================================
+
+            cmd == "TAB" ||
+                    cmd == "PRESS TAB" ||
+                    cmd == "NEXT" ||
+                    cmd == "NEXT FIELD" -> {
+
+                Log.d(
+                    TAG,
+                    "Executing TAB"
+                )
+
+                val success =
+                    ScreenshotService.performTab()
+
+                if (success) {
+
+                    Log.d(
+                        TAG,
+                        "TAB SUCCESS"
+                    )
+
+                } else {
+
+                    Log.e(
+                        TAG,
+                        "TAB FAILED"
+                    )
+                }
+            }
+            // =================================================
             // ENTER
             // =================================================
 
