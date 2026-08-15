@@ -2,6 +2,7 @@ from fastapi import FastAPI, Header, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import os
+import requests
 
 
 # =========================================================
@@ -11,6 +12,7 @@ import os
 app = FastAPI(
     title="Voice Phone Control API"
 )
+
 WEB_DIR = os.path.abspath(
     os.path.join(
         os.path.dirname(__file__),
@@ -41,6 +43,25 @@ API_TOKEN = os.getenv(
 
 
 # =========================================================
+# SUPABASE CONFIG
+# =========================================================
+
+SUPABASE_URL = os.getenv(
+    "SUPABASE_URL",
+    ""
+).rstrip("/")
+
+SUPABASE_SERVICE_ROLE_KEY = os.getenv(
+    "SUPABASE_SERVICE_ROLE_KEY",
+    ""
+)
+
+STATUS_TABLE = "phone_status"
+
+SCREENSHOT_TABLE = "screenshots"
+
+
+# =========================================================
 # MODELS
 # =========================================================
 
@@ -67,6 +88,7 @@ class PhoneStatus(BaseModel):
 # =========================================================
 # ALLOWED COMMANDS FOR UMESH DEVELOPER
 # =========================================================
+
 ALLOWED_COMMANDS = {
     "HOME",
     "BACK",
@@ -87,6 +109,7 @@ ALLOWED_COMMANDS = {
     "RIGHT",
     "MUTE",
     "RECENTS",
+    "WAKE_SCREEN",
 }
 
 
@@ -97,8 +120,6 @@ ALLOWED_COMMANDS = {
 pending_command = None
 
 pending_screenshot = None
-
-pending_status = None
 
 
 # =========================================================
@@ -116,13 +137,41 @@ def check_auth(
             detail="API_TOKEN is not configured"
         )
 
-
     if authorization != f"Bearer {API_TOKEN}":
 
         raise HTTPException(
             status_code=401,
             detail="Unauthorized"
         )
+
+
+# =========================================================
+# SUPABASE HEADERS
+# =========================================================
+
+def supabase_headers():
+
+    if not SUPABASE_URL:
+
+        raise HTTPException(
+            status_code=500,
+            detail="SUPABASE_URL is not configured"
+        )
+
+    if not SUPABASE_SERVICE_ROLE_KEY:
+
+        raise HTTPException(
+            status_code=500,
+            detail="SUPABASE_SERVICE_ROLE_KEY is not configured"
+        )
+
+    return {
+        "apikey": SUPABASE_SERVICE_ROLE_KEY,
+        "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY}",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Prefer": "return=representation"
+    }
 
 
 # =========================================================
@@ -139,8 +188,8 @@ def health():
 
 
 # =========================================================
-# LAPTOP -> SERVER
-# SEND COMMAND FOR UMESH DEVELOPER
+# LAPTOP / WEB -> SERVER
+# SEND COMMAND
 # =========================================================
 
 @app.post("/api/command")
@@ -155,17 +204,14 @@ def send_command(
 ):
 
     global pending_command
-    global pending_status
 
-
-    # Authentication FOR UMESH DEVELOPER
+    # Authentication
 
     check_auth(
         authorization
     )
 
-
-    # Check command FOR UMESH DEVELOPER
+    # Check command
 
     if body.command not in ALLOWED_COMMANDS:
 
@@ -174,8 +220,7 @@ def send_command(
             detail="Command not allowed"
         )
 
-
-    # Queue command FOR UMESH DEVELOPER
+    # Queue command
 
     pending_command = {
 
@@ -183,15 +228,6 @@ def send_command(
 
         "payload": body.payload
     }
-
-
-    # New status request FOR UMESH DEVELOPER
-    # Remove old status FOR UMESH DEVELOPER
-
-    if body.command == "PHONE_STATUS":
-
-        pending_status = None
-
 
     return {
 
@@ -207,7 +243,7 @@ def send_command(
 
 # =========================================================
 # ANDROID -> SERVER
-# GET COMMAND FOR UMESH DEVELOPER
+# GET COMMAND
 # =========================================================
 
 @app.get("/api/command")
@@ -221,25 +257,21 @@ def get_command(
 
     global pending_command
 
-
-    # Authentication FOR UMESH DEVELOPER
+    # Authentication
 
     check_auth(
         authorization
     )
 
-
-    # Get command FOR UMESH DEVELOPER
+    # Get command
 
     command = pending_command
 
-
-    # Consume command FOR UMESH DEVELOPER
+    # Consume command
 
     pending_command = None
 
-
-    # No command FOR UMESH DEVELOPER
+    # No command
 
     if command is None:
 
@@ -252,9 +284,6 @@ def get_command(
             "payload": {}
         }
 
-
-    # Return command FOR UMESH DEVELOPER
-
     return {
 
         "ok": True,
@@ -265,7 +294,7 @@ def get_command(
 
 # =========================================================
 # ANDROID -> SERVER
-# UPLOAD SCREENSHOT FOR UMESH DEVELOPER
+# UPLOAD SCREENSHOT
 # =========================================================
 
 @app.post("/api/screenshot")
@@ -281,15 +310,15 @@ def upload_screenshot(
 
     global pending_screenshot
 
-
-    # Authentication FOR UMESH DEVELOPER
+    # Authentication
 
     check_auth(
         authorization
     )
 
-
-    # Store screenshot FOR UMESH DEVELOPER
+    # -----------------------------------------------------
+    # KEEP EXISTING TEMPORARY SCREENSHOT
+    # -----------------------------------------------------
 
     pending_screenshot = {
 
@@ -298,20 +327,77 @@ def upload_screenshot(
         "image": body.image
     }
 
+    # -----------------------------------------------------
+    # SAVE SCREENSHOT TO SUPABASE
+    # -----------------------------------------------------
 
-    return {
+    try:
 
-        "ok": True,
+        headers = supabase_headers()
 
-        "message": "Screenshot uploaded",
+        data = {
 
-        "filename": body.filename
-    }
+            "filename": body.filename,
+
+            "image": body.image
+
+        }
+
+        response = requests.post(
+
+            f"{SUPABASE_URL}/rest/v1/{SCREENSHOT_TABLE}",
+
+            headers={
+                **headers,
+                "Prefer": "return=representation"
+            },
+
+            json=data,
+
+            timeout=30
+        )
+
+        if response.status_code not in (200, 201):
+
+            raise HTTPException(
+
+                status_code=500,
+
+                detail=(
+                    "Supabase screenshot upload failed: "
+                    f"{response.status_code} "
+                    f"{response.text}"
+                )
+            )
+
+        return {
+
+            "ok": True,
+
+            "message": "Screenshot uploaded and saved",
+
+            "filename": body.filename
+
+        }
+
+    except HTTPException:
+
+        raise
+
+    except Exception as e:
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail=f"Screenshot save error: {str(e)}"
+
+        )
 
 
 # =========================================================
 # LAPTOP -> SERVER
-# DOWNLOAD SCREENSHOT  FOR UMESH DEVELOPER
+# DOWNLOAD LATEST SCREENSHOT
 # =========================================================
 
 @app.get("/api/screenshot")
@@ -325,15 +411,13 @@ def get_screenshot(
 
     global pending_screenshot
 
-
-    # Authentication FOR UMESH DEVELOPER
+    # Authentication
 
     check_auth(
         authorization
     )
 
-
-    # Screenshot not available FOR UMESH DEVELOPER
+    # Screenshot not available
 
     if pending_screenshot is None:
 
@@ -346,16 +430,13 @@ def get_screenshot(
             "filename": None
         }
 
-
-    # Get screenshot  FOR UMESH DEVELOPER
+    # Get screenshot
 
     screenshot = pending_screenshot
 
-
-    # Consume screenshot   FOR UMESH DEVELOPER
+    # Consume screenshot
 
     pending_screenshot = None
-
 
     return {
 
@@ -368,8 +449,139 @@ def get_screenshot(
 
 
 # =========================================================
+# WEB -> SERVER
+# GET ALL SCREENSHOTS FROM SUPABASE
+# =========================================================
+
+@app.get("/api/screenshots")
+def get_screenshots(
+
+    authorization: str | None = Header(
+        default=None
+    )
+
+):
+
+    # Authentication
+
+    check_auth(
+        authorization
+    )
+
+    try:
+
+        headers = supabase_headers()
+
+        response = requests.get(
+
+            f"{SUPABASE_URL}/rest/v1/{SCREENSHOT_TABLE}"
+            "?select=id,filename,image,created_at"
+            "&order=created_at.desc",
+
+            headers=headers,
+
+            timeout=30
+        )
+
+        if response.status_code != 200:
+
+            raise HTTPException(
+
+                status_code=500,
+
+                detail=(
+                    "Supabase screenshot read failed: "
+                    f"{response.status_code} "
+                    f"{response.text}"
+                )
+            )
+
+        rows = response.json()
+
+        return {
+
+            "ok": True,
+
+            "screenshots": rows
+
+        }
+
+    except HTTPException:
+
+        raise
+
+    except Exception as e:
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail=f"Screenshot gallery error: {str(e)}"
+
+        )
+
+# =========================================================
+# DELETE SCREENSHOT
+# =========================================================
+
+@app.delete("/api/screenshot/{screenshot_id}")
+def delete_screenshot(
+    screenshot_id: int,
+    authorization: str | None = Header(default=None)
+):
+
+    check_auth(authorization)
+
+    try:
+
+        headers = supabase_headers()
+
+        response = requests.delete(
+
+            f"{SUPABASE_URL}/rest/v1/{SCREENSHOT_TABLE}?id=eq.{screenshot_id}",
+
+            headers=headers,
+
+            timeout=10
+        )
+
+        if response.status_code not in (200, 204):
+
+            raise HTTPException(
+
+                status_code=500,
+
+                detail=(
+                    "Screenshot delete failed: "
+                    f"{response.status_code} "
+                    f"{response.text}"
+                )
+            )
+
+        return {
+
+            "ok": True,
+
+            "message": "Screenshot deleted",
+
+            "id": screenshot_id
+        }
+
+    except HTTPException:
+
+        raise
+
+    except Exception as e:
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail=f"Screenshot delete error: {str(e)}"
+        )
+# =========================================================
 # ANDROID -> SERVER
-# UPLOAD PHONE STATUS   FOR UMESH DEVELOPER
+# UPLOAD PHONE STATUS
 # =========================================================
 
 @app.post("/api/status")
@@ -383,41 +595,87 @@ def upload_status(
 
 ):
 
-    global pending_status
-
-
-    # Authentication FOR UMESH DEVELOPER
+    # Authentication
 
     check_auth(
         authorization
     )
 
+    try:
 
-    # Store phone status   FOR UMESH DEVELOPER
+        headers = supabase_headers()
 
-    pending_status = {
+        data = {
 
-        "battery": body.battery,
+            "id": 1,
 
-        "charging": body.charging,
+            "battery": body.battery,
 
-        "network": body.network,
+            "charging": body.charging,
 
-        "android": body.android
-    }
+            "network": body.network,
 
+            "android": body.android
 
-    return {
+        }
 
-        "ok": True,
+        # -------------------------------------------------
+        # UPSERT STATUS
+        # -------------------------------------------------
 
-        "message": "Phone status received"
-    }
+        response = requests.post(
+
+            f"{SUPABASE_URL}/rest/v1/{STATUS_TABLE}?on_conflict=id",
+
+            headers={
+                **headers,
+                "Prefer": "resolution=merge-duplicates,return=representation"
+            },
+
+            json=data,
+
+            timeout=10
+        )
+
+        if response.status_code not in (200, 201):
+
+            raise HTTPException(
+
+                status_code=500,
+
+                detail=(
+                    "Supabase status upload failed: "
+                    f"{response.status_code} "
+                    f"{response.text}"
+                )
+            )
+
+        return {
+
+            "ok": True,
+
+            "message": "Phone status received",
+
+            "status": data
+        }
+
+    except HTTPException:
+
+        raise
+
+    except Exception as e:
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail=f"Phone status upload error: {str(e)}"
+        )
 
 
 # =========================================================
 # LAPTOP -> SERVER
-# GET PHONE STATUS FOR UMESH DEVELOPER
+# GET PHONE STATUS
 # =========================================================
 
 @app.get("/api/status")
@@ -429,41 +687,90 @@ def get_status(
 
 ):
 
-    global pending_status
-
-
-    # Authentication FOR UMESH DEVELOPER
+    # Authentication
 
     check_auth(
         authorization
     )
 
+    try:
 
-    # Status not available FOR UMESH DEVELOPER
+        headers = supabase_headers()
 
-    if pending_status is None:
+        # -------------------------------------------------
+        # GET LATEST PHONE STATUS
+        # -------------------------------------------------
+
+        response = requests.get(
+
+            f"{SUPABASE_URL}/rest/v1/{STATUS_TABLE}"
+            "?id=eq.1"
+            "&select=id,battery,charging,network,android,updated_at",
+
+            headers=headers,
+
+            timeout=10
+        )
+
+        if response.status_code != 200:
+
+            raise HTTPException(
+
+                status_code=500,
+
+                detail=(
+                    "Supabase status read failed: "
+                    f"{response.status_code} "
+                    f"{response.text}"
+                )
+            )
+
+        rows = response.json()
+
+        # -------------------------------------------------
+        # STATUS NOT AVAILABLE
+        # -------------------------------------------------
+
+        if not rows:
+
+            return {
+
+                "ok": False,
+
+                "status": None
+            }
+
+        row = rows[0]
+
+        status = {
+
+            "battery": row.get("battery"),
+
+            "charging": row.get("charging"),
+
+            "network": row.get("network"),
+
+            "android": row.get("android")
+        }
+
+        # Status consume/delete nahi hoga
 
         return {
 
-            "ok": False,
+            "ok": True,
 
-            "status": None
+            "status": status
         }
 
- 
-    # Get status FOR UMESH DEVELOPER
+    except HTTPException:
 
-    status = pending_status
+        raise
 
+    except Exception as e:
 
-    # Consume status FOR UMESH DEVELOPER
+        raise HTTPException(
 
-    pending_status = None
+            status_code=500,
 
-
-    return {
-
-        "ok": True,
-
-        "status": status
-    }
+            detail=f"Phone status read error: {str(e)}"
+        )

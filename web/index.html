@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -18,21 +19,37 @@
         }
 
         :root {
-            --bg: #080b12;
-            --card: #101622;
-            --card2: #151d2b;
+            --bg: #060a0d;
+            --bg2: #0a1110;
+
+            --card: #0d1715;
+            --card2: #111f1c;
+
             --border: rgba(255,255,255,0.08);
-            --text: #f5f7fb;
-            --muted: #929bad;
-            --accent: #6c63ff;
-            --accent2: #8b5cf6;
-            --success: #22c55e;
+
+            --text: #f5f7f6;
+            --muted: #91a29d;
+
+            --green: #22c55e;
+            --green2: #16a34a;
+            --green-soft: rgba(34,197,94,0.14);
+
             --danger: #ef4444;
-            --warning: #f59e0b;
+            --danger2: #dc2626;
+
+            --shadow:
+                0 20px 60px rgba(0,0,0,0.35);
         }
 
+
+        /* =====================================================
+           BODY
+        ===================================================== */
+
         body {
+
             margin: 0;
+
             min-height: 100vh;
 
             font-family:
@@ -43,218 +60,422 @@
                 "Segoe UI",
                 sans-serif;
 
-            background:
-                radial-gradient(
-                    circle at top left,
-                    rgba(108,99,255,0.18),
-                    transparent 35%
-                ),
-                radial-gradient(
-                    circle at top right,
-                    rgba(139,92,246,0.12),
-                    transparent 30%
-                ),
-                var(--bg);
-
             color: var(--text);
+
+            background:
+
+                radial-gradient(
+                    circle at 10% 0%,
+                    rgba(34,197,94,0.14),
+                    transparent 32%
+                ),
+
+                radial-gradient(
+                    circle at 90% 10%,
+                    rgba(16,185,129,0.09),
+                    transparent 28%
+                ),
+
+                linear-gradient(
+                    180deg,
+                    #050806 0%,
+                    #080d0c 50%,
+                    #050807 100%
+                );
+
         }
+
+
+        /* =====================================================
+           CONTAINER
+        ===================================================== */
 
         .container {
-            width: min(1100px, 94%);
+
+            width: min(1120px, 94%);
+
             margin: auto;
-            padding: 35px 0 50px;
+
+            padding:
+                35px
+                0
+                60px;
+
         }
 
-        /* ================= HEADER ================= */
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
 
         .header {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             gap: 20px;
 
-            margin-bottom: 25px;
+            margin-bottom: 28px;
+
         }
 
+
         .brand h1 {
+
             margin: 0;
 
-            font-size: clamp(25px, 4vw, 38px);
-            font-weight: 800;
+            font-size:
+                clamp(26px, 4vw, 40px);
+
+            font-weight: 850;
+
+            letter-spacing: -1px;
 
             background:
+
                 linear-gradient(
                     90deg,
                     #ffffff,
-                    #a99cff
+                    #86efac
                 );
 
             -webkit-background-clip: text;
+
             -webkit-text-fill-color: transparent;
+
         }
+
 
         .brand p {
-            margin: 7px 0 0;
+
+            margin:
+                8px
+                0
+                0;
+
             color: var(--muted);
+
             font-size: 14px;
+
         }
+
 
         .online {
+
             display: flex;
+
             align-items: center;
-            gap: 8px;
 
-            padding: 9px 13px;
+            gap: 9px;
 
-            border: 1px solid var(--border);
+            padding:
+                10px
+                15px;
+
+            border:
+                1px solid
+                rgba(34,197,94,0.22);
+
             border-radius: 999px;
 
-            background: rgba(255,255,255,0.04);
+            background:
+                rgba(34,197,94,0.07);
 
-            color: #cbd5e1;
+            color:
+                #bbf7d0;
+
             font-size: 13px;
+
+            font-weight: 700;
+
         }
 
+
         .dot {
+
             width: 9px;
+
             height: 9px;
 
             border-radius: 50%;
-            background: var(--success);
+
+            background:
+                var(--green);
 
             box-shadow:
-                0 0 12px rgba(34,197,94,0.7);
+                0 0 14px
+                rgba(34,197,94,0.8);
+
         }
 
-        /* ================= STATUS ================= */
 
-        .status-card {
+        /* =====================================================
+           COMMON CARD
+        ===================================================== */
+
+        .status-card,
+        .gallery-card {
+
             background:
+
                 linear-gradient(
                     145deg,
                     rgba(255,255,255,0.055),
-                    rgba(255,255,255,0.025)
+                    rgba(255,255,255,0.018)
                 );
 
-            border: 1px solid var(--border);
+            border:
+                1px solid
+                var(--border);
 
-            border-radius: 20px;
+            border-radius: 22px;
+
+            box-shadow:
+                var(--shadow);
+
+        }
+
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .status-card {
 
             padding: 22px;
 
-            margin-bottom: 25px;
+            margin-bottom: 28px;
 
-            box-shadow:
-                0 20px 50px rgba(0,0,0,0.25);
         }
 
+
         .status-header {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             gap: 15px;
 
             margin-bottom: 18px;
+
         }
+
 
         .status-header h2 {
+
             margin: 0;
-            font-size: 18px;
+
+            font-size: 19px;
+
         }
 
-        .refresh-btn {
-            border: 1px solid var(--border);
-            background: var(--card2);
+
+        .refresh-btn,
+        .gallery-btn {
+
+            border:
+                1px solid
+                var(--border);
+
+            background:
+                var(--card2);
+
             color: white;
 
-            padding: 9px 13px;
+            padding:
+                9px
+                14px;
 
-            border-radius: 9px;
+            border-radius: 10px;
 
             cursor: pointer;
+
+            transition: 0.2s;
+
         }
 
-        .refresh-btn:hover {
-            background: #202a3c;
+
+        .refresh-btn:hover,
+        .gallery-btn:hover {
+
+            border-color:
+                rgba(34,197,94,0.4);
+
+            background:
+                rgba(34,197,94,0.1);
+
+            color:
+                #bbf7d0;
+
         }
+
 
         .status-grid {
+
             display: grid;
 
             grid-template-columns:
                 repeat(4, 1fr);
 
-            gap: 12px;
+            gap: 13px;
+
         }
 
+
         .status-item {
-            background: rgba(255,255,255,0.035);
+
+            background:
+                rgba(255,255,255,0.035);
 
             border:
                 1px solid
                 rgba(255,255,255,0.06);
 
-            border-radius: 14px;
+            border-radius: 15px;
 
-            padding: 16px;
+            padding: 17px;
+
+            transition: 0.2s;
+
         }
+
+
+        .status-item:hover {
+
+            border-color:
+                rgba(34,197,94,0.25);
+
+            background:
+                rgba(34,197,94,0.045);
+
+        }
+
 
         .status-icon {
+
             font-size: 22px;
+
             margin-bottom: 8px;
+
         }
+
 
         .status-label {
-            color: var(--muted);
+
+            color:
+                var(--muted);
+
             font-size: 12px;
+
         }
+
 
         .status-value {
+
             margin-top: 4px;
+
             font-size: 17px;
-            font-weight: 700;
+
+            font-weight: 750;
+
         }
 
-        /* ================= COMMAND CARD ================= */
+
+        /* =====================================================
+           SECTION TITLE
+        ===================================================== */
 
         .section-title {
+
             display: flex;
+
             align-items: center;
+
             gap: 10px;
 
-            margin: 30px 0 14px;
+            margin:
+                30px
+                0
+                15px;
+
         }
+
 
         .section-title h2 {
+
             margin: 0;
+
             font-size: 20px;
+
         }
 
+
+        .section-title::before {
+
+            content: "";
+
+            width: 4px;
+
+            height: 22px;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    var(--green),
+                    #86efac
+                );
+
+            box-shadow:
+                0 0 12px
+                rgba(34,197,94,0.45);
+
+        }
+
+
+        /* =====================================================
+           COMMANDS
+        ===================================================== */
+
         .commands {
+
             display: grid;
 
             grid-template-columns:
                 repeat(4, 1fr);
 
             gap: 12px;
+
         }
 
+
         button.command {
+
             position: relative;
 
             border:
                 1px solid
                 rgba(255,255,255,0.07);
 
-            border-radius: 15px;
+            border-radius: 16px;
 
-            padding: 17px 14px;
+            padding:
+                17px
+                14px;
 
             background:
+
                 linear-gradient(
                     145deg,
-                    #151d2b,
-                    #101622
+                    #111b19,
+                    #0b1211
                 );
 
             color: white;
@@ -264,118 +485,512 @@
             text-align: left;
 
             transition:
-                transform 0.15s,
-                border-color 0.15s,
-                background 0.15s;
+                transform 0.18s,
+                border-color 0.18s,
+                background 0.18s;
 
-            min-height: 75px;
+            min-height: 77px;
+
         }
+
 
         button.command:hover {
-            transform: translateY(-2px);
+
+            transform:
+                translateY(-3px);
 
             border-color:
-                rgba(139,92,246,0.5);
+                rgba(34,197,94,0.38);
 
             background:
+
                 linear-gradient(
                     145deg,
-                    #1b2537,
-                    #131b29
+                    #14221e,
+                    #0c1513
                 );
+
+            box-shadow:
+                0 10px 30px
+                rgba(0,0,0,0.2);
+
         }
+
 
         button.command:active {
-            transform: scale(0.97);
+
+            transform:
+                scale(0.97);
+
         }
+
 
         .command-number {
+
             display: block;
 
-            color: var(--accent);
+            color:
+                var(--green);
 
             font-size: 11px;
-            font-weight: 800;
+
+            font-weight: 850;
 
             margin-bottom: 6px;
+
         }
+
 
         .command-name {
+
             font-size: 14px;
-            font-weight: 700;
+
+            font-weight: 750;
+
         }
+
 
         .command-desc {
+
             margin-top: 4px;
 
-            color: var(--muted);
+            color:
+                var(--muted);
 
             font-size: 11px;
+
         }
 
-        /* ================= SPECIAL BUTTONS ================= */
-
-        .danger {
-            border-color:
-                rgba(239,68,68,0.18) !important;
-        }
 
         .special {
+
             border-color:
-                rgba(34,197,94,0.18) !important;
+                rgba(34,197,94,0.22) !important;
+
         }
 
-        /* ================= APPS ================= */
+
+        /* =====================================================
+           APPS
+        ===================================================== */
 
         .apps {
+
             display: grid;
 
             grid-template-columns:
                 repeat(5, 1fr);
 
             gap: 12px;
+
         }
 
+
         .app-button {
+
             border:
                 1px solid
                 rgba(255,255,255,0.07);
 
-            background: var(--card);
+            background:
+                var(--card);
 
             color: white;
 
-            border-radius: 14px;
+            border-radius: 16px;
 
-            padding: 17px 10px;
+            padding:
+                18px
+                10px;
 
             cursor: pointer;
 
-            transition: 0.15s;
+            transition: 0.18s;
+
         }
+
 
         .app-button:hover {
-            transform: translateY(-2px);
-            background: #182235;
+
+            transform:
+                translateY(-3px);
+
+            border-color:
+                rgba(34,197,94,0.3);
+
+            background:
+                #11201c;
+
         }
+
 
         .app-icon {
+
             display: block;
-            font-size: 27px;
+
+            font-size: 28px;
+
             margin-bottom: 8px;
+
         }
+
 
         .app-name {
+
             font-size: 13px;
-            font-weight: 700;
+
+            font-weight: 750;
+
         }
 
-        /* ================= LOG ================= */
+
+        /* =====================================================
+           SCREENSHOT GALLERY
+        ===================================================== */
+
+        .gallery-card {
+
+            margin-top: 32px;
+
+            padding: 22px;
+
+        }
+
+
+        .gallery-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .gallery-header h2 {
+
+            margin: 0;
+
+            font-size: 19px;
+
+        }
+
+
+        .gallery-subtitle {
+
+            color:
+                var(--muted);
+
+            font-size: 12px;
+
+            margin-top: 5px;
+
+        }
+
+
+        .screenshot-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 16px;
+
+        }
+
+
+        .screenshot-card {
+
+            overflow: hidden;
+
+            background:
+                #080d0c;
+
+            border:
+                1px solid
+                rgba(255,255,255,0.08);
+
+            border-radius: 16px;
+
+            transition: 0.2s;
+
+        }
+
+
+        .screenshot-card:hover {
+
+            border-color:
+                rgba(34,197,94,0.28);
+
+            box-shadow:
+                0 12px 35px
+                rgba(0,0,0,0.3);
+
+        }
+
+
+        .image-wrapper {
+
+            position: relative;
+
+            background:
+                #030504;
+
+        }
+
+
+        .screenshot-image {
+
+            display: block;
+
+            width: 100%;
+
+            height: 410px;
+
+            object-fit: contain;
+
+            background:
+                #030504;
+
+            cursor: pointer;
+
+        }
+
+
+        /* =====================================================
+           DELETE BUTTON
+        ===================================================== */
+
+        .delete-btn {
+
+            position: absolute;
+
+            top: 10px;
+
+            right: 10px;
+
+            border:
+                1px solid
+                rgba(239,68,68,0.3);
+
+            background:
+                rgba(127,29,29,0.88);
+
+            color:
+                #fecaca;
+
+            padding:
+                8px
+                11px;
+
+            border-radius: 9px;
+
+            font-size: 12px;
+
+            font-weight: 750;
+
+            cursor: pointer;
+
+            backdrop-filter:
+                blur(8px);
+
+            transition: 0.18s;
+
+        }
+
+
+        .delete-btn:hover {
+
+            background:
+                var(--danger2);
+
+            color: white;
+
+            border-color:
+                rgba(255,255,255,0.2);
+
+            transform:
+                scale(1.04);
+
+        }
+
+
+        .delete-btn:disabled {
+
+            opacity: 0.55;
+
+            cursor: wait;
+
+            transform: none;
+
+        }
+
+
+        .screenshot-info {
+
+            padding:
+                12px;
+
+        }
+
+
+        .screenshot-name {
+
+            font-size: 12px;
+
+            font-weight: 750;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+        }
+
+
+        .screenshot-date {
+
+            margin-top: 5px;
+
+            color:
+                var(--muted);
+
+            font-size: 10px;
+
+        }
+
+
+        .empty-gallery {
+
+            grid-column: 1 / -1;
+
+            padding:
+                45px
+                10px;
+
+            text-align: center;
+
+            color:
+                var(--muted);
+
+            font-size: 13px;
+
+            border:
+                1px dashed
+                rgba(255,255,255,0.08);
+
+            border-radius: 15px;
+
+        }
+
+
+        /* =====================================================
+           IMAGE MODAL
+        ===================================================== */
+
+        .image-modal {
+
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 9999;
+
+            padding: 25px;
+
+            background:
+                rgba(0,0,0,0.94);
+
+            align-items: center;
+
+            justify-content: center;
+
+            backdrop-filter:
+                blur(8px);
+
+        }
+
+
+        .image-modal.show {
+
+            display: flex;
+
+        }
+
+
+        .modal-image {
+
+            max-width: 95vw;
+
+            max-height: 90vh;
+
+            object-fit: contain;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 20px 80px
+                rgba(0,0,0,0.6);
+
+        }
+
+
+        .modal-close {
+
+            position: fixed;
+
+            top: 18px;
+
+            right: 22px;
+
+            width: 44px;
+
+            height: 44px;
+
+            border: 1px solid
+                rgba(255,255,255,0.12);
+
+            border-radius: 50%;
+
+            background:
+                rgba(255,255,255,0.1);
+
+            color: white;
+
+            font-size: 25px;
+
+            cursor: pointer;
+
+        }
+
+
+        .modal-close:hover {
+
+            background:
+                rgba(239,68,68,0.7);
+
+        }
+
+
+        /* =====================================================
+           LOG
+        ===================================================== */
 
         .log-card {
+
             margin-top: 25px;
 
-            background: #070a10;
+            background:
+                #050807;
 
             border:
                 1px solid
@@ -384,27 +999,38 @@
             border-radius: 16px;
 
             overflow: hidden;
+
         }
 
+
         .log-title {
-            padding: 13px 16px;
+
+            padding:
+                13px
+                16px;
 
             border-bottom:
                 1px solid
                 rgba(255,255,255,0.07);
 
-            color: #cbd5e1;
+            color:
+                #cbd5e1;
 
             font-size: 13px;
-            font-weight: 700;
+
+            font-weight: 750;
+
         }
 
+
         #status {
+
             min-height: 90px;
 
             padding: 16px;
 
-            color: #b8c1d1;
+            color:
+                #aebbb6;
 
             font-family:
                 Consolas,
@@ -415,65 +1041,125 @@
             white-space: pre-wrap;
 
             word-break: break-word;
+
         }
 
-        /* ================= LOADING ================= */
 
-        .loading {
-            opacity: 0.65;
-            pointer-events: none;
-        }
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
 
-        /* ================= RESPONSIVE ================= */
-
-        @media (max-width: 850px) {
+        @media (max-width: 900px) {
 
             .commands {
+
                 grid-template-columns:
                     repeat(3, 1fr);
+
             }
 
             .status-grid {
+
                 grid-template-columns:
                     repeat(2, 1fr);
+
             }
 
             .apps {
+
                 grid-template-columns:
                     repeat(3, 1fr);
+
             }
+
+            .screenshot-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+            }
+
         }
 
-        @media (max-width: 550px) {
+
+        @media (max-width: 560px) {
 
             .container {
+
                 width: 92%;
+
                 padding-top: 22px;
+
             }
+
 
             .header {
-                align-items: flex-start;
-                flex-direction: column;
+
+                align-items:
+                    flex-start;
+
+                flex-direction:
+                    column;
+
             }
+
 
             .commands {
+
                 grid-template-columns:
                     repeat(2, 1fr);
+
             }
+
 
             .apps {
+
                 grid-template-columns:
                     repeat(2, 1fr);
+
             }
+
 
             .status-grid {
+
                 grid-template-columns:
                     repeat(2, 1fr);
+
             }
 
-            button.command {
-                min-height: 70px;
+
+            .screenshot-grid {
+
+                grid-template-columns:
+                    1fr;
+
             }
+
+
+            .screenshot-image {
+
+                height: 500px;
+
+            }
+
+
+            .gallery-header {
+
+                align-items:
+                    flex-start;
+
+                flex-direction:
+                    column;
+
+            }
+
+
+            button.command {
+
+                min-height: 70px;
+
+            }
+
         }
 
     </style>
@@ -483,21 +1169,28 @@
 
 <body>
 
+
 <div class="container">
 
-    <!-- ================= HEADER ================= -->
+
+    <!-- =====================================================
+         HEADER
+    ===================================================== -->
 
     <div class="header">
 
         <div class="brand">
 
-            <h1>📱 Voice Phone Control</h1>
+            <h1>
+                📱 Voice Phone Control
+            </h1>
 
             <p>
-                Remote control dashboard
+                Remote Android control dashboard
             </p>
 
         </div>
+
 
         <div class="online">
 
@@ -510,7 +1203,9 @@
     </div>
 
 
-    <!-- ================= PHONE STATUS ================= -->
+    <!-- =====================================================
+         PHONE STATUS
+    ===================================================== -->
 
     <div class="status-card">
 
@@ -519,6 +1214,7 @@
             <h2>
                 📊 Phone Status
             </h2>
+
 
             <button
                 class="refresh-btn"
@@ -531,6 +1227,7 @@
 
 
         <div class="status-grid">
+
 
             <div class="status-item">
 
@@ -611,12 +1308,15 @@
 
             </div>
 
+
         </div>
 
     </div>
 
 
-    <!-- ================= COMMANDS ================= -->
+    <!-- =====================================================
+         COMMANDS
+    ===================================================== -->
 
     <div class="section-title">
 
@@ -634,8 +1334,14 @@
             class="command"
             onclick="sendCommand('HOME')"
         >
-            <span class="command-number">01</span>
-            <span class="command-name">🏠 HOME</span>
+            <span class="command-number">
+                01
+            </span>
+
+            <span class="command-name">
+                🏠 HOME
+            </span>
+
             <span class="command-desc">
                 Go to home screen
             </span>
@@ -646,8 +1352,14 @@
             class="command"
             onclick="sendCommand('BACK')"
         >
-            <span class="command-number">02</span>
-            <span class="command-name">↩️ BACK</span>
+            <span class="command-number">
+                02
+            </span>
+
+            <span class="command-name">
+                ↩️ BACK
+            </span>
+
             <span class="command-desc">
                 Go back
             </span>
@@ -658,20 +1370,46 @@
             class="command"
             onclick="sendCommand('VOLUME_UP')"
         >
-            <span class="command-number">03</span>
-            <span class="command-name">🔊 VOLUME UP</span>
+            <span class="command-number">
+                03
+            </span>
+
+            <span class="command-name">
+                🔊 VOLUME UP
+            </span>
+
             <span class="command-desc">
                 Increase volume
             </span>
         </button>
+<button
+    class="command special"
+    onclick="sendCommand('WAKE_SCREEN')"
+>
+    <span class="command-number">18</span>
+
+    <span class="command-name">
+        🌙 WAKE SCREEN
+    </span>
+
+    <span class="command-desc">
+        Turn phone screen on
+    </span>
+</button>
 
 
         <button
             class="command"
             onclick="sendCommand('VOLUME_DOWN')"
         >
-            <span class="command-number">04</span>
-            <span class="command-name">🔉 VOLUME DOWN</span>
+            <span class="command-number">
+                04
+            </span>
+
+            <span class="command-name">
+                🔉 VOLUME DOWN
+            </span>
+
             <span class="command-desc">
                 Decrease volume
             </span>
@@ -680,10 +1418,16 @@
 
         <button
             class="command special"
-            onclick="sendCommand('TAKE_SCREENSHOT')"
+            onclick="takeScreenshot()"
         >
-            <span class="command-number">05</span>
-            <span class="command-name">📸 SCREENSHOT</span>
+            <span class="command-number">
+                05
+            </span>
+
+            <span class="command-name">
+                📸 SCREENSHOT
+            </span>
+
             <span class="command-desc">
                 Capture phone screen
             </span>
@@ -694,8 +1438,14 @@
             class="command special"
             onclick="requestPhoneStatus()"
         >
-            <span class="command-number">06</span>
-            <span class="command-name">📊 PHONE STATUS</span>
+            <span class="command-number">
+                06
+            </span>
+
+            <span class="command-name">
+                📊 PHONE STATUS
+            </span>
+
             <span class="command-desc">
                 Battery & network
             </span>
@@ -706,8 +1456,14 @@
             class="command"
             onclick="openApp('WhatsApp')"
         >
-            <span class="command-number">07</span>
-            <span class="command-name">🚀 OPEN APP</span>
+            <span class="command-number">
+                07
+            </span>
+
+            <span class="command-name">
+                🚀 OPEN APP
+            </span>
+
             <span class="command-desc">
                 Open selected app
             </span>
@@ -718,8 +1474,14 @@
             class="command"
             onclick="sendCommand('LIVE_SCREEN')"
         >
-            <span class="command-number">08</span>
-            <span class="command-name">🖥️ LIVE SCREEN</span>
+            <span class="command-number">
+                08
+            </span>
+
+            <span class="command-name">
+                🖥️ LIVE SCREEN
+            </span>
+
             <span class="command-desc">
                 Live screen control
             </span>
@@ -730,8 +1492,14 @@
             class="command"
             onclick="sendCommand('NOTIFICATION_STATUS')"
         >
-            <span class="command-number">09</span>
-            <span class="command-name">🔔 NOTIFICATIONS</span>
+            <span class="command-number">
+                09
+            </span>
+
+            <span class="command-name">
+                🔔 NOTIFICATIONS
+            </span>
+
             <span class="command-desc">
                 Notification status
             </span>
@@ -742,8 +1510,14 @@
             class="command"
             onclick="sendCommand('ENTER')"
         >
-            <span class="command-number">10</span>
-            <span class="command-name">⏎ ENTER</span>
+            <span class="command-number">
+                10
+            </span>
+
+            <span class="command-name">
+                ⏎ ENTER
+            </span>
+
             <span class="command-desc">
                 Press enter
             </span>
@@ -754,8 +1528,14 @@
             class="command"
             onclick="sendCommand('UP')"
         >
-            <span class="command-number">11</span>
-            <span class="command-name">⬆️ UP</span>
+            <span class="command-number">
+                11
+            </span>
+
+            <span class="command-name">
+                ⬆️ UP
+            </span>
+
             <span class="command-desc">
                 Scroll up
             </span>
@@ -766,8 +1546,14 @@
             class="command"
             onclick="sendCommand('DOWN')"
         >
-            <span class="command-number">12</span>
-            <span class="command-name">⬇️ DOWN</span>
+            <span class="command-number">
+                12
+            </span>
+
+            <span class="command-name">
+                ⬇️ DOWN
+            </span>
+
             <span class="command-desc">
                 Scroll down
             </span>
@@ -778,8 +1564,14 @@
             class="command"
             onclick="sendCommand('TAB')"
         >
-            <span class="command-number">13</span>
-            <span class="command-name">↹ TAB</span>
+            <span class="command-number">
+                13
+            </span>
+
+            <span class="command-name">
+                ↹ TAB
+            </span>
+
             <span class="command-desc">
                 Next field
             </span>
@@ -790,8 +1582,14 @@
             class="command"
             onclick="sendCommand('LEFT')"
         >
-            <span class="command-number">14</span>
-            <span class="command-name">⬅️ LEFT</span>
+            <span class="command-number">
+                14
+            </span>
+
+            <span class="command-name">
+                ⬅️ LEFT
+            </span>
+
             <span class="command-desc">
                 Move left
             </span>
@@ -802,8 +1600,14 @@
             class="command"
             onclick="sendCommand('RIGHT')"
         >
-            <span class="command-number">15</span>
-            <span class="command-name">➡️ RIGHT</span>
+            <span class="command-number">
+                15
+            </span>
+
+            <span class="command-name">
+                ➡️ RIGHT
+            </span>
+
             <span class="command-desc">
                 Move right
             </span>
@@ -814,8 +1618,14 @@
             class="command"
             onclick="sendCommand('MUTE')"
         >
-            <span class="command-number">16</span>
-            <span class="command-name">🔇 MUTE</span>
+            <span class="command-number">
+                16
+            </span>
+
+            <span class="command-name">
+                🔇 MUTE
+            </span>
+
             <span class="command-desc">
                 Mute volume
             </span>
@@ -826,8 +1636,14 @@
             class="command"
             onclick="sendCommand('RECENTS')"
         >
-            <span class="command-number">17</span>
-            <span class="command-name">📱 RECENT APPS</span>
+            <span class="command-number">
+                17
+            </span>
+
+            <span class="command-name">
+                📱 RECENT APPS
+            </span>
+
             <span class="command-desc">
                 Show recent apps
             </span>
@@ -837,7 +1653,9 @@
     </div>
 
 
-    <!-- ================= APPS ================= -->
+    <!-- =====================================================
+         APPS
+    ===================================================== -->
 
     <div class="section-title">
 
@@ -934,7 +1752,56 @@
     </div>
 
 
-    <!-- ================= LOG ================= -->
+    <!-- =====================================================
+         SCREENSHOT GALLERY
+    ===================================================== -->
+
+    <div class="gallery-card">
+
+
+        <div class="gallery-header">
+
+            <div>
+
+                <h2>
+                    📸 Screenshot Gallery
+                </h2>
+
+                <div class="gallery-subtitle">
+                    Saved phone screenshots
+                </div>
+
+            </div>
+
+
+            <button
+                class="gallery-btn"
+                onclick="loadScreenshots()"
+            >
+                ↻ Refresh
+            </button>
+
+        </div>
+
+
+        <div
+            id="screenshotGrid"
+            class="screenshot-grid"
+        >
+
+            <div class="empty-gallery">
+                📸 No screenshots yet.
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         LOG
+    ===================================================== -->
 
     <div class="log-card">
 
@@ -952,6 +1819,35 @@
 </div>
 
 
+<!-- =========================================================
+     IMAGE MODAL
+========================================================= -->
+
+<div
+    id="imageModal"
+    class="image-modal"
+    onclick="closeImageModal()"
+>
+
+    <button
+        class="modal-close"
+        onclick="closeImageModal()"
+    >
+        ×
+    </button>
+
+
+    <img
+        id="modalImage"
+        class="modal-image"
+        src=""
+        alt="Screenshot"
+        onclick="event.stopPropagation()"
+    >
+
+</div>
+
+
 <script>
 
 
@@ -962,10 +1858,6 @@
     const API_URL =
         "https://phonecontrol-black.vercel.app";
 
-
-    /*
-     * Apna existing API token yahan paste karo.
-     */
 
     const API_TOKEN =
         "VPC-a8F3xK91-pQ7L2mZ6-4NwR8tY5U";
@@ -1038,6 +1930,7 @@
                     );
 
                 return null;
+
             }
 
 
@@ -1060,6 +1953,7 @@
                 error.toString();
 
             return null;
+
         }
 
     }
@@ -1082,6 +1976,621 @@
 
 
     /* =====================================================
+       SCREENSHOT
+    ===================================================== */
+
+    async function takeScreenshot() {
+
+        statusElement.textContent =
+            "📸 Sending screenshot command...\n\n" +
+            "Waiting for Android...";
+
+
+        const oldScreenshots =
+            await getScreenshots();
+
+
+        const oldCount =
+            oldScreenshots.length;
+
+
+        const result =
+            await sendCommand(
+                "TAKE_SCREENSHOT",
+                {}
+            );
+
+
+        if (!result) {
+
+            return;
+
+        }
+
+
+        statusElement.textContent =
+            "📸 Screenshot command sent\n\n" +
+            "Waiting for phone screenshot...";
+
+
+        let attempts = 0;
+
+        const maxAttempts = 15;
+
+
+        const check =
+            setInterval(
+                async function () {
+
+                    attempts++;
+
+
+                    const screenshots =
+                        await loadScreenshots(
+                            true
+                        );
+
+
+                    if (
+                        screenshots &&
+                        screenshots.length > oldCount
+                    ) {
+
+                        clearInterval(check);
+
+
+                        statusElement.textContent =
+                            "✅ New screenshot received\n\n" +
+                            "Screenshot saved in gallery.";
+
+                        return;
+
+                    }
+
+
+                    if (
+                        attempts >= maxAttempts
+                    ) {
+
+                        clearInterval(check);
+
+
+                        statusElement.textContent =
+                            "⚠️ Screenshot command sent.\n\n" +
+                            "Phone screenshot upload ka wait timeout ho gaya.\n\n" +
+                            "Gallery Refresh karke check karo.";
+
+                    }
+
+                },
+                2000
+            );
+
+    }
+
+
+    /* =====================================================
+       GET SCREENSHOTS
+    ===================================================== */
+
+    async function getScreenshots() {
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_URL}/api/screenshots`,
+                    {
+
+                        method: "GET",
+
+                        headers: {
+
+                            "Authorization":
+                                `Bearer ${API_TOKEN}`
+
+                        },
+
+                        cache:
+                            "no-store"
+
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                return [];
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            return Array.isArray(
+                data.screenshots
+            )
+                ? data.screenshots
+                : [];
+
+
+        } catch (error) {
+
+            return [];
+
+        }
+
+    }
+
+
+    /* =====================================================
+       GET SCREENSHOT COUNT
+    ===================================================== */
+
+    async function getScreenshotCount() {
+
+        const screenshots =
+            await getScreenshots();
+
+        return screenshots.length;
+
+    }
+
+
+    /* =====================================================
+       LOAD SCREENSHOTS
+    ===================================================== */
+
+    async function loadScreenshots(
+        silent = false
+    ) {
+
+        const grid =
+            document.getElementById(
+                "screenshotGrid"
+            );
+
+
+        if (!silent) {
+
+            grid.innerHTML =
+                `
+                <div class="empty-gallery">
+                    ⏳ Loading screenshots...
+                </div>
+                `;
+
+        }
+
+
+        try {
+
+            const screenshots =
+                await getScreenshots();
+
+
+            if (
+                screenshots.length === 0
+            ) {
+
+                grid.innerHTML =
+                    `
+                    <div class="empty-gallery">
+                        📸 No screenshots yet.
+                    </div>
+                    `;
+
+                return screenshots;
+
+            }
+
+
+            grid.innerHTML = "";
+
+
+            screenshots.forEach(
+                function (screenshot) {
+
+                    const card =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    card.className =
+                        "screenshot-card";
+
+
+                    /* IMAGE WRAPPER */
+
+                    const imageWrapper =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    imageWrapper.className =
+                        "image-wrapper";
+
+
+                    /* IMAGE */
+
+                    const image =
+                        document.createElement(
+                            "img"
+                        );
+
+
+                    image.className =
+                        "screenshot-image";
+
+
+                    image.src =
+                        screenshot.image;
+
+
+                    image.alt =
+                        screenshot.filename ||
+                        "Phone Screenshot";
+
+
+                    image.loading =
+                        "lazy";
+
+
+                    image.onclick =
+                        function () {
+
+                            openImageModal(
+                                screenshot.image
+                            );
+
+                        };
+
+
+                    /* DELETE BUTTON */
+
+                    const deleteButton =
+                        document.createElement(
+                            "button"
+                        );
+
+
+                    deleteButton.className =
+                        "delete-btn";
+
+
+                    deleteButton.textContent =
+                        "🗑️ Delete";
+
+
+                    deleteButton.onclick =
+                        function (event) {
+
+                            event.stopPropagation();
+
+                            deleteScreenshot(
+                                screenshot.id,
+                                screenshot.filename,
+                                deleteButton
+                            );
+
+                        };
+
+
+                    imageWrapper.appendChild(
+                        image
+                    );
+
+
+                    imageWrapper.appendChild(
+                        deleteButton
+                    );
+
+
+                    /* INFO */
+
+                    const info =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    info.className =
+                        "screenshot-info";
+
+
+                    const name =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    name.className =
+                        "screenshot-name";
+
+
+                    name.textContent =
+                        screenshot.filename ||
+                        "Screenshot";
+
+
+                    const date =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    date.className =
+                        "screenshot-date";
+
+
+                    if (
+                        screenshot.created_at
+                    ) {
+
+                        date.textContent =
+                            formatDate(
+                                screenshot.created_at
+                            );
+
+                    }
+
+
+                    info.appendChild(
+                        name
+                    );
+
+
+                    info.appendChild(
+                        date
+                    );
+
+
+                    card.appendChild(
+                        imageWrapper
+                    );
+
+
+                    card.appendChild(
+                        info
+                    );
+
+
+                    grid.appendChild(
+                        card
+                    );
+
+                }
+            );
+
+
+            return screenshots;
+
+
+        } catch (error) {
+
+            if (!silent) {
+
+                grid.innerHTML =
+                    `
+                    <div class="empty-gallery">
+                        ❌ Connection error
+                    </div>
+                    `;
+
+            }
+
+
+            return null;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       DELETE SCREENSHOT
+    ===================================================== */
+
+    async function deleteScreenshot(
+        screenshotId,
+        filename,
+        button
+    ) {
+
+
+        if (!screenshotId) {
+
+            alert(
+                "Screenshot ID nahi mila."
+            );
+
+            return;
+
+        }
+
+
+        const confirmed =
+            confirm(
+                `Delete screenshot?\n\n${filename || "Screenshot"}`
+            );
+
+
+        if (!confirmed) {
+
+            return;
+
+        }
+
+
+        button.disabled = true;
+
+        button.textContent =
+            "⏳ Deleting...";
+
+
+        statusElement.textContent =
+            "🗑️ Deleting screenshot...\n\n" +
+            (filename || "Screenshot");
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_URL}/api/screenshot/${encodeURIComponent(screenshotId)}`,
+                    {
+
+                        method: "DELETE",
+
+                        headers: {
+
+                            "Authorization":
+                                `Bearer ${API_TOKEN}`
+
+                        }
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.detail ||
+                    "Delete failed"
+                );
+
+            }
+
+
+            statusElement.textContent =
+                "✅ Screenshot deleted\n\n" +
+                (filename || "Screenshot");
+
+
+            await loadScreenshots();
+
+
+        } catch (error) {
+
+            button.disabled = false;
+
+            button.textContent =
+                "🗑️ Delete";
+
+
+            statusElement.textContent =
+                "❌ Screenshot delete failed\n\n" +
+                error.toString();
+
+        }
+
+    }
+
+
+    /* =====================================================
+       FORMAT DATE
+    ===================================================== */
+
+    function formatDate(
+        value
+    ) {
+
+        try {
+
+            return new Date(
+                value
+            ).toLocaleString();
+
+        } catch (error) {
+
+            return value;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       IMAGE MODAL
+    ===================================================== */
+
+    function openImageModal(
+        image
+    ) {
+
+        const modal =
+            document.getElementById(
+                "imageModal"
+            );
+
+
+        const modalImage =
+            document.getElementById(
+                "modalImage"
+            );
+
+
+        modalImage.src =
+            image;
+
+
+        modal.classList.add(
+            "show"
+        );
+
+    }
+
+
+    function closeImageModal() {
+
+        const modal =
+            document.getElementById(
+                "imageModal"
+            );
+
+
+        modal.classList.remove(
+            "show"
+        );
+
+
+        document.getElementById(
+            "modalImage"
+        ).src = "";
+
+    }
+
+
+    /* =====================================================
+       ESC KEY
+    ===================================================== */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape"
+            ) {
+
+                closeImageModal();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
        PHONE STATUS
     ===================================================== */
 
@@ -1091,10 +2600,6 @@
             "⏳ Requesting phone status...";
 
 
-        /*
-         * First tell Android to collect/upload status.
-         */
-
         const commandResult =
             await sendCommand(
                 "PHONE_STATUS",
@@ -1103,18 +2608,15 @@
 
 
         if (!commandResult) {
+
             return;
+
         }
 
 
         statusElement.textContent =
             "⏳ Waiting for Android status...";
 
-
-        /*
-         * Android needs a little time to upload
-         * the status to /api/status.
-         */
 
         await sleep(2000);
 
@@ -1168,19 +2670,9 @@
                     );
 
                 return;
+
             }
 
-
-            /*
-             * Some APIs return:
-             *
-             * {
-             *   status: {...}
-             * }
-             *
-             * while others return the status
-             * object directly.
-             */
 
             const status =
                 data.status || data;
@@ -1293,13 +2785,8 @@
 
 
     /* =====================================================
-       AUTO STATUS
+       AUTO LOAD
     ===================================================== */
-
-    /*
-     * Page open hone ke baad latest status
-     * automatically load karne ki koshish.
-     */
 
     window.addEventListener(
         "load",
@@ -1307,11 +2794,14 @@
 
             fetchPhoneStatus();
 
+            loadScreenshots();
+
         }
     );
 
 
 </script>
+
 
 </body>
 

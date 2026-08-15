@@ -203,17 +203,13 @@ object CommandHandler {
 
                             val json =
                                 """
-                                {
-                                    "ok": true,
-                                    "status": {
-                                        "battery": $battery,
-                                        "charging": $charging,
-                                        "network": $network,
-                                        "android": "$androidVersion",
-                                        "api": $apiVersion
-                                    }
-                                }
-                                """.trimIndent()
+    {
+        "battery": $battery,
+        "charging": $charging,
+        "network": $network,
+        "android": "$androidVersion"
+    }
+    """.trimIndent()
 
                             Log.d(
                                 TAG,
