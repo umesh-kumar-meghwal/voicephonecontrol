@@ -88,26 +88,37 @@ object CommandHandler {
             }
 
             // =================================================
-            // SCREENSHOT
-            // =================================================
+// SCREENSHOT
+// =================================================
 
             cmd == "SCREENSHOT" ||
-                    cmd == "TAKE_SCREENSHOT" ||
+                    cmd == "TAKE SCREENSHOT" ||
                     cmd == "CAPTURE SCREEN" ||
                     cmd == "TAKE A SCREENSHOT" -> {
 
-                Log.d(TAG, "Executing SCREENSHOT")
+                Log.d(
+                    TAG,
+                    "Executing SCREENSHOT"
+                )
 
                 val success =
                     ScreenshotService.performScreenshot()
 
                 if (success) {
-                    Log.d(TAG, "SCREENSHOT REQUEST SENT")
+
+                    Log.d(
+                        TAG,
+                        "SCREENSHOT REQUEST SENT"
+                    )
+
                 } else {
-                    Log.e(TAG, "SCREENSHOT FAILED")
+
+                    Log.e(
+                        TAG,
+                        "SCREENSHOT FAILED"
+                    )
                 }
             }
-
             // =================================================
             // ENTER
             // =================================================
