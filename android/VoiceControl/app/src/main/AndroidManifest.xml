@@ -2,7 +2,8 @@
 
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <uses-permission
+        android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission
         android:name="android.permission.INTERNET" />
 
@@ -53,6 +54,18 @@
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:allowBackup="true">
+
+
+        <receiver
+            android:name=".BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+
+        </receiver>
 
         <activity
             android:name=".PermissionActivity"
