@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.voicecontrol.app-mergeDebugResources-21:/values-watch-v20/values-watch-v20.xml",
+            "outputFile": "com.example.voicecontrol.app-mergeDebugResources-22:/values-watch-v20/values-watch-v20.xml",
             "map": [
                 {
                     "source": "C:\\Users\\umesh\\.gradle\\caches\\9.3.0\\transforms\\481f5639746a4f08900c9db3db0db207\\workspace\\transformed\\appcompat-1.7.1\\res\\values-watch-v20\\values-watch-v20.xml",

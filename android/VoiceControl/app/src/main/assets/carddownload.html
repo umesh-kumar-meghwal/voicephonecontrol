@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Card Downloads</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            border: 0;
+            border-radius: 10px;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .refresh {
+            background: #111827;
+            color: white;
+        }
+
+        .back {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .file-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+
+            box-shadow:
+                0 3px 12px rgba(0, 0, 0, 0.08);
+
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .icon {
+            width: 50px;
+            height: 50px;
+
+            flex-shrink: 0;
+
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 24px;
+
+            background: #f3f4f6;
+        }
+
+        .info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .name {
+            font-weight: bold;
+            word-break: break-word;
+        }
+
+        .type {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .open-btn {
+            background: #2563eb;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .empty {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 12px;
+            display: none;
+            margin-bottom: 15px;
+        }
+
+        .loading {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            color: #6b7280;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>
+        My Card Downloads
+    </h1>
+
+    <div class="subtitle">
+        Saved JPEG and PDF files
+    </div>
+
+    <div class="toolbar">
+
+        <button
+                class="refresh"
+                onclick="loadFiles()"
+        >
+            Refresh
+        </button>
+
+        <button
+                class="back"
+                onclick="goBack()"
+        >
+            Back
+        </button>
+
+    </div>
+
+    <div
+            id="error"
+            class="error"
+    ></div>
+
+    <div
+            id="fileList"
+            class="file-list"
+    >
+
+        <div class="loading">
+            Loading files...
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // =========================================================
+    // LOAD FILES
+    // =========================================================
+
+    function loadFiles() {
+
+        const container =
+            document.getElementById("fileList");
+
+        const errorBox =
+            document.getElementById("error");
+
+        if (!container) {
+            return;
+        }
+
+        errorBox.style.display = "none";
+
+        container.innerHTML = `
+            <div class="loading">
+                Loading files...
+            </div>
+        `;
+
+
+        // =====================================================
+        // ANDROID BRIDGE CHECK
+        // =====================================================
+
+        if (!window.AndroidDownload) {
+
+            container.innerHTML = `
+                <div class="empty">
+                    Android download bridge available nahi hai.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        try {
+
+            const json =
+                AndroidDownload.getDownloadedFiles();
+
+            console.log(
+                "Downloaded files:",
+                json
+            );
+
+
+            const files =
+                JSON.parse(json);
+
+
+            container.innerHTML = "";
+
+
+            // =================================================
+            // NO FILES
+            // =================================================
+
+            if (
+                !files ||
+                files.length === 0
+            ) {
+
+                container.innerHTML = `
+                    <div class="empty">
+                        Abhi koi downloaded card nahi hai.
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            // =================================================
+            // FILES
+            // =================================================
+
+            files.forEach(function(file) {
+
+                const item =
+                    document.createElement("div");
+
+                item.className =
+                    "file-card";
+
+
+                // -------------------------------------------------
+                // ICON
+                // -------------------------------------------------
+
+                const icon =
+                    document.createElement("div");
+
+                icon.className =
+                    "icon";
+
+
+                const mime =
+                    file.mime || "";
+
+
+                if (
+                    mime ===
+                    "application/pdf" ||
+                    String(file.name)
+                        .toLowerCase()
+                        .endsWith(".pdf")
+                ) {
+
+                    icon.textContent =
+                        "📄";
+
+                } else {
+
+                    icon.textContent =
+                        "🖼️";
+                }
+
+
+                // -------------------------------------------------
+                // INFO
+                // -------------------------------------------------
+
+                const info =
+                    document.createElement("div");
+
+                info.className =
+                    "info";
+
+
+                const name =
+                    document.createElement("div");
+
+                name.className =
+                    "name";
+
+                name.textContent =
+                    file.name || "Unknown file";
+
+
+                const type =
+                    document.createElement("div");
+
+                type.className =
+                    "type";
+
+                type.textContent =
+                    mime ||
+                    "Unknown file type";
+
+
+                info.appendChild(name);
+                info.appendChild(type);
+
+
+                // -------------------------------------------------
+                // OPEN BUTTON
+                // -------------------------------------------------
+
+                const openButton =
+                    document.createElement("button");
+
+                openButton.className =
+                    "open-btn";
+
+                openButton.textContent =
+                    "Open";
+
+
+                openButton.onclick =
+                    function() {
+
+                        openFile(
+                            file.uri ||
+                            file.path ||
+                            "",
+                            file.mime || ""
+                        );
+                    };
+
+
+                // -------------------------------------------------
+                // CARD
+                // -------------------------------------------------
+
+                item.appendChild(icon);
+                item.appendChild(info);
+                item.appendChild(openButton);
+
+                container.appendChild(item);
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "Files load error:",
+                error
+            );
+
+
+            container.innerHTML = `
+                <div class="empty">
+                    Files load nahi ho rahi.
+                </div>
+            `;
+
+
+            errorBox.textContent =
+                "Error: " +
+                error.message;
+
+            errorBox.style.display =
+                "block";
+        }
+    }
+
+
+    // =========================================================
+    // OPEN FILE
+    // =========================================================
+
+    function openFile(
+        uri,
+        mime
+    ) {
+
+        if (
+            !window.AndroidDownload
+        ) {
+
+            alert(
+                "Android bridge available nahi hai."
+            );
+
+            return;
+        }
+
+
+        if (
+            !uri ||
+            uri.trim() === ""
+        ) {
+
+            alert(
+                "File URI nahi mili."
+            );
+
+            return;
+        }
+
+
+        console.log(
+            "Opening:",
+            uri,
+            mime
+        );
+
+
+        try {
+
+            AndroidDownload.openDownloadedFile(
+                uri,
+                mime
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Open file error:",
+                error
+            );
+
+            alert(
+                "File open nahi ho paayi: " +
+                error.message
+            );
+        }
+    }
+
+
+    // =========================================================
+    // BACK
+    // =========================================================
+
+    function goBack() {
+
+        if (
+            window.history.length > 1
+        ) {
+
+            window.history.back();
+
+        } else {
+
+            window.location.href =
+                "https://appassets.androidplatform.net/assets/index.html";
+        }
+    }
+
+
+    // =========================================================
+    // AUTO LOAD
+    // =========================================================
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            loadFiles();
+
+        }
+    );
+
+</script>
+
+</body>
+
+</html>

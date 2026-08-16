@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.voicecontrol.app-mergeDebugResources-21:/values-en-rIN/values-en-rIN.xml",
+            "outputFile": "com.example.voicecontrol.app-mergeDebugResources-22:/values-en-rIN/values-en-rIN.xml",
             "map": [
                 {
                     "source": "C:\\Users\\umesh\\.gradle\\caches\\9.3.0\\transforms\\4f7cf6e9dfbba517f4a701043c0c712d\\workspace\\transformed\\core-1.13.0\\res\\values-en-rIN\\values-en-rIN.xml",

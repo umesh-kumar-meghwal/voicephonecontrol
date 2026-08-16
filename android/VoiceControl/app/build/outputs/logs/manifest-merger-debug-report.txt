@@ -1,11 +1,12 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:3:1-143:12
-INJECTED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:3:1-143:12
-INJECTED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:3:1-143:12
-INJECTED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:3:1-143:12
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:3:1-130:12
+INJECTED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:3:1-130:12
+INJECTED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:3:1-130:12
+INJECTED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:3:1-130:12
 MERGED from [androidx.appcompat:appcompat-resources:1.7.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\0f15c22b47eb6c976b7c91a4b96f4292\workspace\transformed\jetified-appcompat-resources-1.7.1\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.appcompat:appcompat:1.7.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\481f5639746a4f08900c9db3db0db207\workspace\transformed\appcompat-1.7.1\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.webkit:webkit:1.14.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\bebf6932eea1cf8ef1ac00818c6ca534\workspace\transformed\webkit-1.14.0\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.fragment:fragment:1.5.4] C:\Users\umesh\.gradle\caches\9.3.0\transforms\67de3aea3255981a02626268b58410fa\workspace\transformed\fragment-1.5.4\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.activity:activity:1.8.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f01e334c81dd9e22864473305862bdc5\workspace\transformed\jetified-activity-1.8.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\b466d3fbbf7491f789c4db10d5be3ce9\workspace\transformed\jetified-savedstate-1.2.1\AndroidManifest.xml:17:1-22:12
@@ -25,13 +26,13 @@ MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\umesh\.gradl
 MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f442277f83ab9f62544b450313b6a013\workspace\transformed\viewpager-1.0.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.customview:customview:1.0.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\70a51ac12e017ceeabe9f041c1b65512\workspace\transformed\customview-1.0.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.core:core:1.13.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\4f7cf6e9dfbba517f4a701043c0c712d\workspace\transformed\core-1.13.0\AndroidManifest.xml:17:1-30:12
-MERGED from [androidx.annotation:annotation-experimental:1.4.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\fcb733a045838833abc555f16f13ad93\workspace\transformed\jetified-annotation-experimental-1.4.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.annotation:annotation-experimental:1.4.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\fe63b96c6631c2e518f71cc5d51e9606\workspace\transformed\jetified-annotation-experimental-1.4.1\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\22ad1c402027b54ba1576e434da19671\workspace\transformed\cursoradapter-1.0.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:17:1-55:12
-MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\07572e18898fc07d028ac29b1030f0f8\workspace\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:17:1-33:12
-MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\82ed3daf0fd15cd48736a222eafff3f7\workspace\transformed\jetified-tracing-1.0.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\e689de7501eb1979ce68889bed2487b2\workspace\transformed\interpolator-1.0.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\208699ffc2018bfc5c23bcc93a94653c\workspace\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\07572e18898fc07d028ac29b1030f0f8\workspace\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:17:1-33:12
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\82ed3daf0fd15cd48736a222eafff3f7\workspace\transformed\jetified-tracing-1.0.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\0ab9188bac33f0a553a90bda00d5bbdb\workspace\transformed\core-runtime-2.2.0\AndroidManifest.xml:17:1-22:12
 	package
 		INJECTED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml
@@ -69,43 +70,39 @@ uses-permission#android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION
 ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:20:5-21:81
 	android:name
 		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:21:9-78
-uses-permission#android.permission.POST_NOTIFICATIONS
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:23:5-24:64
-	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:24:9-61
 uses-permission#android.permission.ACCESS_FINE_LOCATION
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:25:5-26:66
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:24:5-25:66
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:26:9-63
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:25:9-63
 uses-permission#android.permission.ACCESS_COARSE_LOCATION
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:28:5-29:68
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:27:5-28:68
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:29:9-65
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:28:9-65
 uses-permission#android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:31:5-32:82
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:30:5-31:82
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:32:9-79
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:31:9-79
 queries
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:35:5-49:15
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:34:5-48:15
 package#com.whatsapp
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:37:9-38:43
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:36:9-37:43
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:38:13-40
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:37:13-40
 package#com.google.android.youtube
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:40:9-41:57
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:39:9-40:57
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:41:13-54
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:40:13-54
 package#com.android.chrome
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:43:9-44:49
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:42:9-43:49
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:44:13-46
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:43:13-46
 package#com.android.settings
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:46:9-47:51
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:45:9-46:51
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:47:13-48
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:46:13-48
 application
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:52:5-141:19
-INJECTED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:52:5-141:19
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:51:5-128:19
+INJECTED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:51:5-128:19
 MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f3092570bb6e1cc8fe46f82d2d4d10d0\workspace\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f3092570bb6e1cc8fe46f82d2d4d10d0\workspace\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\umesh\.gradle\caches\9.3.0\transforms\eb54f35d14bf3032cfe4d19b8e62625c\workspace\transformed\jetified-lifecycle-process-2.6.2\AndroidManifest.xml:23:5-33:19
@@ -114,124 +111,108 @@ MERGED from [androidx.core:core:1.13.0] C:\Users\umesh\.gradle\caches\9.3.0\tran
 MERGED from [androidx.core:core:1.13.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\4f7cf6e9dfbba517f4a701043c0c712d\workspace\transformed\core-1.13.0\AndroidManifest.xml:28:5-89
 MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:23:5-53:19
 MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:23:5-53:19
-MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\07572e18898fc07d028ac29b1030f0f8\workspace\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
-MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\07572e18898fc07d028ac29b1030f0f8\workspace\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\208699ffc2018bfc5c23bcc93a94653c\workspace\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\208699ffc2018bfc5c23bcc93a94653c\workspace\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\07572e18898fc07d028ac29b1030f0f8\workspace\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\07572e18898fc07d028ac29b1030f0f8\workspace\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
 	android:extractNativeLibs
 		INJECTED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.13.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\4f7cf6e9dfbba517f4a701043c0c712d\workspace\transformed\core-1.13.0\AndroidManifest.xml:28:18-86
 	android:label
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:54:9-38
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:53:9-42
 	android:roundIcon
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:56:9-54
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:55:9-54
 	android:icon
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:55:9-43
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:54:9-43
 	android:allowBackup
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:57:9-35
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:56:9-35
 	android:theme
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:53:9-50
-service#com.example.voicecontrol.MicrophoneService
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:59:9-62:58
-	android:exported
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:61:13-37
-	android:foregroundServiceType
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:62:13-55
-	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:60:13-46
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:52:9-50
 receiver#com.example.voicecontrol.BootReceiver
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:63:9-72:20
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:59:9-68:20
 	android:enabled
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:65:13-35
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:61:13-35
 	android:exported
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:66:13-36
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:62:13-36
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:64:13-41
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:60:13-41
 intent-filter#action:name:android.intent.action.BOOT_COMPLETED
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:68:13-70:29
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:64:13-66:29
 action#android.intent.action.BOOT_COMPLETED
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:69:17-79
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:65:17-79
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:69:25-76
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:65:25-76
 activity#com.example.voicecontrol.PermissionActivity
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:74:9-85:20
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:70:9-81:20
 	android:excludeFromRecents
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:77:13-46
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:73:13-46
 	android:exported
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:76:13-36
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:72:13-36
 	android:theme
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:78:13-66
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:74:13-66
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:75:13-47
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:71:13-47
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:80:13-83:29
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:76:13-79:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:81:17-69
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:77:17-69
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:81:25-66
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:77:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:82:17-77
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:78:17-77
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:82:27-74
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:78:27-74
 activity#com.example.voicecontrol.MainActivity
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:87:9-89:40
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:83:9-85:40
 	android:exported
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:89:13-37
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:85:13-37
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:88:13-41
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:84:13-41
 service#com.example.voicecontrol.CommandService
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:96:9-99:56
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:92:9-95:56
 	android:exported
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:98:13-37
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:94:13-37
 	android:foregroundServiceType
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:99:13-53
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:95:13-53
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:97:13-43
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:93:13-43
+service#com.example.voicecontrol.MicrophoneService
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:97:9-100:58
+	android:exported
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:99:13-37
+	android:foregroundServiceType
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:100:13-55
+	android:name
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:98:13-46
 service#com.example.voicecontrol.ScreenshotService
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:104:9-120:19
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:105:9-117:19
 	android:exported
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:107:13-37
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:108:13-36
 	android:permission
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:106:13-79
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:107:13-79
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:105:13-46
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:106:13-46
 intent-filter#action:name:android.accessibilityservice.AccessibilityService
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:109:13-114:29
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:110:13-112:29
 action#android.accessibilityservice.AccessibilityService
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:111:17-112:88
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:111:17-92
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:112:21-85
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:111:25-89
 meta-data#android.accessibilityservice
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:116:13-118:72
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:114:13-116:72
 	android:resource
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:118:17-69
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:116:17-69
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:117:17-60
-service#com.example.voicecontrol.NotificationService
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:121:9-131:19
-	android:label
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:123:13-56
-	android:exported
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:125:13-36
-	android:permission
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:124:13-87
-	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:122:13-48
-intent-filter#action:name:android.service.notification.NotificationListenerService
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:127:13-129:29
-action#android.service.notification.NotificationListenerService
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:128:17-99
-	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:128:25-96
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:115:17-60
 service#com.example.voicecontrol.LiveScreenService
-ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:135:9-138:63
+ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:122:9-125:63
 	android:exported
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:137:13-37
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:124:13-37
 	android:foregroundServiceType
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:138:13-60
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:125:13-60
 	android:name
-		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:136:13-46
+		ADDED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml:123:13-46
 uses-sdk
 INJECTED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\umesh\Downloads\VoicePhoneControl\android\VoiceControl\app\src\main\AndroidManifest.xml
@@ -240,6 +221,8 @@ MERGED from [androidx.appcompat:appcompat-resources:1.7.1] C:\Users\umesh\.gradl
 MERGED from [androidx.appcompat:appcompat-resources:1.7.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\0f15c22b47eb6c976b7c91a4b96f4292\workspace\transformed\jetified-appcompat-resources-1.7.1\AndroidManifest.xml:5:5-44
 MERGED from [androidx.appcompat:appcompat:1.7.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\481f5639746a4f08900c9db3db0db207\workspace\transformed\appcompat-1.7.1\AndroidManifest.xml:5:5-44
 MERGED from [androidx.appcompat:appcompat:1.7.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\481f5639746a4f08900c9db3db0db207\workspace\transformed\appcompat-1.7.1\AndroidManifest.xml:5:5-44
+MERGED from [androidx.webkit:webkit:1.14.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\bebf6932eea1cf8ef1ac00818c6ca534\workspace\transformed\webkit-1.14.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.webkit:webkit:1.14.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\bebf6932eea1cf8ef1ac00818c6ca534\workspace\transformed\webkit-1.14.0\AndroidManifest.xml:5:5-44
 MERGED from [androidx.fragment:fragment:1.5.4] C:\Users\umesh\.gradle\caches\9.3.0\transforms\67de3aea3255981a02626268b58410fa\workspace\transformed\fragment-1.5.4\AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.fragment:fragment:1.5.4] C:\Users\umesh\.gradle\caches\9.3.0\transforms\67de3aea3255981a02626268b58410fa\workspace\transformed\fragment-1.5.4\AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.activity:activity:1.8.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\f01e334c81dd9e22864473305862bdc5\workspace\transformed\jetified-activity-1.8.0\AndroidManifest.xml:20:5-44
@@ -278,20 +261,20 @@ MERGED from [androidx.customview:customview:1.0.0] C:\Users\umesh\.gradle\caches
 MERGED from [androidx.customview:customview:1.0.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\70a51ac12e017ceeabe9f041c1b65512\workspace\transformed\customview-1.0.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.core:core:1.13.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\4f7cf6e9dfbba517f4a701043c0c712d\workspace\transformed\core-1.13.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.core:core:1.13.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\4f7cf6e9dfbba517f4a701043c0c712d\workspace\transformed\core-1.13.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.annotation:annotation-experimental:1.4.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\fcb733a045838833abc555f16f13ad93\workspace\transformed\jetified-annotation-experimental-1.4.0\AndroidManifest.xml:5:5-44
-MERGED from [androidx.annotation:annotation-experimental:1.4.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\fcb733a045838833abc555f16f13ad93\workspace\transformed\jetified-annotation-experimental-1.4.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\fe63b96c6631c2e518f71cc5d51e9606\workspace\transformed\jetified-annotation-experimental-1.4.1\AndroidManifest.xml:5:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\fe63b96c6631c2e518f71cc5d51e9606\workspace\transformed\jetified-annotation-experimental-1.4.1\AndroidManifest.xml:5:5-44
 MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\22ad1c402027b54ba1576e434da19671\workspace\transformed\cursoradapter-1.0.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\22ad1c402027b54ba1576e434da19671\workspace\transformed\cursoradapter-1.0.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:21:5-44
 MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\84e43f1c01dc2305ca92028e01340982\workspace\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:21:5-44
-MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\07572e18898fc07d028ac29b1030f0f8\workspace\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
-MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\07572e18898fc07d028ac29b1030f0f8\workspace\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
-MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\82ed3daf0fd15cd48736a222eafff3f7\workspace\transformed\jetified-tracing-1.0.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\82ed3daf0fd15cd48736a222eafff3f7\workspace\transformed\jetified-tracing-1.0.0\AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\e689de7501eb1979ce68889bed2487b2\workspace\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\e689de7501eb1979ce68889bed2487b2\workspace\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\208699ffc2018bfc5c23bcc93a94653c\workspace\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\208699ffc2018bfc5c23bcc93a94653c\workspace\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\07572e18898fc07d028ac29b1030f0f8\workspace\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\umesh\.gradle\caches\9.3.0\transforms\07572e18898fc07d028ac29b1030f0f8\workspace\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\82ed3daf0fd15cd48736a222eafff3f7\workspace\transformed\jetified-tracing-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\82ed3daf0fd15cd48736a222eafff3f7\workspace\transformed\jetified-tracing-1.0.0\AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\0ab9188bac33f0a553a90bda00d5bbdb\workspace\transformed\core-runtime-2.2.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\umesh\.gradle\caches\9.3.0\transforms\0ab9188bac33f0a553a90bda00d5bbdb\workspace\transformed\core-runtime-2.2.0\AndroidManifest.xml:20:5-44
 	android:targetSdkVersion
