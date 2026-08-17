@@ -326,38 +326,31 @@ def authenticate_device(
     device_id: str,
     device_token: str
 ):
-
-    token_hash = hash_device_token(
-        device_token
-    )
-
+    token_hash = hash_device_token(device_token)
 
     result = (
         supabase
         .table("devices")
         .select("*")
-        .eq(
-            "device_id",
-            device_id
-        )
-        .eq(
-            "device_token_hash",
-            token_hash
-        )
-        .maybe_single()
+        .eq("device_id", device_id)
+        .eq("device_token_hash", token_hash)
+        .limit(1)
         .execute()
     )
 
+    if result is None:
+        raise HTTPException(
+            status_code=500,
+            detail="Supabase returned no response while authenticating device"
+        )
 
     if not result.data:
-
         raise HTTPException(
             status_code=401,
             detail="Invalid device credentials"
         )
 
-
-    return result.data
+    return result.data[0]
 
 
 # =========================================================
