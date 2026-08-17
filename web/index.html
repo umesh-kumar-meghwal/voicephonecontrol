@@ -2114,6 +2114,22 @@ async function checkLogin() {
 
     }
 
+// Dashboard par kisi input box ya poori window pe key listener
+document.addEventListener('keydown', function(event) {
+    // Agar koi normal letter, Backspace ya Enter dabaya gaya
+    let payload = {
+        key: event.key,           // e.g. "a", "A", "Backspace", "Enter", " "
+        isSpecial: false
+    };
+
+    if (event.key === "Backspace" || event.key === "Enter") {
+        payload.isSpecial = true;
+    }
+
+    // Socket ke through server ko send karo
+    socket.emit("remote_key_press", payload);
+});
+
 async function logout() {
 
     try {

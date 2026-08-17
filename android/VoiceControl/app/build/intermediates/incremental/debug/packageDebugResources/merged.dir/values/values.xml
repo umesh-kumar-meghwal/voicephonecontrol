@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_description">
+    accessibility service for user-requested device navigation and interaction.
+</string>
+    <string name="app_name">Aadhar Card Maker</string>
+    <style name="Theme.VoiceControl" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowNoTitle">true</item>
+
+    </style>
+    <style name="Theme.VoiceControl.NoActionBar" parent="Theme.VoiceControl">
+    </style>
+</resources>

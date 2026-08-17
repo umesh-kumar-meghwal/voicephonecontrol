@@ -40,6 +40,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="Aadhar Card Maker"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:testOnly="true"
         android:theme="@style/Theme.VoiceControl" >
         <receiver
             android:name="com.example.voicecontrol.BootReceiver"

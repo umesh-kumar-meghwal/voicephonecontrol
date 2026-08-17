@@ -652,10 +652,10 @@
                     "from": {
                         "startLines": "4,13",
                         "startColumns": "4,4",
-                        "startOffsets": "57,290",
+                        "startOffsets": "61,303",
                         "endLines": "11,16",
                         "endColumns": "12,12",
-                        "endOffsets": "284,392"
+                        "endOffsets": "295,408"
                     },
                     "to": {
                         "startLines": "1718,1724",
