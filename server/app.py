@@ -238,98 +238,54 @@ def create_access_token(
         algorithm=JWT_ALGORITHM
     )
 
-
 def get_current_user(
-    authorization: Optional[str] =
-    Header(default=None)
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
-
-    if not authorization:
-
-        raise HTTPException(
-            status_code=401,
-            detail="Authorization required"
-        )
-
-
-    if not authorization.startswith(
-        "Bearer "
-    ):
-
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid authorization format"
-        )
-
-
-    token = authorization[
-        7:
-    ]
-
+    token = credentials.credentials
 
     try:
-
         payload = jwt.decode(
             token,
             JWT_SECRET,
-            algorithms=[
-                JWT_ALGORITHM
-            ]
+            algorithms=[JWT_ALGORITHM]
         )
 
     except jwt.ExpiredSignatureError:
-
         raise HTTPException(
             status_code=401,
             detail="Token expired"
         )
 
     except jwt.InvalidTokenError:
-
         raise HTTPException(
             status_code=401,
             detail="Invalid token"
         )
 
-
-    user_id = payload.get(
-        "sub"
-    )
-
+    user_id = payload.get("sub")
 
     if not user_id:
-
         raise HTTPException(
             status_code=401,
             detail="Invalid token"
         )
-
 
     result = (
         supabase
         .table("users")
-        .select(
-            "id,username,created_at"
-        )
-        .eq(
-            "id",
-            user_id
-        )
+        .select("id,username,created_at")
+        .eq("id", user_id)
         .maybe_single()
         .execute()
     )
 
-
     if not result.data:
-
         raise HTTPException(
             status_code=401,
             detail="User not found"
         )
 
-
     return result.data
-
 
 # =========================================================
 # DEVICE TOKEN
@@ -612,52 +568,12 @@ def login_user(
 # =========================================================
 @app.get("/auth/me")
 def current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security)
+    user=Depends(get_current_user)
 ):
-    token = credentials.credentials
-
-    try:
-        payload = jwt.decode(
-            token,
-            JWT_SECRET,
-            algorithms=["HS256"]
-        )
-
-        user_id = payload.get("sub")
-
-        if not user_id:
-            raise HTTPException(
-                status_code=401,
-                detail="Invalid token"
-            )
-
-    except JWTError:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid or expired token"
-        )
-
-    response = (
-        supabase
-        .table("users")
-        .select("id, username, created_at")
-        .eq("id", user_id)
-        .execute()
-    )
-
-    users = response.data or []
-
-    if not users:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found"
-        )
-
     return {
         "ok": True,
-        "user": users[0]
+        "user": user
     }
-
 # =========================================================
 # REGISTER DEVICE
 # Android App -> Server
