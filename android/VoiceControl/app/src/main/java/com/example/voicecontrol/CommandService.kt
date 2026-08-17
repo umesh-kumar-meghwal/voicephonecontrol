@@ -86,13 +86,11 @@ class CommandService : Service() {
                     try {
 
                         val command =
-                            ApiClient.getCommandSync(this)
+                            ApiClient.getCommandSync(applicationContext)
 
                         if (command != null) {
 
-                            handleCommand(
-                                command
-                            )
+                            handleCommand(command)
 
                         } else {
 
@@ -103,6 +101,14 @@ class CommandService : Service() {
                         }
 
                     } catch (e: Exception) {
+
+                        Log.e(
+                            TAG,
+                            "COMMAND POLLING ERROR",
+                            e
+                        )
+
+                }catch (e: Exception) {
 
                         Log.e(
                             TAG,

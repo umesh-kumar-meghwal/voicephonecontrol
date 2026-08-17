@@ -7,16 +7,34 @@ import android.util.Log
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
+import java.net.URLEncoder
 
 object ApiClient {
 
     private const val TAG = "ApiClient"
 
+    // =========================================================
+    // SERVER
+    // =========================================================
+
     private const val SERVER_URL =
         "https://phonecontrol-black.vercel.app"
 
+    /*
+     * IMPORTANT:
+     * Ye server-side API token hai.
+     *
+     * Production APK ke andar permanent secret rakhna secure nahi hai.
+     * Filhaal existing project ke server ke saath compatibility ke liye
+     * same token use kiya gaya hai.
+     */
     private const val API_TOKEN =
         "VPC-a8F3xK91-pQ7L2mZ6-4NwR8tY5U"
+
+
+    // =========================================================
+    // LOCAL STORAGE
+    // =========================================================
 
     private const val PREF_NAME =
         "voice_phone_control"
@@ -24,31 +42,58 @@ object ApiClient {
     private const val DEVICE_ID_KEY =
         "device_id"
 
+    private const val DEVICE_TOKEN_KEY =
+        "device_token"
+
 
     // =========================================================
-    // DEVICE ID
+    // GET SAVED DEVICE ID
     // =========================================================
 
     fun getSavedDeviceId(
         context: Context
     ): String? {
 
-        val prefs =
-            context.getSharedPreferences(
+        return context
+            .getSharedPreferences(
                 PREF_NAME,
                 Context.MODE_PRIVATE
             )
-
-        return prefs.getString(
-            DEVICE_ID_KEY,
-            null
-        )
+            .getString(
+                DEVICE_ID_KEY,
+                null
+            )
     }
 
 
-    private fun saveDeviceId(
+    // =========================================================
+    // GET SAVED DEVICE TOKEN
+    // =========================================================
+
+    private fun getSavedDeviceToken(
+        context: Context
+    ): String? {
+
+        return context
+            .getSharedPreferences(
+                PREF_NAME,
+                Context.MODE_PRIVATE
+            )
+            .getString(
+                DEVICE_TOKEN_KEY,
+                null
+            )
+    }
+
+
+    // =========================================================
+    // SAVE DEVICE CREDENTIALS
+    // =========================================================
+
+    private fun saveDeviceCredentials(
         context: Context,
-        deviceId: String
+        deviceId: String,
+        deviceToken: String
     ) {
 
         context
@@ -61,7 +106,16 @@ object ApiClient {
                 DEVICE_ID_KEY,
                 deviceId
             )
+            .putString(
+                DEVICE_TOKEN_KEY,
+                deviceToken
+            )
             .apply()
+
+        Log.d(
+            TAG,
+            "DEVICE CREDENTIALS SAVED"
+        )
     }
 
 
@@ -97,38 +151,78 @@ object ApiClient {
     // REGISTER DEVICE
     // =========================================================
 
+    @Synchronized
     fun registerDevice(
         context: Context
     ): String? {
 
-        val existing =
+        val existingDeviceId =
             getSavedDeviceId(context)
 
-        if (existing != null) {
+        val existingDeviceToken =
+            getSavedDeviceToken(context)
+
+        /*
+         * Agar phone pehle se registered hai,
+         * dobara new device create nahi karna.
+         */
+        if (
+            !existingDeviceId.isNullOrBlank() &&
+            !existingDeviceToken.isNullOrBlank()
+        ) {
 
             Log.d(
                 TAG,
-                "Existing Device ID = $existing"
+                "DEVICE ALREADY REGISTERED"
             )
 
-            return existing
+            Log.d(
+                TAG,
+                "DEVICE ID = $existingDeviceId"
+            )
+
+            return existingDeviceId
         }
+
 
         var connection:
                 HttpURLConnection? = null
 
         try {
 
+            Log.d(
+                TAG,
+                "REGISTERING DEVICE..."
+            )
+
+
             val url =
-                URL("$SERVER_URL/device/register")
+                URL(
+                    "$SERVER_URL/device/register"
+                )
+
 
             connection =
                 url.openConnection()
                         as HttpURLConnection
 
-            connection.requestMethod = "POST"
 
-            connection.doOutput = true
+            connection.requestMethod =
+                "POST"
+
+            connection.doOutput =
+                true
+
+            connection.connectTimeout =
+                10000
+
+            connection.readTimeout =
+                10000
+
+
+            // -------------------------------------------------
+            // HEADERS
+            // -------------------------------------------------
 
             connection.setRequestProperty(
                 "Authorization",
@@ -140,10 +234,36 @@ object ApiClient {
                 "application/json"
             )
 
-            val deviceName =
-                "${Build.MANUFACTURER} ${Build.MODEL}"
+            connection.setRequestProperty(
+                "Accept",
+                "application/json"
+            )
 
-            val json = JSONObject()
+
+            // -------------------------------------------------
+            // DEVICE INFORMATION
+            // -------------------------------------------------
+
+            val manufacturer =
+                Build.MANUFACTURER
+
+            val model =
+                Build.MODEL
+
+            val deviceName =
+                "$manufacturer $model"
+
+
+            val androidId =
+                getAndroidId(context)
+
+
+            // -------------------------------------------------
+            // REQUEST JSON
+            // -------------------------------------------------
+
+            val json =
+                JSONObject()
 
             json.put(
                 "device_name",
@@ -152,15 +272,32 @@ object ApiClient {
 
             json.put(
                 "device_model",
-                Build.MODEL
+                model
             )
 
             json.put(
                 "android_id",
-                getAndroidId(context)
+                androidId
             )
 
-            connection.outputStream
+
+            Log.d(
+                TAG,
+                "DEVICE NAME = $deviceName"
+            )
+
+            Log.d(
+                TAG,
+                "DEVICE MODEL = $model"
+            )
+
+
+            // -------------------------------------------------
+            // SEND REQUEST
+            // -------------------------------------------------
+
+            connection
+                .outputStream
                 .bufferedWriter()
                 .use {
 
@@ -171,60 +308,186 @@ object ApiClient {
                     it.flush()
                 }
 
-            val code =
+
+            // -------------------------------------------------
+            // RESPONSE CODE
+            // -------------------------------------------------
+
+            val responseCode =
                 connection.responseCode
+
 
             Log.d(
                 TAG,
-                "REGISTER -> HTTP $code"
+                "REGISTER HTTP = $responseCode"
             )
 
-            if (code != 200) {
+
+            // -------------------------------------------------
+            // ERROR RESPONSE
+            // -------------------------------------------------
+
+            if (
+                responseCode !in 200..299
+            ) {
+
+                val errorBody =
+                    try {
+
+                        connection
+                            .errorStream
+                            ?.bufferedReader()
+                            ?.use {
+                                it.readText()
+                            }
+
+                    } catch (_: Exception) {
+
+                        null
+                    }
+
+
+                Log.e(
+                    TAG,
+                    "REGISTER FAILED = $errorBody"
+                )
 
                 return null
             }
 
+
+            // -------------------------------------------------
+            // SUCCESS RESPONSE
+            // -------------------------------------------------
+
             val response =
-                connection.inputStream
+                connection
+                    .inputStream
                     .bufferedReader()
                     .use {
                         it.readText()
                     }
+
 
             Log.d(
                 TAG,
                 "REGISTER RESPONSE = $response"
             )
 
+
             val result =
                 JSONObject(response)
 
-            val deviceId =
-                result.getString(
-                    "device_id"
+
+            if (
+                !result.optBoolean(
+                    "ok",
+                    false
+                )
+            ) {
+
+                Log.e(
+                    TAG,
+                    "REGISTER RESPONSE NOT OK"
                 )
 
-            saveDeviceId(
+                return null
+            }
+
+
+            // -------------------------------------------------
+            // GET DEVICE ID
+            // -------------------------------------------------
+
+            val deviceId =
+                result.optString(
+                    "device_id",
+                    ""
+                )
+
+
+            // -------------------------------------------------
+            // GET DEVICE TOKEN
+            // -------------------------------------------------
+
+            val deviceToken =
+                result.optString(
+                    "device_token",
+                    ""
+                )
+
+
+            if (
+                deviceId.isBlank()
+            ) {
+
+                Log.e(
+                    TAG,
+                    "DEVICE ID EMPTY"
+                )
+
+                return null
+            }
+
+
+            if (
+                deviceToken.isBlank()
+            ) {
+
+                Log.e(
+                    TAG,
+                    "DEVICE TOKEN EMPTY"
+                )
+
+                return null
+            }
+
+
+            // -------------------------------------------------
+            // SAVE
+            // -------------------------------------------------
+
+            saveDeviceCredentials(
                 context,
-                deviceId
+                deviceId,
+                deviceToken
+            )
+
+
+            Log.d(
+                TAG,
+                "================================"
             )
 
             Log.d(
                 TAG,
-                "DEVICE REGISTERED = $deviceId"
+                "DEVICE REGISTERED SUCCESSFULLY"
             )
 
+            Log.d(
+                TAG,
+                "DEVICE ID = $deviceId"
+            )
+
+            Log.d(
+                TAG,
+                "================================"
+            )
+
+
             return deviceId
+
 
         } catch (e: Exception) {
 
             Log.e(
                 TAG,
-                "DEVICE REGISTER ERROR",
+                "REGISTER DEVICE ERROR",
                 e
             )
 
             return null
+
 
         } finally {
 
@@ -241,37 +504,58 @@ object ApiClient {
         context: Context
     ): JSONObject? {
 
+        /*
+         * Device ID nahi hai to automatically register.
+         */
         val deviceId =
             getSavedDeviceId(context)
                 ?: registerDevice(context)
                 ?: return null
 
+
+        /*
+         * Device token required.
+         */
+        val deviceToken =
+            getSavedDeviceToken(context)
+                ?: return null
+
+
         var connection:
                 HttpURLConnection? = null
 
+
         try {
+
+            val encodedDeviceId =
+                URLEncoder.encode(
+                    deviceId,
+                    "UTF-8"
+                )
+
+
+            val encodedToken =
+                URLEncoder.encode(
+                    deviceToken,
+                    "UTF-8"
+                )
+
 
             val url =
                 URL(
-                    "$SERVER_URL/command" +
-                            "?device_id=$deviceId"
+                    "$SERVER_URL/device/command" +
+                            "?device_id=$encodedDeviceId" +
+                            "&device_token=$encodedToken"
                 )
+
 
             connection =
                 url.openConnection()
                         as HttpURLConnection
 
-            connection.requestMethod = "GET"
 
-            connection.setRequestProperty(
-                "Authorization",
-                "Bearer $API_TOKEN"
-            )
-
-            connection.setRequestProperty(
-                "Accept",
-                "application/json"
-            )
+            connection.requestMethod =
+                "GET"
 
             connection.connectTimeout =
                 10000
@@ -279,35 +563,84 @@ object ApiClient {
             connection.readTimeout =
                 10000
 
+
+            connection.setRequestProperty(
+                "Accept",
+                "application/json"
+            )
+
+
             val responseCode =
                 connection.responseCode
 
+
             Log.d(
                 TAG,
-                "GET COMMAND -> HTTP $responseCode"
+                "COMMAND HTTP = $responseCode"
             )
 
-            if (responseCode != 200) {
+
+            if (
+                responseCode != 200
+            ) {
+
+                /*
+                 * Unauthorized hone par credentials clear
+                 * nahi kar rahe, taaki accidental loss na ho.
+                 */
+                Log.e(
+                    TAG,
+                    "COMMAND REQUEST FAILED"
+                )
 
                 return null
             }
 
+
             val response =
-                connection.inputStream
+                connection
+                    .inputStream
                     .bufferedReader()
                     .use {
                         it.readText()
                     }
 
+
             if (
-                response.isBlank() ||
-                response == "null"
+                response.isBlank()
             ) {
 
                 return null
             }
 
-            return JSONObject(response)
+
+            val result =
+                JSONObject(response)
+
+
+            val command =
+                result.optString(
+                    "command",
+                    ""
+                )
+
+
+            if (
+                command.isBlank()
+            ) {
+
+                return null
+            }
+
+
+            Log.d(
+                TAG,
+                "COMMAND RECEIVED = $command"
+            )
+
+
+            return result
+
 
         } catch (e: Exception) {
 
@@ -318,6 +651,7 @@ object ApiClient {
             )
 
             return null
+
 
         } finally {
 
@@ -339,30 +673,55 @@ object ApiClient {
                 ?: registerDevice(context)
                 ?: return
 
+
+        val deviceToken =
+            getSavedDeviceToken(context)
+                ?: return
+
+
         Thread {
 
             var connection:
                     HttpURLConnection? = null
 
+
             try {
 
+                val encodedToken =
+                    URLEncoder.encode(
+                        deviceToken,
+                        "UTF-8"
+                    )
+
+
+                /*
+                 * Current FastAPI endpoint:
+                 *
+                 * POST /device/heartbeat
+                 * Body:
+                 * {
+                 *   "device_id": "..."
+                 * }
+                 *
+                 * Token query parameter mein.
+                 */
                 val url =
                     URL(
                         "$SERVER_URL/device/heartbeat" +
-                                "?device_id=$deviceId"
+                                "?device_token=$encodedToken"
                     )
+
 
                 connection =
                     url.openConnection()
                             as HttpURLConnection
 
+
                 connection.requestMethod =
                     "POST"
 
-                connection.setRequestProperty(
-                    "Authorization",
-                    "Bearer $API_TOKEN"
-                )
+                connection.doOutput =
+                    true
 
                 connection.connectTimeout =
                     5000
@@ -370,13 +729,68 @@ object ApiClient {
                 connection.readTimeout =
                     5000
 
-                val code =
+
+                connection.setRequestProperty(
+                    "Content-Type",
+                    "application/json"
+                )
+
+                connection.setRequestProperty(
+                    "Accept",
+                    "application/json"
+                )
+
+
+                val json =
+                    JSONObject()
+
+
+                json.put(
+                    "device_id",
+                    deviceId
+                )
+
+
+                connection
+                    .outputStream
+                    .bufferedWriter()
+                    .use {
+
+                        it.write(
+                            json.toString()
+                        )
+
+                        it.flush()
+                    }
+
+
+                val responseCode =
                     connection.responseCode
+
 
                 Log.d(
                     TAG,
-                    "HEARTBEAT -> HTTP $code"
+                    "HEARTBEAT HTTP = $responseCode"
                 )
+
+
+                if (
+                    responseCode == 200
+                ) {
+
+                    Log.d(
+                        TAG,
+                        "HEARTBEAT SUCCESS"
+                    )
+
+                } else {
+
+                    Log.e(
+                        TAG,
+                        "HEARTBEAT FAILED"
+                    )
+                }
+
 
             } catch (e: Exception) {
 
@@ -386,11 +800,51 @@ object ApiClient {
                     e
                 )
 
+
             } finally {
 
                 connection?.disconnect()
             }
 
         }.start()
+    }
+
+
+    // =========================================================
+    // CLEAR DEVICE CREDENTIALS
+    // =========================================================
+
+    /*
+     * Development/testing ke liye.
+     *
+     * Agar phone ko fresh registration karwana ho:
+     *
+     * ApiClient.clearDeviceCredentials(context)
+     *
+     * Next request par new device registration hogi.
+     */
+    fun clearDeviceCredentials(
+        context: Context
+    ) {
+
+        context
+            .getSharedPreferences(
+                PREF_NAME,
+                Context.MODE_PRIVATE
+            )
+            .edit()
+            .remove(
+                DEVICE_ID_KEY
+            )
+            .remove(
+                DEVICE_TOKEN_KEY
+            )
+            .apply()
+
+
+        Log.d(
+            TAG,
+            "DEVICE CREDENTIALS CLEARED"
+        )
     }
 }
