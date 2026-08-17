@@ -580,17 +580,33 @@ object ApiClient {
             )
 
 
-            if (
-                responseCode != 200
-            ) {
+            if (responseCode != 200) {
 
-                /*
-                 * Unauthorized hone par credentials clear
-                 * nahi kar rahe, taaki accidental loss na ho.
-                 */
+                val errorBody =
+                    try {
+                        connection
+                            .errorStream
+                            ?.bufferedReader()
+                            ?.use {
+                                it.readText()
+                            }
+                    } catch (e: Exception) {
+                        "Unable to read error body: ${e.message}"
+                    }
+
                 Log.e(
                     TAG,
-                    "COMMAND REQUEST FAILED"
+                    "COMMAND HTTP = $responseCode"
+                )
+
+                Log.e(
+                    TAG,
+                    "COMMAND ERROR BODY = $errorBody"
+                )
+
+                Log.e(
+                    TAG,
+                    "DEVICE ID = $deviceId"
                 )
 
                 return null
