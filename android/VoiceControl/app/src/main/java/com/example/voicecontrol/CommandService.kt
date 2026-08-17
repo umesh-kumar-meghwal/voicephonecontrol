@@ -86,7 +86,7 @@ class CommandService : Service() {
                     try {
 
                         val command =
-                            ApiClient.getCommandSync()
+                            ApiClient.getCommandSync(this)
 
                         if (command != null) {
 

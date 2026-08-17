@@ -17,15 +17,30 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.d(TAG, "========== APP STARTED ==========")
+        Log.d(
+            TAG,
+            "========== APP STARTED =========="
+        )
+
+        // Register this Android device
+        Thread {
+
+            val deviceId =
+                ApiClient.registerDevice(this)
+
+            Log.d(
+                TAG,
+                "MY DEVICE ID = $deviceId"
+            )
+
+        }.start()
 
         // Existing command service
         startCommandService()
 
-        // Microphone permission check
+        // Microphone permission
         checkMicrophonePermission()
 
-        // Accessibility permission manually Settings se deni hai.
         finish()
     }
 
