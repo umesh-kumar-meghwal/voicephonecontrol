@@ -2,15 +2,12 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <title>Voice Phone Control</title>
+    <title>VoicePhoneControl</title>
 
     <style>
 
@@ -18,2881 +15,1248 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --bg: #060a0d;
-            --bg2: #0a1110;
-
-            --card: #0d1715;
-            --card2: #111f1c;
-
-            --border: rgba(255,255,255,0.08);
-
-            --text: #f5f7f6;
-            --muted: #91a29d;
-
-            --green: #22c55e;
-            --green2: #16a34a;
-            --green-soft: rgba(34,197,94,0.14);
-
-            --danger: #ef4444;
-            --danger2: #dc2626;
-
-            --shadow:
-                0 20px 60px rgba(0,0,0,0.35);
-        }
-
-
-        /* =====================================================
-           BODY
-        ===================================================== */
-
         body {
-
             margin: 0;
-
-            min-height: 100vh;
-
-            font-family:
-                Inter,
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
-
-            color: var(--text);
-
-            background:
-
-                radial-gradient(
-                    circle at 10% 0%,
-                    rgba(34,197,94,0.14),
-                    transparent 32%
-                ),
-
-                radial-gradient(
-                    circle at 90% 10%,
-                    rgba(16,185,129,0.09),
-                    transparent 28%
-                ),
-
-                linear-gradient(
-                    180deg,
-                    #050806 0%,
-                    #080d0c 50%,
-                    #050807 100%
-                );
-
+            font-family: Arial, sans-serif;
+            background: #07100d;
+            color: white;
         }
-
-
-        /* =====================================================
-           CONTAINER
-        ===================================================== */
 
         .container {
-
-            width: min(1120px, 94%);
-
-            margin: auto;
-
-            padding:
-                35px
-                0
-                60px;
-
+            width: 92%;
+            max-width: 1100px;
+            margin: 35px auto;
         }
 
-
-        /* =====================================================
-           HEADER
-        ===================================================== */
-
-        .header {
-
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
-
-            gap: 20px;
-
-            margin-bottom: 28px;
-
+        .card {
+            background: #101b18;
+            border: 1px solid #263832;
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 20px;
         }
 
-
-        .brand h1 {
-
-            margin: 0;
-
-            font-size:
-                clamp(26px, 4vw, 40px);
-
-            font-weight: 850;
-
-            letter-spacing: -1px;
-
-            background:
-
-                linear-gradient(
-                    90deg,
-                    #ffffff,
-                    #86efac
-                );
-
-            -webkit-background-clip: text;
-
-            -webkit-text-fill-color: transparent;
-
+        h1,
+        h2,
+        h3 {
+            margin-top: 0;
         }
 
-
-        .brand p {
-
-            margin:
-                8px
-                0
-                0;
-
-            color: var(--muted);
-
-            font-size: 14px;
-
+        input {
+            width: 100%;
+            padding: 13px;
+            margin: 7px 0;
+            border-radius: 10px;
+            border: 1px solid #34453e;
+            background: #09120f;
+            color: white;
+            outline: none;
         }
 
+        input:focus {
+            border-color: #22c55e;
+        }
+
+        button {
+            padding: 11px 17px;
+            border: 0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 4px;
+            background: #22c55e;
+            color: #041008;
+        }
+
+        button:hover {
+            background: #16a34a;
+            color: white;
+        }
+
+        button.danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        button.secondary {
+            background: #263832;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .message {
+            margin-top: 12px;
+            min-height: 20px;
+        }
+
+        .device {
+            padding: 18px;
+            border: 1px solid #34453e;
+            border-radius: 14px;
+            margin-top: 14px;
+            background: #0b1512;
+        }
 
         .online {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 9px;
-
-            padding:
-                10px
-                15px;
-
-            border:
-                1px solid
-                rgba(34,197,94,0.22);
-
-            border-radius: 999px;
-
-            background:
-                rgba(34,197,94,0.07);
-
-            color:
-                #bbf7d0;
-
-            font-size: 13px;
-
-            font-weight: 700;
-
+            color: #4dff88;
         }
 
-
-        .dot {
-
-            width: 9px;
-
-            height: 9px;
-
-            border-radius: 50%;
-
-            background:
-                var(--green);
-
-            box-shadow:
-                0 0 14px
-                rgba(34,197,94,0.8);
-
+        .offline {
+            color: #ff6464;
         }
-
-
-        /* =====================================================
-           COMMON CARD
-        ===================================================== */
-
-        .status-card,
-        .gallery-card {
-
-            background:
-
-                linear-gradient(
-                    145deg,
-                    rgba(255,255,255,0.055),
-                    rgba(255,255,255,0.018)
-                );
-
-            border:
-                1px solid
-                var(--border);
-
-            border-radius: 22px;
-
-            box-shadow:
-                var(--shadow);
-
-        }
-
-
-        /* =====================================================
-           STATUS
-        ===================================================== */
-
-        .status-card {
-
-            padding: 22px;
-
-            margin-bottom: 28px;
-
-        }
-
-
-        .status-header {
-
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
-
-            gap: 15px;
-
-            margin-bottom: 18px;
-
-        }
-
-
-        .status-header h2 {
-
-            margin: 0;
-
-            font-size: 19px;
-
-        }
-
-
-        .refresh-btn,
-        .gallery-btn {
-
-            border:
-                1px solid
-                var(--border);
-
-            background:
-                var(--card2);
-
-            color: white;
-
-            padding:
-                9px
-                14px;
-
-            border-radius: 10px;
-
-            cursor: pointer;
-
-            transition: 0.2s;
-
-        }
-
-
-        .refresh-btn:hover,
-        .gallery-btn:hover {
-
-            border-color:
-                rgba(34,197,94,0.4);
-
-            background:
-                rgba(34,197,94,0.1);
-
-            color:
-                #bbf7d0;
-
-        }
-
-
-        .status-grid {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(4, 1fr);
-
-            gap: 13px;
-
-        }
-
-
-        .status-item {
-
-            background:
-                rgba(255,255,255,0.035);
-
-            border:
-                1px solid
-                rgba(255,255,255,0.06);
-
-            border-radius: 15px;
-
-            padding: 17px;
-
-            transition: 0.2s;
-
-        }
-
-
-        .status-item:hover {
-
-            border-color:
-                rgba(34,197,94,0.25);
-
-            background:
-                rgba(34,197,94,0.045);
-
-        }
-
-
-        .status-icon {
-
-            font-size: 22px;
-
-            margin-bottom: 8px;
-
-        }
-
-
-        .status-label {
-
-            color:
-                var(--muted);
-
-            font-size: 12px;
-
-        }
-
-
-        .status-value {
-
-            margin-top: 4px;
-
-            font-size: 17px;
-
-            font-weight: 750;
-
-        }
-
-
-        /* =====================================================
-           SECTION TITLE
-        ===================================================== */
-
-        .section-title {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 10px;
-
-            margin:
-                30px
-                0
-                15px;
-
-        }
-
-
-        .section-title h2 {
-
-            margin: 0;
-
-            font-size: 20px;
-
-        }
-
-
-        .section-title::before {
-
-            content: "";
-
-            width: 4px;
-
-            height: 22px;
-
-            border-radius: 10px;
-
-            background:
-                linear-gradient(
-                    180deg,
-                    var(--green),
-                    #86efac
-                );
-
-            box-shadow:
-                0 0 12px
-                rgba(34,197,94,0.45);
-
-        }
-
-
-        /* =====================================================
-           COMMANDS
-        ===================================================== */
 
         .commands {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(4, 1fr);
-
-            gap: 12px;
-
-        }
-
-
-        button.command {
-
-            position: relative;
-
-            border:
-                1px solid
-                rgba(255,255,255,0.07);
-
-            border-radius: 16px;
-
-            padding:
-                17px
-                14px;
-
-            background:
-
-                linear-gradient(
-                    145deg,
-                    #111b19,
-                    #0b1211
-                );
-
-            color: white;
-
-            cursor: pointer;
-
-            text-align: left;
-
-            transition:
-                transform 0.18s,
-                border-color 0.18s,
-                background 0.18s;
-
-            min-height: 77px;
-
-        }
-
-
-        button.command:hover {
-
-            transform:
-                translateY(-3px);
-
-            border-color:
-                rgba(34,197,94,0.38);
-
-            background:
-
-                linear-gradient(
-                    145deg,
-                    #14221e,
-                    #0c1513
-                );
-
-            box-shadow:
-                0 10px 30px
-                rgba(0,0,0,0.2);
-
-        }
-
-
-        button.command:active {
-
-            transform:
-                scale(0.97);
-
-        }
-
-
-        .command-number {
-
-            display: block;
-
-            color:
-                var(--green);
-
-            font-size: 11px;
-
-            font-weight: 850;
-
-            margin-bottom: 6px;
-
-        }
-
-
-        .command-name {
-
-            font-size: 14px;
-
-            font-weight: 750;
-
-        }
-
-
-        .command-desc {
-
-            margin-top: 4px;
-
-            color:
-                var(--muted);
-
-            font-size: 11px;
-
-        }
-
-
-        .special {
-
-            border-color:
-                rgba(34,197,94,0.22) !important;
-
-        }
-
-
-        /* =====================================================
-           APPS
-        ===================================================== */
-
-        .apps {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(5, 1fr);
-
-            gap: 12px;
-
-        }
-
-
-        .app-button {
-
-            border:
-                1px solid
-                rgba(255,255,255,0.07);
-
-            background:
-                var(--card);
-
-            color: white;
-
-            border-radius: 16px;
-
-            padding:
-                18px
-                10px;
-
-            cursor: pointer;
-
-            transition: 0.18s;
-
-        }
-
-
-        .app-button:hover {
-
-            transform:
-                translateY(-3px);
-
-            border-color:
-                rgba(34,197,94,0.3);
-
-            background:
-                #11201c;
-
-        }
-
-
-        .app-icon {
-
-            display: block;
-
-            font-size: 28px;
-
-            margin-bottom: 8px;
-
-        }
-
-
-        .app-name {
-
-            font-size: 13px;
-
-            font-weight: 750;
-
-        }
-
-
-        /* =====================================================
-           SCREENSHOT GALLERY
-        ===================================================== */
-
-        .gallery-card {
-
-            margin-top: 32px;
-
-            padding: 22px;
-
-        }
-
-
-        .gallery-header {
-
             display: flex;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
 
+        .command {
+            background: #1c2c26;
+            color: white;
+        }
+
+        .command:hover {
+            background: #22c55e;
+        }
+
+        .topbar {
+            display: flex;
             justify-content: space-between;
-
             align-items: center;
-
             gap: 15px;
-
-            margin-bottom: 20px;
-
+            flex-wrap: wrap;
         }
 
-
-        .gallery-header h2 {
-
-            margin: 0;
-
-            font-size: 19px;
-
-        }
-
-
-        .gallery-subtitle {
-
-            color:
-                var(--muted);
-
-            font-size: 12px;
-
-            margin-top: 5px;
-
-        }
-
-
-        .screenshot-grid {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(3, 1fr);
-
-            gap: 16px;
-
-        }
-
-
-        .screenshot-card {
-
-            overflow: hidden;
-
-            background:
-                #080d0c;
-
-            border:
-                1px solid
-                rgba(255,255,255,0.08);
-
-            border-radius: 16px;
-
-            transition: 0.2s;
-
-        }
-
-
-        .screenshot-card:hover {
-
-            border-color:
-                rgba(34,197,94,0.28);
-
-            box-shadow:
-                0 12px 35px
-                rgba(0,0,0,0.3);
-
-        }
-
-
-        .image-wrapper {
-
-            position: relative;
-
-            background:
-                #030504;
-
-        }
-
-
-        .screenshot-image {
-
-            display: block;
-
-            width: 100%;
-
-            height: 410px;
-
-            object-fit: contain;
-
-            background:
-                #030504;
-
-            cursor: pointer;
-
-        }
-
-
-        /* =====================================================
-           DELETE BUTTON
-        ===================================================== */
-
-        .delete-btn {
-
-            position: absolute;
-
-            top: 10px;
-
-            right: 10px;
-
-            border:
-                1px solid
-                rgba(239,68,68,0.3);
-
-            background:
-                rgba(127,29,29,0.88);
-
-            color:
-                #fecaca;
-
-            padding:
-                8px
-                11px;
-
-            border-radius: 9px;
-
-            font-size: 12px;
-
-            font-weight: 750;
-
-            cursor: pointer;
-
-            backdrop-filter:
-                blur(8px);
-
-            transition: 0.18s;
-
-        }
-
-
-        .delete-btn:hover {
-
-            background:
-                var(--danger2);
-
-            color: white;
-
-            border-color:
-                rgba(255,255,255,0.2);
-
-            transform:
-                scale(1.04);
-
-        }
-
-
-        .delete-btn:disabled {
-
-            opacity: 0.55;
-
-            cursor: wait;
-
-            transform: none;
-
-        }
-
-
-        .screenshot-info {
-
-            padding:
-                12px;
-
-        }
-
-
-        .screenshot-name {
-
-            font-size: 12px;
-
-            font-weight: 750;
-
-            white-space: nowrap;
-
-            overflow: hidden;
-
-            text-overflow: ellipsis;
-
-        }
-
-
-        .screenshot-date {
-
-            margin-top: 5px;
-
-            color:
-                var(--muted);
-
-            font-size: 10px;
-
-        }
-
-
-        .empty-gallery {
-
-            grid-column: 1 / -1;
-
-            padding:
-                45px
-                10px;
-
-            text-align: center;
-
-            color:
-                var(--muted);
-
+        .api-status {
+            padding: 8px 12px;
+            border-radius: 20px;
+            background: #10251a;
+            color: #4dff88;
             font-size: 13px;
-
-            border:
-                1px dashed
-                rgba(255,255,255,0.08);
-
-            border-radius: 15px;
-
         }
 
-
-        /* =====================================================
-           IMAGE MODAL
-        ===================================================== */
-
-        .image-modal {
-
-            display: none;
-
-            position: fixed;
-
-            inset: 0;
-
-            z-index: 9999;
-
-            padding: 25px;
-
-            background:
-                rgba(0,0,0,0.94);
-
-            align-items: center;
-
-            justify-content: center;
-
-            backdrop-filter:
-                blur(8px);
-
+        .api-status.error {
+            color: #ff6464;
+            background: #2a1212;
         }
 
-
-        .image-modal.show {
-
-            display: flex;
-
+        .empty {
+            padding: 20px;
+            color: #9ca3af;
         }
 
-
-        .modal-image {
-
-            max-width: 95vw;
-
-            max-height: 90vh;
-
-            object-fit: contain;
-
-            border-radius: 12px;
-
-            box-shadow:
-                0 20px 80px
-                rgba(0,0,0,0.6);
-
-        }
-
-
-        .modal-close {
-
-            position: fixed;
-
-            top: 18px;
-
-            right: 22px;
-
-            width: 44px;
-
-            height: 44px;
-
-            border: 1px solid
-                rgba(255,255,255,0.12);
-
-            border-radius: 50%;
-
-            background:
-                rgba(255,255,255,0.1);
-
-            color: white;
-
-            font-size: 25px;
-
-            cursor: pointer;
-
-        }
-
-
-        .modal-close:hover {
-
-            background:
-                rgba(239,68,68,0.7);
-
-        }
-
-
-        /* =====================================================
-           LOG
-        ===================================================== */
-
-        .log-card {
-
-            margin-top: 25px;
-
-            background:
-                #050807;
-
-            border:
-                1px solid
-                rgba(255,255,255,0.07);
-
-            border-radius: 16px;
-
-            overflow: hidden;
-
-        }
-
-
-        .log-title {
-
-            padding:
-                13px
-                16px;
-
-            border-bottom:
-                1px solid
-                rgba(255,255,255,0.07);
-
-            color:
-                #cbd5e1;
-
-            font-size: 13px;
-
-            font-weight: 750;
-
-        }
-
-
-        #status {
-
-            min-height: 90px;
-
-            padding: 16px;
-
-            color:
-                #aebbb6;
-
-            font-family:
-                Consolas,
-                monospace;
-
-            font-size: 12px;
-
-            white-space: pre-wrap;
-
-            word-break: break-word;
-
-        }
-
-
-        /* =====================================================
-           RESPONSIVE
-        ===================================================== */
-
-        @media (max-width: 900px) {
-
-            .commands {
-
-                grid-template-columns:
-                    repeat(3, 1fr);
-
-            }
-
-            .status-grid {
-
-                grid-template-columns:
-                    repeat(2, 1fr);
-
-            }
-
-            .apps {
-
-                grid-template-columns:
-                    repeat(3, 1fr);
-
-            }
-
-            .screenshot-grid {
-
-                grid-template-columns:
-                    repeat(2, 1fr);
-
-            }
-
-        }
-
-
-        @media (max-width: 560px) {
-
-            .container {
-
-                width: 92%;
-
-                padding-top: 22px;
-
-            }
-
-
-            .header {
-
-                align-items:
-                    flex-start;
-
-                flex-direction:
-                    column;
-
-            }
-
-
-            .commands {
-
-                grid-template-columns:
-                    repeat(2, 1fr);
-
-            }
-
-
-            .apps {
-
-                grid-template-columns:
-                    repeat(2, 1fr);
-
-            }
-
-
-            .status-grid {
-
-                grid-template-columns:
-                    repeat(2, 1fr);
-
-            }
-
-
-            .screenshot-grid {
-
-                grid-template-columns:
-                    1fr;
-
-            }
-
-
-            .screenshot-image {
-
-                height: 500px;
-
-            }
-
-
-            .gallery-header {
-
-                align-items:
-                    flex-start;
-
-                flex-direction:
-                    column;
-
-            }
-
-
-            button.command {
-
-                min-height: 70px;
-
-            }
-
+        code {
+            color: #86efac;
         }
 
     </style>
 
 </head>
 
-
 <body>
-
 
 <div class="container">
 
+    <!-- AUTH -->
 
-    <!-- =====================================================
-         HEADER
-    ===================================================== -->
+    <div id="authBox"
+         class="card">
 
-    <div class="header">
+        <h1>
+            📱 VoicePhoneControl
+        </h1>
 
-        <div class="brand">
+        <p>
+            Login or create your account.
+        </p>
 
-            <h1>
-                📱 Voice Phone Control
-            </h1>
+        <input
+            id="username"
+            type="text"
+            placeholder="Username"
+            autocomplete="username"
+        >
 
-            <p>
-                Remote Android control dashboard
-            </p>
+        <input
+            id="password"
+            type="password"
+            placeholder="Password"
+            autocomplete="current-password"
+        >
 
-        </div>
+        <button
+            onclick="registerUser()"
+        >
+            Register
+        </button>
 
+        <button
+            onclick="loginUser()"
+        >
+            Login
+        </button>
 
-        <div class="online">
-
-            <span class="dot"></span>
-
-            API Online
-<button
-    class="refresh-btn"
-    onclick="logout()"
->
-    🚪 Logout
-</button>
-
-        </div>
+        <p
+            id="authMessage"
+            class="message"
+        ></p>
 
     </div>
 
 
-    <!-- =====================================================
-         PHONE STATUS
-    ===================================================== -->
+    <!-- DASHBOARD -->
 
-    <div class="status-card">
+    <div
+        id="dashboardBox"
+        class="hidden"
+    >
 
-        <div class="status-header">
+        <div class="card">
+
+            <div class="topbar">
+
+                <div>
+
+                    <h1>
+                        📱 VoicePhoneControl
+                    </h1>
+
+                    <p>
+                        Welcome,
+                        <strong id="usernameDisplay">
+                            User
+                        </strong>
+                    </p>
+
+                </div>
+
+                <div>
+
+                    <span
+                        id="apiStatus"
+                        class="api-status"
+                    >
+                        ● API
+                    </span>
+
+                    <button
+                        class="danger"
+                        onclick="logout()"
+                    >
+                        Logout
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ADD DEVICE -->
+
+        <div class="card">
 
             <h2>
-                📊 Phone Status
+                ➕ Add Device
             </h2>
 
+            <p>
+                Android app me jo Device ID mile,
+                wo yahan enter karo.
+            </p>
+
+            <input
+                id="deviceIdInput"
+                placeholder="VPC-XXXXXXXX"
+            >
 
             <button
-                class="refresh-btn"
-                onclick="requestPhoneStatus()"
+                onclick="claimDevice()"
             >
-                ↻ Refresh
+                Add Device
             </button>
 
-        </div>
-
-
-        <div class="status-grid">
-
-
-            <div class="status-item">
-
-                <div class="status-icon">
-                    🔋
-                </div>
-
-                <div class="status-label">
-                    Battery
-                </div>
-
-                <div
-                    class="status-value"
-                    id="battery"
-                >
-                    --
-                </div>
-
-            </div>
-
-
-            <div class="status-item">
-
-                <div class="status-icon">
-                    ⚡
-                </div>
-
-                <div class="status-label">
-                    Charging
-                </div>
-
-                <div
-                    class="status-value"
-                    id="charging"
-                >
-                    --
-                </div>
-
-            </div>
-
-
-            <div class="status-item">
-
-                <div class="status-icon">
-                    🌐
-                </div>
-
-                <div class="status-label">
-                    Network
-                </div>
-
-                <div
-                    class="status-value"
-                    id="network"
-                >
-                    --
-                </div>
-
-            </div>
-
-
-            <div class="status-item">
-
-                <div class="status-icon">
-                    🤖
-                </div>
-
-                <div class="status-label">
-                    Android
-                </div>
-
-                <div
-                    class="status-value"
-                    id="android"
-                >
-                    --
-                </div>
-
-            </div>
-
+            <p
+                id="deviceMessage"
+                class="message"
+            ></p>
 
         </div>
 
-    </div>
 
+        <!-- DEVICES -->
 
-    <!-- =====================================================
-         COMMANDS
-    ===================================================== -->
+        <div class="card">
 
-    <div class="section-title">
-
-        <h2>
-            🎮 Commands
-        </h2>
-
-    </div>
-
-
-    <div class="commands">
-
-
-        <button
-            class="command"
-            onclick="sendCommand('HOME')"
-        >
-            <span class="command-number">
-                01
-            </span>
-
-            <span class="command-name">
-                🏠 HOME
-            </span>
-
-            <span class="command-desc">
-                Go to home screen
-            </span>
-        </button>
-
-
-        <button
-            class="command"
-            onclick="sendCommand('BACK')"
-        >
-            <span class="command-number">
-                02
-            </span>
-
-            <span class="command-name">
-                ↩️ BACK
-            </span>
-
-            <span class="command-desc">
-                Go back
-            </span>
-        </button>
-
-
-        <button
-            class="command"
-            onclick="sendCommand('VOLUME_UP')"
-        >
-            <span class="command-number">
-                03
-            </span>
-
-            <span class="command-name">
-                🔊 VOLUME UP
-            </span>
-
-            <span class="command-desc">
-                Increase volume
-            </span>
-        </button>
-<button
-    class="command special"
-    onclick="sendCommand('WAKE_SCREEN')"
->
-    <span class="command-number">18</span>
-
-    <span class="command-name">
-        🌙 WAKE SCREEN
-    </span>
-
-    <span class="command-desc">
-        Turn phone screen on
-    </span>
-</button>
-
-
-        <button
-            class="command"
-            onclick="sendCommand('VOLUME_DOWN')"
-        >
-            <span class="command-number">
-                04
-            </span>
-
-            <span class="command-name">
-                🔉 VOLUME DOWN
-            </span>
-
-            <span class="command-desc">
-                Decrease volume
-            </span>
-        </button>
-
-
-        <button
-            class="command special"
-            onclick="takeScreenshot()"
-        >
-            <span class="command-number">
-                05
-            </span>
-
-            <span class="command-name">
-                📸 SCREENSHOT
-            </span>
-
-            <span class="command-desc">
-                Capture phone screen
-            </span>
-        </button>
-
-
-        <button
-            class="command special"
-            onclick="requestPhoneStatus()"
-        >
-            <span class="command-number">
-                06
-            </span>
-
-            <span class="command-name">
-                📊 PHONE STATUS
-            </span>
-
-            <span class="command-desc">
-                Battery & network
-            </span>
-        </button>
-
-
-        <button
-            class="command"
-            onclick="openApp('WhatsApp')"
-        >
-            <span class="command-number">
-                07
-            </span>
-
-            <span class="command-name">
-                🚀 OPEN APP
-            </span>
-
-            <span class="command-desc">
-                Open selected app
-            </span>
-        </button>
-
-
-        <button
-            class="command"
-            onclick="sendCommand('LIVE_SCREEN')"
-        >
-            <span class="command-number">
-                08
-            </span>
-
-            <span class="command-name">
-                🖥️ LIVE SCREEN
-            </span>
-
-            <span class="command-desc">
-                Live screen control
-            </span>
-        </button>
-
-
-        <button
-            class="command"
-            onclick="sendCommand('NOTIFICATION_STATUS')"
-        >
-            <span class="command-number">
-                09
-            </span>
-
-            <span class="command-name">
-                🔔 NOTIFICATIONS
-            </span>
-
-            <span class="command-desc">
-                Notification status
-            </span>
-        </button>
-
-
-        <button
-            class="command"
-            onclick="sendCommand('ENTER')"
-        >
-            <span class="command-number">
-                10
-            </span>
-
-            <span class="command-name">
-                ⏎ ENTER
-            </span>
-
-            <span class="command-desc">
-                Press enter
-            </span>
-        </button>
-
-
-        <button
-            class="command"
-            onclick="sendCommand('UP')"
-        >
-            <span class="command-number">
-                11
-            </span>
-
-            <span class="command-name">
-                ⬆️ UP
-            </span>
-
-            <span class="command-desc">
-                Scroll up
-            </span>
-        </button>
-
-
-        <button
-            class="command"
-            onclick="sendCommand('DOWN')"
-        >
-            <span class="command-number">
-                12
-            </span>
-
-            <span class="command-name">
-                ⬇️ DOWN
-            </span>
-
-            <span class="command-desc">
-                Scroll down
-            </span>
-        </button>
-
-
-        <button
-            class="command"
-            onclick="sendCommand('TAB')"
-        >
-            <span class="command-number">
-                13
-            </span>
-
-            <span class="command-name">
-                ↹ TAB
-            </span>
-
-            <span class="command-desc">
-                Next field
-            </span>
-        </button>
-
-
-        <button
-            class="command"
-            onclick="sendCommand('LEFT')"
-        >
-            <span class="command-number">
-                14
-            </span>
-
-            <span class="command-name">
-                ⬅️ LEFT
-            </span>
-
-            <span class="command-desc">
-                Move left
-            </span>
-        </button>
-
-
-        <button
-            class="command"
-            onclick="sendCommand('RIGHT')"
-        >
-            <span class="command-number">
-                15
-            </span>
-
-            <span class="command-name">
-                ➡️ RIGHT
-            </span>
-
-            <span class="command-desc">
-                Move right
-            </span>
-        </button>
-
-
-        <button
-            class="command"
-            onclick="sendCommand('MUTE')"
-        >
-            <span class="command-number">
-                16
-            </span>
-
-            <span class="command-name">
-                🔇 MUTE
-            </span>
-
-            <span class="command-desc">
-                Mute volume
-            </span>
-        </button>
-
-
-        <button
-            class="command"
-            onclick="sendCommand('RECENTS')"
-        >
-            <span class="command-number">
-                17
-            </span>
-
-            <span class="command-name">
-                📱 RECENT APPS
-            </span>
-
-            <span class="command-desc">
-                Show recent apps
-            </span>
-        </button>
-
-
-    </div>
-
-
-    <!-- =====================================================
-         APPS
-    ===================================================== -->
-
-    <div class="section-title">
-
-        <h2>
-            🚀 Open App
-        </h2>
-
-    </div>
-
-
-    <div class="apps">
-
-
-        <button
-            class="app-button"
-            onclick="openApp('WhatsApp')"
-        >
-
-            <span class="app-icon">
-                💬
-            </span>
-
-            <span class="app-name">
-                WhatsApp
-            </span>
-
-        </button>
-
-
-        <button
-            class="app-button"
-            onclick="openApp('YouTube')"
-        >
-
-            <span class="app-icon">
-                ▶️
-            </span>
-
-            <span class="app-name">
-                YouTube
-            </span>
-
-        </button>
-
-
-        <button
-            class="app-button"
-            onclick="openApp('Chrome')"
-        >
-
-            <span class="app-icon">
-                🌐
-            </span>
-
-            <span class="app-name">
-                Chrome
-            </span>
-
-        </button>
-
-
-        <button
-            class="app-button"
-            onclick="openApp('Settings')"
-        >
-
-            <span class="app-icon">
-                ⚙️
-            </span>
-
-            <span class="app-name">
-                Settings
-            </span>
-
-        </button>
-
-
-        <button
-            class="app-button"
-            onclick="openApp('Camera')"
-        >
-
-            <span class="app-icon">
-                📷
-            </span>
-
-            <span class="app-name">
-                Camera
-            </span>
-
-        </button>
-
-
-    </div>
-
-
-    <!-- =====================================================
-         SCREENSHOT GALLERY
-    ===================================================== -->
-
-    <div class="gallery-card">
-
-
-        <div class="gallery-header">
-
-            <div>
+            <div class="topbar">
 
                 <h2>
-                    📸 Screenshot Gallery
+                    📱 My Devices
                 </h2>
 
-                <div class="gallery-subtitle">
-                    Saved phone screenshots
-                </div>
+                <button
+                    class="secondary"
+                    onclick="loadDevices()"
+                >
+                    🔄 Refresh
+                </button>
 
             </div>
 
-
-            <button
-                class="gallery-btn"
-                onclick="loadScreenshots()"
-            >
-                ↻ Refresh
-            </button>
-
-        </div>
-
-
-        <div
-            id="screenshotGrid"
-            class="screenshot-grid"
-        >
-
-            <div class="empty-gallery">
-                📸 No screenshots yet.
+            <div id="devices">
+                Loading...
             </div>
 
         </div>
 
-
     </div>
-
-
-    <!-- =====================================================
-         LOG
-    ===================================================== -->
-
-    <div class="log-card">
-
-        <div class="log-title">
-            📡 Command Log
-        </div>
-
-        <div id="status">
-            Ready...
-        </div>
-
-    </div>
-
-
-</div>
-
-
-<!-- =========================================================
-     IMAGE MODAL
-========================================================= -->
-
-<div
-    id="imageModal"
-    class="image-modal"
-    onclick="closeImageModal()"
->
-
-    <button
-        class="modal-close"
-        onclick="closeImageModal()"
-    >
-        ×
-    </button>
-
-
-    <img
-        id="modalImage"
-        class="modal-image"
-        src=""
-        alt="Screenshot"
-        onclick="event.stopPropagation()"
-    >
 
 </div>
 
 
 <script>
+
 /* =====================================================
-   AUTH GUARD
+   API CONFIG
 ===================================================== */
 
-async function checkLogin() {
+const API_URL =
+    "https://voicephonecontrol.vercel.app/";
 
-    try {
 
-        const response =
-            await fetch(
-                "/api/auth/me",
-                {
-                    method: "GET",
+/* =====================================================
+   TOKEN
+===================================================== */
 
-                    credentials: "include",
-
-                    cache: "no-store"
-                }
-            );
-
-        if (!response.ok) {
-
-            window.location.replace(
-                "/login.html"
-            );
-
-            return false;
-        }
-
-        return true;
-
-    } catch(error) {
-
-        window.location.replace(
-            "/web/login.html"
-        );
-
-        return false;
-    }
-}
-
-
-    /* =====================================================
-       API
-    ===================================================== */
-
-   const API_URL =
-    "https://voicephonecontrol.vercel.app";
-
-
-    const API_TOKEN =
-        "VPC-a8F3xK91-pQ7L2mZ6-4NwR8tY5U";
-
-
-    const statusElement =
-        document.getElementById("status");
-
-
-    /* =====================================================
-       SEND COMMAND
-    ===================================================== */
-
-    async function sendCommand(
-        command,
-        payload = {}
-    ) {
-
-        statusElement.textContent =
-            "⏳ Sending command...\n\n" +
-            command;
-
-
-        try {
-
-            const response =
-                await fetch(
-                    `${API_URL}/api/command`,
-                    {
-
-                        method: "POST",
-
-                        headers: {
-
-                            "Content-Type":
-                                "application/json",
-
-                            "Authorization":
-                                `Bearer ${API_TOKEN}`
-
-                        },
-
-                        body:
-                            JSON.stringify({
-
-                                command:
-                                    command,
-
-                                payload:
-                                    payload
-
-                            })
-
-                    }
-                );
-
-
-            const data =
-                await response.json();
-
-
-            if (!response.ok) {
-
-                statusElement.textContent =
-                    `❌ Error ${response.status}\n\n` +
-                    JSON.stringify(
-                        data,
-                        null,
-                        2
-                    );
-
-                return null;
-
-            }
-
-
-            statusElement.textContent =
-                "✅ Command sent\n\n" +
-                JSON.stringify(
-                    data,
-                    null,
-                    2
-                );
-
-
-            return data;
-
-
-        } catch (error) {
-
-            statusElement.textContent =
-                "❌ Connection Error\n\n" +
-                error.toString();
-
-            return null;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       OPEN APP
-    ===================================================== */
-
-    function openApp(app) {
-
-        sendCommand(
-            "OPEN_APP",
-            {
-                app: app
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       SCREENSHOT
-    ===================================================== */
-
-    async function takeScreenshot() {
-
-        statusElement.textContent =
-            "📸 Sending screenshot command...\n\n" +
-            "Waiting for Android...";
-
-
-        const oldScreenshots =
-            await getScreenshots();
-
-
-        const oldCount =
-            oldScreenshots.length;
-
-
-        const result =
-            await sendCommand(
-                "TAKE_SCREENSHOT",
-                {}
-            );
-
-
-        if (!result) {
-
-            return;
-
-        }
-
-
-        statusElement.textContent =
-            "📸 Screenshot command sent\n\n" +
-            "Waiting for phone screenshot...";
-
-
-        let attempts = 0;
-
-        const maxAttempts = 15;
-
-
-        const check =
-            setInterval(
-                async function () {
-
-                    attempts++;
-
-
-                    const screenshots =
-                        await loadScreenshots(
-                            true
-                        );
-
-
-                    if (
-                        screenshots &&
-                        screenshots.length > oldCount
-                    ) {
-
-                        clearInterval(check);
-
-
-                        statusElement.textContent =
-                            "✅ New screenshot received\n\n" +
-                            "Screenshot saved in gallery.";
-
-                        return;
-
-                    }
-
-
-                    if (
-                        attempts >= maxAttempts
-                    ) {
-
-                        clearInterval(check);
-
-
-                        statusElement.textContent =
-                            "⚠️ Screenshot command sent.\n\n" +
-                            "Phone screenshot upload ka wait timeout ho gaya.\n\n" +
-                            "Gallery Refresh karke check karo.";
-
-                    }
-
-                },
-                2000
-            );
-
-    }
-
-// Dashboard par kisi input box ya poori window pe key listener
-document.addEventListener('keydown', function(event) {
-    // Agar koi normal letter, Backspace ya Enter dabaya gaya
-    let payload = {
-        key: event.key,           // e.g. "a", "A", "Backspace", "Enter", " "
-        isSpecial: false
-    };
-
-    if (event.key === "Backspace" || event.key === "Enter") {
-        payload.isSpecial = true;
-    }
-
-    // Socket ke through server ko send karo
-    socket.emit("remote_key_press", payload);
-});
-
-async function logout() {
-
-    try {
-
-        await fetch(
-            "/api/logout",
-            {
-                method: "POST",
-                credentials: "include"
-            }
-        );
-
-    } finally {
-
-        window.location.replace(
-            "/login.html"
-        );
-
-    }
-
-}
-
-
-    /* =====================================================
-       GET SCREENSHOTS
-    ===================================================== */
-
-    async function getScreenshots() {
-
-        try {
-
-            const response =
-                await fetch(
-                    `${API_URL}/api/screenshots`,
-                    {
-
-                        method: "GET",
-
-                        headers: {
-
-                            "Authorization":
-                                `Bearer ${API_TOKEN}`
-
-                        },
-
-                        cache:
-                            "no-store"
-
-                    }
-                );
-
-
-            if (!response.ok) {
-
-                return [];
-
-            }
-
-
-            const data =
-                await response.json();
-
-
-            return Array.isArray(
-                data.screenshots
-            )
-                ? data.screenshots
-                : [];
-
-
-        } catch (error) {
-
-            return [];
-
-        }
-
-    }
-
-
-    /* =====================================================
-       GET SCREENSHOT COUNT
-    ===================================================== */
-
-    async function getScreenshotCount() {
-
-        const screenshots =
-            await getScreenshots();
-
-        return screenshots.length;
-
-    }
-
-
-    /* =====================================================
-       LOAD SCREENSHOTS
-    ===================================================== */
-
-    async function loadScreenshots(
-        silent = false
-    ) {
-
-        const grid =
-            document.getElementById(
-                "screenshotGrid"
-            );
-
-
-        if (!silent) {
-
-            grid.innerHTML =
-                `
-                <div class="empty-gallery">
-                    ⏳ Loading screenshots...
-                </div>
-                `;
-
-        }
-
-
-        try {
-
-            const screenshots =
-                await getScreenshots();
-
-
-            if (
-                screenshots.length === 0
-            ) {
-
-                grid.innerHTML =
-                    `
-                    <div class="empty-gallery">
-                        📸 No screenshots yet.
-                    </div>
-                    `;
-
-                return screenshots;
-
-            }
-
-
-            grid.innerHTML = "";
-
-
-            screenshots.forEach(
-                function (screenshot) {
-
-                    const card =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    card.className =
-                        "screenshot-card";
-
-
-                    /* IMAGE WRAPPER */
-
-                    const imageWrapper =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    imageWrapper.className =
-                        "image-wrapper";
-
-
-                    /* IMAGE */
-
-                    const image =
-                        document.createElement(
-                            "img"
-                        );
-
-
-                    image.className =
-                        "screenshot-image";
-
-
-                    image.src =
-                        screenshot.image;
-
-
-                    image.alt =
-                        screenshot.filename ||
-                        "Phone Screenshot";
-
-
-                    image.loading =
-                        "lazy";
-
-
-                    image.onclick =
-                        function () {
-
-                            openImageModal(
-                                screenshot.image
-                            );
-
-                        };
-
-
-                    /* DELETE BUTTON */
-
-                    const deleteButton =
-                        document.createElement(
-                            "button"
-                        );
-
-
-                    deleteButton.className =
-                        "delete-btn";
-
-
-                    deleteButton.textContent =
-                        "🗑️ Delete";
-
-
-                    deleteButton.onclick =
-                        function (event) {
-
-                            event.stopPropagation();
-
-                            deleteScreenshot(
-                                screenshot.id,
-                                screenshot.filename,
-                                deleteButton
-                            );
-
-                        };
-
-
-                    imageWrapper.appendChild(
-                        image
-                    );
-
-
-                    imageWrapper.appendChild(
-                        deleteButton
-                    );
-
-
-                    /* INFO */
-
-                    const info =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    info.className =
-                        "screenshot-info";
-
-
-                    const name =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    name.className =
-                        "screenshot-name";
-
-
-                    name.textContent =
-                        screenshot.filename ||
-                        "Screenshot";
-
-
-                    const date =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    date.className =
-                        "screenshot-date";
-
-
-                    if (
-                        screenshot.created_at
-                    ) {
-
-                        date.textContent =
-                            formatDate(
-                                screenshot.created_at
-                            );
-
-                    }
-
-
-                    info.appendChild(
-                        name
-                    );
-
-
-                    info.appendChild(
-                        date
-                    );
-
-
-                    card.appendChild(
-                        imageWrapper
-                    );
-
-
-                    card.appendChild(
-                        info
-                    );
-
-
-                    grid.appendChild(
-                        card
-                    );
-
-                }
-            );
-
-
-            return screenshots;
-
-
-        } catch (error) {
-
-            if (!silent) {
-
-                grid.innerHTML =
-                    `
-                    <div class="empty-gallery">
-                        ❌ Connection error
-                    </div>
-                    `;
-
-            }
-
-
-            return null;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       DELETE SCREENSHOT
-    ===================================================== */
-
-    async function deleteScreenshot(
-        screenshotId,
-        filename,
-        button
-    ) {
-
-
-        if (!screenshotId) {
-
-            alert(
-                "Screenshot ID nahi mila."
-            );
-
-            return;
-
-        }
-
-
-        const confirmed =
-            confirm(
-                `Delete screenshot?\n\n${filename || "Screenshot"}`
-            );
-
-
-        if (!confirmed) {
-
-            return;
-
-        }
-
-
-        button.disabled = true;
-
-        button.textContent =
-            "⏳ Deleting...";
-
-
-        statusElement.textContent =
-            "🗑️ Deleting screenshot...\n\n" +
-            (filename || "Screenshot");
-
-
-        try {
-
-            const response =
-                await fetch(
-                    `${API_URL}/api/screenshot/${encodeURIComponent(screenshotId)}`,
-                    {
-
-                        method: "DELETE",
-
-                        headers: {
-
-                            "Authorization":
-                                `Bearer ${API_TOKEN}`
-
-                        }
-
-                    }
-                );
-
-
-            const data =
-                await response.json();
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    data.detail ||
-                    "Delete failed"
-                );
-
-            }
-
-
-            statusElement.textContent =
-                "✅ Screenshot deleted\n\n" +
-                (filename || "Screenshot");
-
-
-            await loadScreenshots();
-
-
-        } catch (error) {
-
-            button.disabled = false;
-
-            button.textContent =
-                "🗑️ Delete";
-
-
-            statusElement.textContent =
-                "❌ Screenshot delete failed\n\n" +
-                error.toString();
-
-        }
-
-    }
-
-
-    /* =====================================================
-       FORMAT DATE
-    ===================================================== */
-
-    function formatDate(
-        value
-    ) {
-
-        try {
-
-            return new Date(
-                value
-            ).toLocaleString();
-
-        } catch (error) {
-
-            return value;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       IMAGE MODAL
-    ===================================================== */
-
-    function openImageModal(
-        image
-    ) {
-
-        const modal =
-            document.getElementById(
-                "imageModal"
-            );
-
-
-        const modalImage =
-            document.getElementById(
-                "modalImage"
-            );
-
-
-        modalImage.src =
-            image;
-
-
-        modal.classList.add(
-            "show"
-        );
-
-    }
-
-
-    function closeImageModal() {
-
-        const modal =
-            document.getElementById(
-                "imageModal"
-            );
-
-
-        modal.classList.remove(
-            "show"
-        );
-
-
-        document.getElementById(
-            "modalImage"
-        ).src = "";
-
-    }
-
-
-    /* =====================================================
-       ESC KEY
-    ===================================================== */
-
-    document.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (
-                event.key === "Escape"
-            ) {
-
-                closeImageModal();
-
-            }
-
-        }
+let token =
+    localStorage.getItem(
+        "vpc_token"
     );
 
 
-    /* =====================================================
-       PHONE STATUS
-    ===================================================== */
+/* =====================================================
+   DOM
+===================================================== */
 
-    async function requestPhoneStatus() {
+const authBox =
+    document.getElementById(
+        "authBox"
+    );
 
-        statusElement.textContent =
-            "⏳ Requesting phone status...";
+const dashboardBox =
+    document.getElementById(
+        "dashboardBox"
+    );
 
+const authMessage =
+    document.getElementById(
+        "authMessage"
+    );
 
-        const commandResult =
-            await sendCommand(
-                "PHONE_STATUS",
-                {}
-            );
+const deviceMessage =
+    document.getElementById(
+        "deviceMessage"
+    );
 
+const devicesContainer =
+    document.getElementById(
+        "devices"
+    );
 
-        if (!commandResult) {
-
-            return;
-
-        }
-
-
-        statusElement.textContent =
-            "⏳ Waiting for Android status...";
-
-
-        await sleep(2000);
-
-
-        await fetchPhoneStatus();
-
-    }
-
-
-    /* =====================================================
-       FETCH PHONE STATUS
-    ===================================================== */
-
-    async function fetchPhoneStatus() {
-
-        try {
-
-            const response =
-                await fetch(
-                    `${API_URL}/api/status`,
-                    {
-
-                        method: "GET",
-
-                        headers: {
-
-                            "Authorization":
-                                `Bearer ${API_TOKEN}`
-
-                        },
-
-                        cache:
-                            "no-store"
-
-                    }
-                );
+const apiStatus =
+    document.getElementById(
+        "apiStatus"
+    );
 
 
-            const data =
-                await response.json();
+/* =====================================================
+   AUTH HEADERS
+===================================================== */
+
+function authHeaders() {
+
+    return {
+
+        "Content-Type":
+            "application/json",
+
+        "Authorization":
+            "Bearer " + token
+
+    };
+
+}
 
 
-            if (!response.ok) {
+/* =====================================================
+   API REQUEST HELPER
+===================================================== */
 
-                statusElement.textContent =
-                    `❌ Status Error ${response.status}\n\n` +
-                    JSON.stringify(
-                        data,
-                        null,
-                        2
-                    );
+async function apiRequest(
+    endpoint,
+    options = {}
+) {
 
-                return;
+    const response =
+        await fetch(
+            API_URL + endpoint,
+            options
+        );
 
-            }
+    let data = {};
 
+    try {
 
-            const status =
-                data.status || data;
+        data =
+            await response.json();
 
+    } catch {
 
-            updatePhoneStatus(
-                status
-            );
-
-
-            statusElement.textContent =
-                "✅ Phone status updated\n\n" +
-                JSON.stringify(
-                    status,
-                    null,
-                    2
-                );
-
-
-        } catch (error) {
-
-            statusElement.textContent =
-                "❌ Phone Status Error\n\n" +
-                error.toString();
-
-        }
+        data = {};
 
     }
 
+    if (!response.ok) {
 
-    /* =====================================================
-       UPDATE STATUS UI
-    ===================================================== */
-
-    function updatePhoneStatus(
-        status
-    ) {
-
-        const battery =
-            status.battery;
-
-
-        const charging =
-            status.charging;
-
-
-        const network =
-            status.network;
-
-
-        const android =
-            status.android;
-
-
-        document.getElementById(
-            "battery"
-        ).textContent =
-            battery !== undefined
-                ? `${battery}%`
-                : "--";
-
-
-        document.getElementById(
-            "charging"
-        ).textContent =
-            charging === true
-                ? "Yes"
-                : charging === false
-                    ? "No"
-                    : "--";
-
-
-        document.getElementById(
-            "network"
-        ).textContent =
-            network === true
-                ? "Connected"
-                : network === false
-                    ? "Disconnected"
-                    : "--";
-
-
-        document.getElementById(
-            "android"
-        ).textContent =
-            android !== undefined
-                ? android
-                : "--";
-
-    }
-
-
-    /* =====================================================
-       SLEEP
-    ===================================================== */
-
-    function sleep(
-        milliseconds
-    ) {
-
-        return new Promise(
-            resolve =>
-                setTimeout(
-                    resolve,
-                    milliseconds
-                )
+        throw new Error(
+            data.detail ||
+            data.message ||
+            `HTTP ${response.status}`
         );
 
     }
 
+    return data;
 
-    /* =====================================================
-       AUTO LOAD
-    ===================================================== */
+}
 
-   window.addEventListener(
-    "load",
-    async function () {
 
-        const authenticated =
-            await checkLogin();
+/* =====================================================
+   REGISTER
+===================================================== */
 
-        if (!authenticated) {
-            return;
-        }
+async function registerUser() {
 
-        fetchPhoneStatus();
+    const username =
+        document
+            .getElementById("username")
+            .value
+            .trim();
 
-        loadScreenshots();
+    const password =
+        document
+            .getElementById("password")
+            .value;
+
+
+    if (!username || !password) {
+
+        authMessage.textContent =
+            "Username and password required.";
+
+        return;
 
     }
-);
 
+
+    if (username.length < 3) {
+
+        authMessage.textContent =
+            "Username minimum 3 characters.";
+
+        return;
+
+    }
+
+
+    if (password.length < 6) {
+
+        authMessage.textContent =
+            "Password minimum 6 characters.";
+
+        return;
+
+    }
+
+
+    authMessage.textContent =
+        "⏳ Creating account...";
+
+
+    try {
+
+        const data =
+            await apiRequest(
+                "/auth/register",
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            username:
+                                username,
+
+                            password:
+                                password
+                        })
+
+                }
+            );
+
+
+        token =
+            data.token;
+
+
+        localStorage.setItem(
+            "vpc_token",
+            token
+        );
+
+
+        authMessage.textContent =
+            "✅ Registration successful";
+
+
+        showDashboard();
+
+
+    } catch (error) {
+
+        authMessage.textContent =
+            "❌ " + error.message;
+
+    }
+
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+async function loginUser() {
+
+    const username =
+        document
+            .getElementById("username")
+            .value
+            .trim();
+
+    const password =
+        document
+            .getElementById("password")
+            .value;
+
+
+    if (!username || !password) {
+
+        authMessage.textContent =
+            "Username and password required.";
+
+        return;
+
+    }
+
+
+    authMessage.textContent =
+        "⏳ Logging in...";
+
+
+    try {
+
+        const data =
+            await apiRequest(
+                "/auth/login",
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            username:
+                                username,
+
+                            password:
+                                password
+                        })
+
+                }
+            );
+
+
+        token =
+            data.token;
+
+
+        localStorage.setItem(
+            "vpc_token",
+            token
+        );
+
+
+        authMessage.textContent =
+            "✅ Login successful";
+
+
+        showDashboard();
+
+
+    } catch (error) {
+
+        authMessage.textContent =
+            "❌ " + error.message;
+
+    }
+
+}
+
+
+/* =====================================================
+   CHECK CURRENT USER
+===================================================== */
+
+async function loadMe() {
+
+    try {
+
+        const data =
+            await apiRequest(
+                "/auth/me",
+                {
+
+                    method: "GET",
+
+                    headers: {
+                        "Authorization":
+                            "Bearer " + token
+                    }
+
+                }
+            );
+
+
+        document
+            .getElementById(
+                "usernameDisplay"
+            )
+            .textContent =
+                data.user.username;
+
+
+        setApiStatus(
+            true
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Auth error:",
+            error
+        );
+
+
+        logout();
+
+    }
+
+}
+
+
+/* =====================================================
+   SHOW DASHBOARD
+===================================================== */
+
+function showDashboard() {
+
+    authBox
+        .classList
+        .add("hidden");
+
+
+    dashboardBox
+        .classList
+        .remove("hidden");
+
+
+    loadMe();
+
+    loadDevices();
+
+}
+
+
+/* =====================================================
+   SHOW LOGIN
+===================================================== */
+
+function showAuth() {
+
+    authBox
+        .classList
+        .remove("hidden");
+
+
+    dashboardBox
+        .classList
+        .add("hidden");
+
+}
+
+
+/* =====================================================
+   CLAIM DEVICE
+===================================================== */
+
+async function claimDevice() {
+
+    const deviceId =
+        document
+            .getElementById(
+                "deviceIdInput"
+            )
+            .value
+            .trim()
+            .toUpperCase();
+
+
+    if (!deviceId) {
+
+        deviceMessage.textContent =
+            "Device ID required.";
+
+        return;
+
+    }
+
+
+    deviceMessage.textContent =
+        "⏳ Adding device...";
+
+
+    try {
+
+        const data =
+            await apiRequest(
+                "/devices/claim",
+                {
+
+                    method: "POST",
+
+                    headers:
+                        authHeaders(),
+
+                    body:
+                        JSON.stringify({
+                            device_id:
+                                deviceId
+                        })
+
+                }
+            );
+
+
+        deviceMessage.textContent =
+            "✅ " +
+            (
+                data.message ||
+                "Device added successfully."
+            );
+
+
+        document
+            .getElementById(
+                "deviceIdInput"
+            )
+            .value = "";
+
+
+        loadDevices();
+
+
+    } catch (error) {
+
+        deviceMessage.textContent =
+            "❌ " + error.message;
+
+    }
+
+}
+
+
+/* =====================================================
+   LOAD DEVICES
+===================================================== */
+
+async function loadDevices() {
+
+    devicesContainer.innerHTML =
+        "⏳ Loading devices...";
+
+
+    try {
+
+        const data =
+            await apiRequest(
+                "/devices",
+                {
+
+                    method: "GET",
+
+                    headers:
+                        authHeaders()
+
+                }
+            );
+
+
+        setApiStatus(
+            true
+        );
+
+
+        if (
+            !data.devices ||
+            data.devices.length === 0
+        ) {
+
+            devicesContainer.innerHTML =
+                `
+                <div class="empty">
+                    📱 No devices added yet.
+                </div>
+                `;
+
+            return;
+
+        }
+
+
+        devicesContainer.innerHTML =
+            "";
+
+
+        data.devices.forEach(
+            function(device) {
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                div.className =
+                    "device";
+
+
+                const status =
+                    device.online
+
+                        ? `
+                            <span class="online">
+                                ● Online
+                            </span>
+                          `
+
+                        : `
+                            <span class="offline">
+                                ● Offline
+                            </span>
+                          `;
+
+
+                div.innerHTML = `
+
+                    <h3>
+                        📱
+                        ${escapeHtml(
+                            device.device_name ||
+                            "Android Phone"
+                        )}
+                    </h3>
+
+                    <p>
+                        Device ID:
+                        <strong>
+                            ${escapeHtml(
+                                device.device_id
+                            )}
+                        </strong>
+                    </p>
+
+                    <p>
+                        Model:
+                        ${escapeHtml(
+                            device.device_model ||
+                            "Unknown"
+                        )}
+                    </p>
+
+                    <p>
+                        Status:
+                        ${status}
+                    </p>
+
+                    <div class="commands">
+
+                        <button
+                            class="command"
+                            onclick="sendCommand(
+                                '${escapeJs(
+                                    device.device_id
+                                )}',
+                                'HOME'
+                            )"
+                        >
+                            🏠 HOME
+                        </button>
+
+
+                        <button
+                            class="command"
+                            onclick="sendCommand(
+                                '${escapeJs(
+                                    device.device_id
+                                )}',
+                                'BACK'
+                            )"
+                        >
+                            ↩️ BACK
+                        </button>
+
+
+                        <button
+                            class="command"
+                            onclick="sendCommand(
+                                '${escapeJs(
+                                    device.device_id
+                                )}',
+                                'VOLUME_UP'
+                            )"
+                        >
+                            🔊 VOL +
+                        </button>
+
+
+                        <button
+                            class="command"
+                            onclick="sendCommand(
+                                '${escapeJs(
+                                    device.device_id
+                                )}',
+                                'VOLUME_DOWN'
+                            )"
+                        >
+                            🔉 VOL -
+                        </button>
+
+
+                        <button
+                            class="command"
+                            onclick="sendCommand(
+                                '${escapeJs(
+                                    device.device_id
+                                )}',
+                                'TAKE_SCREENSHOT'
+                            )"
+                        >
+                            📸 SCREENSHOT
+                        </button>
+
+
+                        <button
+                            class="command"
+                            onclick="sendCommand(
+                                '${escapeJs(
+                                    device.device_id
+                                )}',
+                                'PHONE_STATUS'
+                            )"
+                        >
+                            📊 PHONE STATUS
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                devicesContainer.appendChild(
+                    div
+                );
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        if (
+            error.message
+                .toLowerCase()
+                .includes("token")
+        ) {
+
+            logout();
+
+            return;
+
+        }
+
+
+        setApiStatus(
+            false
+        );
+
+
+        devicesContainer.innerHTML =
+            `
+            <div class="empty">
+                ❌ ${escapeHtml(
+                    error.message
+                )}
+            </div>
+            `;
+
+    }
+
+}
+
+
+/* =====================================================
+   SEND COMMAND
+===================================================== */
+
+async function sendCommand(
+    deviceId,
+    command
+) {
+
+    try {
+
+        const data =
+            await apiRequest(
+                "/command",
+                {
+
+                    method: "POST",
+
+                    headers:
+                        authHeaders(),
+
+                    body:
+                        JSON.stringify({
+
+                            device_id:
+                                deviceId,
+
+                            command:
+                                command,
+
+                            payload: {}
+
+                        })
+
+                }
+            );
+
+
+        alert(
+            "✅ " +
+            command +
+            " queued for " +
+            deviceId
+        );
+
+
+        return data;
+
+
+    } catch (error) {
+
+        alert(
+            "❌ " +
+            error.message
+        );
+
+
+        return null;
+
+    }
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logout() {
+
+    localStorage.removeItem(
+        "vpc_token"
+    );
+
+
+    token = null;
+
+
+    showAuth();
+
+}
+
+
+/* =====================================================
+   API STATUS
+===================================================== */
+
+function setApiStatus(
+    online
+) {
+
+    if (online) {
+
+        apiStatus.textContent =
+            "● API Connected";
+
+        apiStatus.classList
+            .remove("error");
+
+    } else {
+
+        apiStatus.textContent =
+            "● API Error";
+
+        apiStatus.classList
+            .add("error");
+
+    }
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+/* =====================================================
+   ESCAPE JS
+===================================================== */
+
+function escapeJs(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "\\",
+            "\\\\"
+        )
+        .replaceAll(
+            "'",
+            "\\'"
+        );
+
+}
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+async function initialize() {
+
+    if (!token) {
+
+        showAuth();
+
+        return;
+
+    }
+
+
+    try {
+
+        await loadMe();
+
+        showDashboard();
+
+    } catch {
+
+        logout();
+
+    }
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+initialize();
 
 </script>
-
 
 </body>
 
