@@ -492,6 +492,9 @@ def login_user(
     )
 
 
+    # Fetch the user safely.
+    # Using limit(1) instead of maybe_single() avoids the None-response
+    # problem that was causing: "NoneType has no attribute data".
     result = (
         supabase
         .table("users")
@@ -500,20 +503,25 @@ def login_user(
             "username",
             username
         )
-        .maybe_single()
+        .limit(1)
         .execute()
     )
 
+    if result is None:
+        raise HTTPException(
+            status_code=500,
+            detail="Supabase returned no response while logging in"
+        )
 
-    user = result.data
+    users = result.data or []
 
-
-    if not user:
-
+    if not users:
         raise HTTPException(
             status_code=401,
             detail="Invalid username or password"
         )
+
+    user = users[0]
 
 
     valid = verify_password(
