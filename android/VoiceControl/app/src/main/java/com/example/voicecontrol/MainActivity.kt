@@ -4,8 +4,13 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.webkit.WebChromeClient
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import android.widget.Toast
 
 class MainActivity : Activity() {
 
@@ -14,15 +19,42 @@ class MainActivity : Activity() {
         private const val MIC_PERMISSION_REQUEST = 500
     }
 
+    private lateinit var webView: WebView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.d(
-            TAG,
-            "========== APP STARTED =========="
+        Log.d(TAG, "========== APP STARTED ==========")
+
+        // -------------------------------------------------
+        // WEBVIEW
+        // -------------------------------------------------
+
+        webView = WebView(this)
+
+        webView.settings.javaScriptEnabled = true
+        webView.settings.domStorageEnabled = true
+        webView.settings.allowFileAccess = true
+        webView.settings.allowContentAccess = true
+
+        webView.webViewClient = WebViewClient()
+        webView.webChromeClient = WebChromeClient()
+
+        // Android -> JavaScript bridge
+        webView.addJavascriptInterface(
+            DeviceBridge(this),
+            "Android"
         )
 
-        // Register this Android device
+        setContentView(webView)
+
+        // Local HTML
+        webView.loadUrl("file:///android_asset/index.html")
+
+        // -------------------------------------------------
+        // REGISTER DEVICE
+        // -------------------------------------------------
+
         Thread {
 
             val deviceId =
@@ -33,32 +65,62 @@ class MainActivity : Activity() {
                 "MY DEVICE ID = $deviceId"
             )
 
+            runOnUiThread {
+
+                if (!deviceId.isNullOrBlank()) {
+
+                    webView.evaluateJavascript(
+                        "window.setDeviceId(${JSONObjectHelper.quote(deviceId)});",
+                        null
+                    )
+
+                } else {
+
+                    webView.evaluateJavascript(
+                        "window.setDeviceId('Registration failed');",
+                        null
+                    )
+
+                    Toast.makeText(
+                        this,
+                        "Device registration failed",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+
         }.start()
 
-        // Existing command service
+        // -------------------------------------------------
+        // COMMAND SERVICE
+        // -------------------------------------------------
+
         startCommandService()
 
-        // Microphone permission
-        checkMicrophonePermission()
+        // -------------------------------------------------
+        // MICROPHONE
+        // -------------------------------------------------
 
-        finish()
+        checkMicrophonePermission()
     }
 
-    // =========================================================
+    // =====================================================
     // COMMAND SERVICE
-    // =========================================================
+    // =====================================================
 
     private fun startCommandService() {
+
         try {
 
-            val intent = Intent(
-                this,
-                CommandService::class.java
-            )
+            val intent =
+                Intent(
+                    this,
+                    CommandService::class.java
+                )
 
             if (
-                android.os.Build.VERSION.SDK_INT >=
-                android.os.Build.VERSION_CODES.O
+                Build.VERSION.SDK_INT >=
+                Build.VERSION_CODES.O
             ) {
 
                 startForegroundService(intent)
@@ -83,15 +145,15 @@ class MainActivity : Activity() {
         }
     }
 
-    // =========================================================
+    // =====================================================
     // MICROPHONE PERMISSION
-    // =========================================================
+    // =====================================================
 
     private fun checkMicrophonePermission() {
 
         if (
-            android.os.Build.VERSION.SDK_INT >=
-            android.os.Build.VERSION_CODES.M
+            Build.VERSION.SDK_INT >=
+            Build.VERSION_CODES.M
         ) {
 
             if (
@@ -122,9 +184,9 @@ class MainActivity : Activity() {
         }
     }
 
-    // =========================================================
+    // =====================================================
     // PERMISSION RESULT
-    // =========================================================
+    // =====================================================
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -161,6 +223,22 @@ class MainActivity : Activity() {
                     "MICROPHONE PERMISSION DENIED"
                 )
             }
+        }
+    }
+
+    // =====================================================
+    // BACK BUTTON
+    // =====================================================
+
+    override fun onBackPressed() {
+
+        if (webView.canGoBack()) {
+
+            webView.goBack()
+
+        } else {
+
+            super.onBackPressed()
         }
     }
 }

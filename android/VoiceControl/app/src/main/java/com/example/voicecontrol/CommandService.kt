@@ -20,32 +20,23 @@ import java.util.concurrent.Executors
 class CommandService : Service() {
 
     companion object {
-
         private const val TAG = "CommandService"
 
-        private const val CHANNEL_ID =
-            "voice_command_service"
-
+        private const val CHANNEL_ID = "voice_command_service"
         private const val NOTIFICATION_ID = 1001
 
-        private const val POLL_INTERVAL =
-            2000L
-
-        private const val RETRY_INTERVAL =
-            3000L
+        private const val POLL_INTERVAL = 2000L
+        private const val HEARTBEAT_INTERVAL = 15000L
+        private const val RETRY_INTERVAL = 3000L
     }
 
-    private val handler =
-        Handler(Looper.getMainLooper())
+    private val handler = Handler(Looper.getMainLooper())
 
-    private val executor =
-        Executors.newSingleThreadExecutor()
+    private val executor = Executors.newSingleThreadExecutor()
 
-    private lateinit var connectivityManager:
-            ConnectivityManager
+    private lateinit var connectivityManager: ConnectivityManager
 
-    private var networkCallback:
-            ConnectivityManager.NetworkCallback? = null
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
 
     @Volatile
     private var running = false
@@ -53,77 +44,130 @@ class CommandService : Service() {
     @Volatile
     private var networkAvailable = false
 
+
+    // =========================================================
+    // HEARTBEAT
+    // =========================================================
+
+    private val heartbeatRunnable = object : Runnable {
+
+        override fun run() {
+
+            if (!running) {
+                return
+            }
+
+            if (!networkAvailable) {
+
+                Log.d(
+                    TAG,
+                    "HEARTBEAT: NETWORK OFF"
+                )
+
+                handler.postDelayed(
+                    this,
+                    RETRY_INTERVAL
+                )
+
+                return
+            }
+
+            executor.execute {
+
+                try {
+
+                    Log.d(
+                        TAG,
+                        "Sending device heartbeat..."
+                    )
+
+                    ApiClient.heartbeat(
+                        applicationContext
+                    )
+
+                } catch (e: Exception) {
+
+                    Log.e(
+                        TAG,
+                        "HEARTBEAT SCHEDULER ERROR",
+                        e
+                    )
+                }
+            }
+
+            handler.postDelayed(
+                this,
+                HEARTBEAT_INTERVAL
+            )
+        }
+    }
+
+
     // =========================================================
     // COMMAND POLLING
     // =========================================================
 
-    private val commandRunnable =
-        object : Runnable {
+    private val commandRunnable = object : Runnable {
 
-            override fun run() {
+        override fun run() {
 
-                if (!running) {
-                    return
-                }
+            if (!running) {
+                return
+            }
 
-                if (!networkAvailable) {
+            if (!networkAvailable) {
 
-                    Log.d(
-                        TAG,
-                        "NETWORK OFF - waiting for network..."
-                    )
-
-                    handler.postDelayed(
-                        this,
-                        RETRY_INTERVAL
-                    )
-
-                    return
-                }
-
-                executor.execute {
-
-                    try {
-
-                        val command =
-                            ApiClient.getCommandSync(applicationContext)
-
-                        if (command != null) {
-
-                            handleCommand(command)
-
-                        } else {
-
-                            Log.d(
-                                TAG,
-                                "No command available"
-                            )
-                        }
-
-                    } catch (e: Exception) {
-
-                        Log.e(
-                            TAG,
-                            "COMMAND POLLING ERROR",
-                            e
-                        )
-
-                }catch (e: Exception) {
-
-                        Log.e(
-                            TAG,
-                            "COMMAND POLLING ERROR",
-                            e
-                        )
-                    }
-                }
+                Log.d(
+                    TAG,
+                    "COMMAND: NETWORK OFF"
+                )
 
                 handler.postDelayed(
                     this,
-                    POLL_INTERVAL
+                    RETRY_INTERVAL
                 )
+
+                return
             }
+
+            executor.execute {
+
+                try {
+
+                    val command =
+                        ApiClient.getCommandSync(
+                            applicationContext
+                        )
+
+                    if (command != null) {
+
+                        handleCommand(command)
+
+                    } else {
+
+                        Log.d(
+                            TAG,
+                            "No command available"
+                        )
+                    }
+
+                } catch (e: Exception) {
+
+                    Log.e(
+                        TAG,
+                        "COMMAND POLLING ERROR",
+                        e
+                    )
+                }
+            }
+
+            handler.postDelayed(
+                this,
+                POLL_INTERVAL
+            )
         }
+    }
+
 
     // =========================================================
     // COMMAND HANDLER
@@ -152,9 +196,7 @@ class CommandService : Service() {
             ?.forEach { key ->
 
                 payload[key] =
-                    payloadJson.optString(
-                        key
-                    )
+                    payloadJson.optString(key)
             }
 
         Log.d(
@@ -198,6 +240,7 @@ class CommandService : Service() {
         }
     }
 
+
     // =========================================================
     // SERVICE CREATE
     // =========================================================
@@ -223,12 +266,9 @@ class CommandService : Service() {
 
         createNotificationChannel()
 
-        val notification =
-            createNotification()
-
         startForeground(
             NOTIFICATION_ID,
-            notification
+            createNotification()
         )
 
         Log.d(
@@ -238,6 +278,7 @@ class CommandService : Service() {
 
         setupNetworkMonitoring()
     }
+
 
     // =========================================================
     // SERVICE START
@@ -266,6 +307,16 @@ class CommandService : Service() {
                 "NETWORK AVAILABLE = $networkAvailable"
             )
 
+            // HEARTBEAT START
+            handler.removeCallbacks(
+                heartbeatRunnable
+            )
+
+            handler.post(
+                heartbeatRunnable
+            )
+
+            // COMMAND POLLING START
             handler.removeCallbacks(
                 commandRunnable
             )
@@ -273,10 +324,16 @@ class CommandService : Service() {
             handler.post(
                 commandRunnable
             )
+
+            Log.d(
+                TAG,
+                "HEARTBEAT + COMMAND POLLING STARTED"
+            )
         }
 
         return START_STICKY
     }
+
 
     // =========================================================
     // NETWORK MONITORING
@@ -312,16 +369,21 @@ class CommandService : Service() {
 
                     Log.d(
                         TAG,
-                        "RESUMING COMMAND POLLING"
-                    )
-
-                    Log.d(
-                        TAG,
                         "================================="
                     )
 
                     networkAvailable = true
 
+                    // Restart heartbeat
+                    handler.removeCallbacks(
+                        heartbeatRunnable
+                    )
+
+                    handler.post(
+                        heartbeatRunnable
+                    )
+
+                    // Restart command polling
                     handler.removeCallbacks(
                         commandRunnable
                     )
@@ -347,11 +409,6 @@ class CommandService : Service() {
 
                     Log.d(
                         TAG,
-                        "WAITING FOR NETWORK..."
-                    )
-
-                    Log.d(
-                        TAG,
                         "================================="
                     )
 
@@ -359,14 +416,14 @@ class CommandService : Service() {
                 }
             }
 
-        networkCallback =
-            callback
+        networkCallback = callback
 
         try {
 
-            connectivityManager.registerDefaultNetworkCallback(
-                callback
-            )
+            connectivityManager
+                .registerDefaultNetworkCallback(
+                    callback
+                )
 
             Log.d(
                 TAG,
@@ -383,6 +440,7 @@ class CommandService : Service() {
         }
     }
 
+
     // =========================================================
     // CHECK NETWORK
     // =========================================================
@@ -397,17 +455,14 @@ class CommandService : Service() {
 
             val capabilities =
                 connectivityManager
-                    .getNetworkCapabilities(
-                        network
-                    )
+                    .getNetworkCapabilities(network)
                     ?: return false
 
             capabilities.hasCapability(
                 NetworkCapabilities.NET_CAPABILITY_INTERNET
             ) &&
                     capabilities.hasCapability(
-                        NetworkCapabilities
-                            .NET_CAPABILITY_VALIDATED
+                        NetworkCapabilities.NET_CAPABILITY_VALIDATED
                     )
 
         } catch (e: Exception) {
@@ -421,6 +476,7 @@ class CommandService : Service() {
             false
         }
     }
+
 
     // =========================================================
     // SERVICE DESTROY
@@ -444,9 +500,7 @@ class CommandService : Service() {
             networkCallback?.let {
 
                 connectivityManager
-                    .unregisterNetworkCallback(
-                        it
-                    )
+                    .unregisterNetworkCallback(it)
             }
 
         } catch (_: Exception) {
@@ -459,6 +513,7 @@ class CommandService : Service() {
         super.onDestroy()
     }
 
+
     // =========================================================
     // BIND
     // =========================================================
@@ -469,6 +524,7 @@ class CommandService : Service() {
 
         return null
     }
+
 
     // =========================================================
     // NOTIFICATION CHANNEL
@@ -485,8 +541,7 @@ class CommandService : Service() {
                 NotificationChannel(
                     CHANNEL_ID,
                     "Voice Command Control",
-                    NotificationManager
-                        .IMPORTANCE_LOW
+                    NotificationManager.IMPORTANCE_LOW
                 )
 
             channel.description =
@@ -523,11 +578,10 @@ class CommandService : Service() {
                     "Voice Phone Control"
                 )
                 .setContentText(
-                    "Waiting for commands..."
+                    "Connected - waiting for commands..."
                 )
                 .setSmallIcon(
-                    android.R.drawable
-                        .ic_media_play
+                    android.R.drawable.ic_media_play
                 )
                 .setOngoing(true)
                 .build()
@@ -540,11 +594,10 @@ class CommandService : Service() {
                     "Voice Phone Control"
                 )
                 .setContentText(
-                    "Waiting for commands..."
+                    "Connected - waiting for commands..."
                 )
                 .setSmallIcon(
-                    android.R.drawable
-                        .ic_media_play
+                    android.R.drawable.ic_media_play
                 )
                 .setOngoing(true)
                 .build()

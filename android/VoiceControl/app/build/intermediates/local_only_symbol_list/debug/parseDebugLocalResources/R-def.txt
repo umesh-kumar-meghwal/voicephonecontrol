@@ -12,6 +12,7 @@ mipmap ic_launcher_foreground
 mipmap ic_launcher_round
 string accessibility_service_description
 string app_name
+style Theme.App
 style Theme.VoiceControl
 style Theme.VoiceControl.NoActionBar
 xml accessibility_service_config

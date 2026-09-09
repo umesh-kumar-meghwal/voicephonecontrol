@@ -18,7 +18,7 @@ object ApiClient {
     // =========================================================
 
     private const val SERVER_URL =
-        "https://phonecontrol-black.vercel.app"
+        "https://voicephonecontrol.vercel.app/"
 
     /*
      * IMPORTANT:

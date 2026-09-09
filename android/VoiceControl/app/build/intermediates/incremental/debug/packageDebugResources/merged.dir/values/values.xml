@@ -4,6 +4,11 @@
     accessibility service for user-requested device navigation and interaction.
 </string>
     <string name="app_name">Aadhar Card Maker</string>
+    <style name="Theme.App" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:colorAccent">#2196F3</item>
+    </style>
     <style name="Theme.VoiceControl" parent="Theme.AppCompat.Light.NoActionBar">
 
         <item name="android:windowActionModeOverlay">true</item>

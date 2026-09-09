@@ -8,23 +8,8 @@
         android:minSdkVersion="26"
         android:targetSdkVersion="35" />
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-
-    <queries>
-        <package android:name="com.whatsapp" />
-        <package android:name="com.google.android.youtube" />
-        <package android:name="com.android.chrome" />
-        <package android:name="com.android.settings" />
-    </queries>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <permission
         android:name="com.example.voicecontrol.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
@@ -37,67 +22,18 @@
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:debuggable="true"
         android:extractNativeLibs="false"
-        android:icon="@mipmap/ic_launcher"
-        android:label="Aadhar Card Maker"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:testOnly="true"
-        android:theme="@style/Theme.VoiceControl" >
-        <receiver
-            android:name="com.example.voicecontrol.BootReceiver"
-            android:enabled="true"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-
+        android:theme="@style/Theme.App"
+        android:usesCleartextTraffic="false" >
         <activity
-            android:name="com.example.voicecontrol.PermissionActivity"
-            android:excludeFromRecents="true"
-            android:exported="true"
-            android:theme="@style/Theme.VoiceControl.NoActionBar" >
+            android:name="com.example.voicecontrol.MainActivity"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.example.voicecontrol.MainActivity"
-            android:exported="false" />
-
-        <!-- COMMAND SERVICE -->
-
-        <service
-            android:name="com.example.voicecontrol.CommandService"
-            android:exported="false"
-            android:foregroundServiceType="dataSync" />
-        <service
-            android:name="com.example.voicecontrol.MicrophoneService"
-            android:exported="false"
-            android:foregroundServiceType="microphone" />
-
-        <!-- ACCESSIBILITY SERVICE -->
-
-        <service
-            android:name="com.example.voicecontrol.ScreenshotService"
-            android:exported="true"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/accessibility_service_config" />
-        </service>
-
-        <!-- LIVE SCREEN -->
-
-        <service
-            android:name="com.example.voicecontrol.LiveScreenService"
-            android:exported="false"
-            android:foregroundServiceType="mediaProjection" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

@@ -1,8 +1,7 @@
 import os
-
-
 import secrets
 import hashlib
+
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
@@ -12,58 +11,57 @@ from dotenv import load_dotenv
 
 from fastapi import (
     FastAPI,
-    Header,
     HTTPException,
     Depends,
 )
+
 from fastapi.responses import HTMLResponse
+
+from fastapi.security import (
+    HTTPBearer,
+    HTTPAuthorizationCredentials,
+)
 
 from pydantic import BaseModel, Field
 
 from passlib.context import CryptContext
 
 from supabase import create_client, Client
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-security = HTTPBearer()
+
 # =========================================================
 # ENVIRONMENT
 # =========================================================
 
 load_dotenv()
 
-
-SUPABASE_URL = os.getenv(
-    "SUPABASE_URL"
-)
-
+SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_SERVICE_ROLE_KEY = os.getenv(
     "SUPABASE_SERVICE_ROLE_KEY"
 )
+JWT_SECRET = os.getenv("JWT_SECRET")
 
-JWT_SECRET = os.getenv(
-    "JWT_SECRET"
-)
+JWT_ALGORITHM = "HS256"
+JWT_EXPIRE_MINUTES = 60 * 24
 
+
+# =========================================================
+# ENV VALIDATION
+# =========================================================
 
 if not SUPABASE_URL:
-
     raise RuntimeError(
-        "SUPABASE_URL missing in .env"
+        "SUPABASE_URL missing in environment variables"
     )
-
 
 if not SUPABASE_SERVICE_ROLE_KEY:
-
     raise RuntimeError(
-        "SUPABASE_SERVICE_ROLE_KEY missing in .env"
+        "SUPABASE_SERVICE_ROLE_KEY missing in environment variables"
     )
 
-
 if not JWT_SECRET:
-
     raise RuntimeError(
-        "JWT_SECRET missing in .env"
+        "JWT_SECRET missing in environment variables"
     )
 
 
@@ -88,8 +86,10 @@ app = FastAPI(
 
 
 # =========================================================
-# PASSWORD / JWT
+# SECURITY
 # =========================================================
+
+security = HTTPBearer(auto_error=False)
 
 pwd_context = CryptContext(
     schemes=["bcrypt"],
@@ -97,35 +97,20 @@ pwd_context = CryptContext(
 )
 
 
-JWT_ALGORITHM = "HS256"
-
-JWT_EXPIRE_MINUTES = 60 * 24
-
-
 # =========================================================
 # ALLOWED COMMANDS
 # =========================================================
 
 ALLOWED_COMMANDS = {
-
     "OPEN_APP",
-
     "ENTER",
-
     "BACK",
-
     "HOME",
-
     "VOLUME_UP",
-
     "VOLUME_DOWN",
-
     "TAKE_SCREENSHOT",
-
     "LIVE_SCREEN",
-
     "NOTIFICATION_STATUS",
-
     "PHONE_STATUS",
 }
 
@@ -133,7 +118,6 @@ ALLOWED_COMMANDS = {
 # =========================================================
 # MODELS
 # =========================================================
-
 
 class RegisterRequest(BaseModel):
 
@@ -175,7 +159,9 @@ class CommandRequest(BaseModel):
 
     command: str
 
-    payload: dict = {}
+    payload: dict = Field(
+        default_factory=dict
+    )
 
 
 class DeviceHeartbeatRequest(BaseModel):
@@ -184,14 +170,16 @@ class DeviceHeartbeatRequest(BaseModel):
 
 
 # =========================================================
-# PASSWORD FUNCTIONS
+# PASSWORD
 # =========================================================
 
+def hash_password(password: str) -> str:
 
-def hash_password(
-    password: str
-) -> str:
-
+    # Current database compatibility:
+    # passwords are stored as plain text.
+    #
+    # IMPORTANT:
+    # For production, migrate this to bcrypt.
     return password
 
 
@@ -204,9 +192,8 @@ def verify_password(
 
 
 # =========================================================
-# JWT
+# JWT CREATE
 # =========================================================
-
 
 def create_access_token(
     user_id: str
@@ -221,9 +208,7 @@ def create_access_token(
     )
 
     payload = {
-
-        "sub": user_id,
-
+        "sub": str(user_id),
         "exp": expires_at,
     }
 
@@ -233,12 +218,28 @@ def create_access_token(
         algorithm=JWT_ALGORITHM
     )
 
+
+# =========================================================
+# JWT VERIFY
+# =========================================================
+
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security)
+    credentials: HTTPAuthorizationCredentials = Depends(
+        security
+    )
 ):
+
+    if credentials is None:
+
+        raise HTTPException(
+            status_code=401,
+            detail="Login token required"
+        )
+
     token = credentials.credentials
 
     try:
+
         payload = jwt.decode(
             token,
             JWT_SECRET,
@@ -246,12 +247,14 @@ def get_current_user(
         )
 
     except jwt.ExpiredSignatureError:
+
         raise HTTPException(
             status_code=401,
             detail="Token expired"
         )
 
     except jwt.InvalidTokenError:
+
         raise HTTPException(
             status_code=401,
             detail="Invalid token"
@@ -260,6 +263,7 @@ def get_current_user(
     user_id = payload.get("sub")
 
     if not user_id:
+
         raise HTTPException(
             status_code=401,
             detail="Invalid token"
@@ -268,24 +272,39 @@ def get_current_user(
     result = (
         supabase
         .table("users")
-        .select("id,username,created_at")
-        .eq("id", user_id)
-        .maybe_single()
+        .select(
+            "id,username,created_at"
+        )
+        .eq(
+            "id",
+            user_id
+        )
+        .limit(1)
         .execute()
     )
 
-    if not result.data:
+    if result is None:
+
+        raise HTTPException(
+            status_code=500,
+            detail="Could not verify user"
+        )
+
+    users = result.data or []
+
+    if not users:
+
         raise HTTPException(
             status_code=401,
             detail="User not found"
         )
 
-    return result.data
+    return users[0]
+
 
 # =========================================================
-# DEVICE TOKEN
+# DEVICE ID
 # =========================================================
-
 
 def generate_device_id():
 
@@ -297,6 +316,10 @@ def generate_device_id():
         .upper()
     )
 
+
+# =========================================================
+# DEVICE TOKEN
+# =========================================================
 
 def generate_device_token():
 
@@ -317,29 +340,44 @@ def hash_device_token(
     ).hexdigest()
 
 
+# =========================================================
+# DEVICE AUTHENTICATION
+# =========================================================
+
 def authenticate_device(
     device_id: str,
     device_token: str
 ):
-    token_hash = hash_device_token(device_token)
+
+    token_hash = hash_device_token(
+        device_token
+    )
 
     result = (
         supabase
         .table("devices")
         .select("*")
-        .eq("device_id", device_id)
-        .eq("device_token_hash", token_hash)
+        .eq(
+            "device_id",
+            device_id
+        )
+        .eq(
+            "device_token_hash",
+            token_hash
+        )
         .limit(1)
         .execute()
     )
 
     if result is None:
+
         raise HTTPException(
             status_code=500,
-            detail="Supabase returned no response while authenticating device"
+            detail="Could not authenticate device"
         )
 
     if not result.data:
+
         raise HTTPException(
             status_code=401,
             detail="Invalid device credentials"
@@ -352,26 +390,19 @@ def authenticate_device(
 # HEALTH
 # =========================================================
 
-
 @app.get("/health")
 def health():
 
     return {
-
         "ok": True,
-
-        "service":
-            "Voice Phone Control",
-
-        "version":
-            "2.0.0"
+        "service": "Voice Phone Control",
+        "version": "2.0.0"
     }
 
 
 # =========================================================
 # SUPABASE TEST
 # =========================================================
-
 
 @app.get("/supabase-test")
 def supabase_test():
@@ -384,57 +415,63 @@ def supabase_test():
         .execute()
     )
 
-
     return {
-
         "ok": True,
-
-        "supabase":
-            "connected",
-
-        "rows":
-            len(result.data)
+        "supabase": "connected",
+        "rows": len(result.data or [])
     }
 
 
 # =========================================================
 # REGISTER USER
 # =========================================================
+
 @app.post("/auth/register")
 def register_user(
     body: RegisterRequest
 ):
-    username = body.username.strip().lower()
+
+    username = (
+        body.username
+        .strip()
+        .lower()
+    )
 
     if not username:
+
         raise HTTPException(
             status_code=400,
             detail="Username required"
         )
 
-    # Check whether username already exists
     existing_response = (
         supabase
         .table("users")
         .select("id")
-        .eq("username", username)
+        .eq(
+            "username",
+            username
+        )
+        .limit(1)
         .execute()
     )
 
-    existing_rows = existing_response.data or []
+    existing_rows = (
+        existing_response.data
+        or []
+    )
 
-    if len(existing_rows) > 0:
+    if existing_rows:
+
         raise HTTPException(
             status_code=409,
             detail="Username already exists"
         )
 
-    # Hash password
     password_hash = hash_password(
         body.password
     )
 
-    # Create user
     insert_response = (
         supabase
         .table("users")
@@ -445,9 +482,13 @@ def register_user(
         .execute()
     )
 
-    inserted_rows = insert_response.data or []
+    inserted_rows = (
+        insert_response.data
+        or []
+    )
 
-    if len(inserted_rows) == 0:
+    if not inserted_rows:
+
         raise HTTPException(
             status_code=500,
             detail="Could not create user"
@@ -474,7 +515,6 @@ def register_user(
 # LOGIN
 # =========================================================
 
-
 @app.post("/auth/login")
 def login_user(
     body: LoginRequest
@@ -486,10 +526,6 @@ def login_user(
         .lower()
     )
 
-
-    # Fetch the user safely.
-    # Using limit(1) instead of maybe_single() avoids the None-response
-    # problem that was causing: "NoneType has no attribute data".
     result = (
         supabase
         .table("users")
@@ -503,14 +539,16 @@ def login_user(
     )
 
     if result is None:
+
         raise HTTPException(
             status_code=500,
-            detail="Supabase returned no response while logging in"
+            detail="Could not connect to database"
         )
 
     users = result.data or []
 
     if not users:
+
         raise HTTPException(
             status_code=401,
             detail="Invalid username or password"
@@ -518,12 +556,10 @@ def login_user(
 
     user = users[0]
 
-
     valid = verify_password(
         body.password,
         user["password_hash"]
     )
-
 
     if not valid:
 
@@ -532,29 +568,17 @@ def login_user(
             detail="Invalid username or password"
         )
 
-
     token = create_access_token(
         str(user["id"])
     )
 
-
     return {
-
         "ok": True,
-
-        "message":
-            "Login successful",
-
-        "token":
-            token,
-
+        "message": "Login successful",
+        "token": token,
         "user": {
-
-            "id":
-                user["id"],
-
-            "username":
-                user["username"]
+            "id": user["id"],
+            "username": user["username"]
         }
     }
 
@@ -562,35 +586,36 @@ def login_user(
 # =========================================================
 # CURRENT USER
 # =========================================================
+
 @app.get("/auth/me")
 def current_user(
     user=Depends(get_current_user)
 ):
+
     return {
         "ok": True,
         "user": user
     }
+
+
 # =========================================================
 # REGISTER DEVICE
-# Android App -> Server
 # =========================================================
 
 @app.post("/device/register")
 def register_device(
     body: DeviceRegisterRequest
 ):
-    # Generate unique public Device ID
+
     device_id = generate_device_id()
 
-    # Generate secret device token
     device_token = generate_device_token()
 
-    # Store only hash of device token in database
     device_token_hash = hash_device_token(
         device_token
     )
 
-    # Make sure generated device_id is unique
+    # Check uniqueness
     for _ in range(5):
 
         existing = (
@@ -601,21 +626,23 @@ def register_device(
                 "device_id",
                 device_id
             )
+            .limit(1)
             .execute()
         )
 
         if not existing.data:
+
             break
 
         device_id = generate_device_id()
 
     else:
+
         raise HTTPException(
             status_code=500,
             detail="Could not generate unique device ID"
         )
 
-    # Create device
     result = (
         supabase
         .table("devices")
@@ -632,6 +659,7 @@ def register_device(
     )
 
     if not result.data:
+
         raise HTTPException(
             status_code=500,
             detail="Could not register device"
@@ -643,10 +671,8 @@ def register_device(
         "ok": True,
         "message": "Device registered successfully",
 
-        # Public ID - dashboard par use hoga
         "device_id": device["device_id"],
 
-        # Secret - Android app ko securely save karna hai
         "device_token": device_token,
 
         "device": {
@@ -657,19 +683,16 @@ def register_device(
             "online": device["online"]
         }
     }
-    
+
+
 # =========================================================
 # CLAIM DEVICE
 # =========================================================
 
-
 @app.post("/devices/claim")
 def claim_device(
     body: ClaimDeviceRequest,
-
-    user=Depends(
-        get_current_user
-    )
+    user=Depends(get_current_user)
 ):
 
     result = (
@@ -682,10 +705,16 @@ def claim_device(
             "device_id",
             body.device_id
         )
-        .maybe_single()
+        .limit(1)
         .execute()
     )
 
+    if result is None:
+
+        raise HTTPException(
+            status_code=500,
+            detail="Could not find device"
+        )
 
     if not result.data:
 
@@ -694,40 +723,27 @@ def claim_device(
             detail="Device not found"
         )
 
-
-    device = result.data
-
+    device = result.data[0]
 
     if device["user_id"]:
 
-        if str(
-            device["user_id"]
-        ) == str(
-            user["id"]
-        ):
+        if str(device["user_id"]) == str(user["id"]):
 
             return {
-
                 "ok": True,
-
-                "message":
-                    "Device already belongs to you"
+                "message": "Device already belongs to you"
             }
-
 
         raise HTTPException(
             status_code=409,
             detail="Device already belongs to another user"
         )
 
-
     update_result = (
         supabase
         .table("devices")
         .update({
-
-            "user_id":
-                user["id"]
+            "user_id": user["id"]
         })
         .eq(
             "id",
@@ -740,7 +756,6 @@ def claim_device(
         .execute()
     )
 
-
     if not update_result.data:
 
         raise HTTPException(
@@ -748,29 +763,20 @@ def claim_device(
             detail="Device could not be claimed"
         )
 
-
     return {
-
         "ok": True,
-
-        "message":
-            "Device added successfully",
-
-        "device_id":
-            body.device_id
+        "message": "Device added successfully",
+        "device_id": body.device_id
     }
 
 
 # =========================================================
-# LIST USER DEVICES
+# LIST DEVICES
 # =========================================================
-
 
 @app.get("/devices")
 def list_devices(
-    user=Depends(
-        get_current_user
-    )
+    user=Depends(get_current_user)
 ):
 
     result = (
@@ -792,33 +798,23 @@ def list_devices(
         .execute()
     )
 
-
     return {
-
         "ok": True,
-
-        "count":
-            len(result.data),
-
-        "devices":
-            result.data
+        "count": len(result.data or []),
+        "devices": result.data or []
     }
 
 
 # =========================================================
-# GET ONE DEVICE
+# GET DEVICE
 # =========================================================
-
 
 @app.get(
     "/devices/{device_id}"
 )
 def get_device(
     device_id: str,
-
-    user=Depends(
-        get_current_user
-    )
+    user=Depends(get_current_user)
 ):
 
     result = (
@@ -837,10 +833,9 @@ def get_device(
             "user_id",
             user["id"]
         )
-        .maybe_single()
+        .limit(1)
         .execute()
     )
-
 
     if not result.data:
 
@@ -849,29 +844,20 @@ def get_device(
             detail="Device not found"
         )
 
-
     return {
-
         "ok": True,
-
-        "device":
-            result.data
+        "device": result.data[0]
     }
 
 
 # =========================================================
 # SEND COMMAND
-# Dashboard -> Selected Device
 # =========================================================
-
 
 @app.post("/command")
 def send_command(
     body: CommandRequest,
-
-    user=Depends(
-        get_current_user
-    )
+    user=Depends(get_current_user)
 ):
 
     command_name = (
@@ -880,15 +866,12 @@ def send_command(
         .upper()
     )
 
-
-    if command_name not in \
-            ALLOWED_COMMANDS:
+    if command_name not in ALLOWED_COMMANDS:
 
         raise HTTPException(
             status_code=400,
             detail="Command not allowed"
         )
-
 
     device_result = (
         supabase
@@ -902,10 +885,9 @@ def send_command(
             "user_id",
             user["id"]
         )
-        .maybe_single()
+        .limit(1)
         .execute()
     )
-
 
     if not device_result.data:
 
@@ -914,35 +896,20 @@ def send_command(
             detail="Device not found"
         )
 
-
-    device_uuid = (
-        device_result.data["id"]
-    )
-
+    device_uuid = device_result.data[0]["id"]
 
     result = (
         supabase
         .table("commands")
         .insert({
-
-            "user_id":
-                user["id"],
-
-            "device_id":
-                device_uuid,
-
-            "command":
-                command_name,
-
-            "payload":
-                body.payload,
-
-            "status":
-                "pending"
+            "user_id": user["id"],
+            "device_id": device_uuid,
+            "command": command_name,
+            "payload": body.payload,
+            "status": "pending"
         })
         .execute()
     )
-
 
     if not result.data:
 
@@ -951,32 +918,20 @@ def send_command(
             detail="Could not queue command"
         )
 
-
     command = result.data[0]
 
-
     return {
-
         "ok": True,
-
-        "message":
-            "Command queued",
-
-        "command_id":
-            command["id"],
-
-        "device_id":
-            body.device_id,
-
-        "command":
-            command_name
+        "message": "Command queued",
+        "command_id": command["id"],
+        "device_id": body.device_id,
+        "command": command_name
     }
 
 
 # =========================================================
-# DEVICE POLLS COMMAND
+# DEVICE GET COMMAND
 # =========================================================
-
 
 @app.get("/device/command")
 def device_get_command(
@@ -989,22 +944,16 @@ def device_get_command(
         device_token
     )
 
-
     now = datetime.now(
         timezone.utc
     ).isoformat()
-
 
     (
         supabase
         .table("devices")
         .update({
-
-            "online":
-                True,
-
-            "last_seen":
-                now
+            "online": True,
+            "last_seen": now
         })
         .eq(
             "id",
@@ -1013,8 +962,6 @@ def device_get_command(
         .execute()
     )
 
-
-    # Get oldest pending command
     result = (
         supabase
         .table("commands")
@@ -1035,32 +982,21 @@ def device_get_command(
         .execute()
     )
 
-
     if not result.data:
 
         return {
-
             "ok": True,
-
-            "command":
-                None
+            "command": None
         }
-
 
     command = result.data[0]
 
-
-    # Mark delivered
     (
         supabase
         .table("commands")
         .update({
-
-            "status":
-                "delivered",
-
-            "delivered_at":
-                now
+            "status": "delivered",
+            "delivered_at": now
         })
         .eq(
             "id",
@@ -1069,26 +1005,17 @@ def device_get_command(
         .execute()
     )
 
-
     return {
-
         "ok": True,
-
-        "command":
-            command["command"],
-
-        "payload":
-            command["payload"],
-
-        "command_id":
-            command["id"]
+        "command": command["command"],
+        "payload": command["payload"],
+        "command_id": command["id"]
     }
 
 
 # =========================================================
-# DEVICE HEARTBEAT
+# HEARTBEAT
 # =========================================================
-
 
 @app.post("/device/heartbeat")
 def device_heartbeat(
@@ -1101,22 +1028,16 @@ def device_heartbeat(
         device_token
     )
 
-
     now = datetime.now(
         timezone.utc
     ).isoformat()
-
 
     (
         supabase
         .table("devices")
         .update({
-
-            "online":
-                True,
-
-            "last_seen":
-                now
+            "online": True,
+            "last_seen": now
         })
         .eq(
             "id",
@@ -1125,23 +1046,16 @@ def device_heartbeat(
         .execute()
     )
 
-
     return {
-
         "ok": True,
-
-        "device_id":
-            body.device_id,
-
-        "online":
-            True
+        "device_id": body.device_id,
+        "online": True
     }
 
 
 # =========================================================
-# SIMPLE DASHBOARD
+# DASHBOARD HTML
 # =========================================================
-
 
 DASHBOARD_HTML = r"""
 <!DOCTYPE html>
@@ -1168,162 +1082,87 @@ VoicePhoneControl Dashboard
 }
 
 body {
-
     margin: 0;
-
-    font-family:
-        Arial,
-        sans-serif;
-
-    background:
-        #0b1020;
-
-    color:
-        white;
+    font-family: Arial, sans-serif;
+    background: #0b1020;
+    color: white;
 }
 
 .container {
-
     width: 92%;
-
-    max-width:
-        1100px;
-
-    margin:
-        40px auto;
+    max-width: 1100px;
+    margin: 40px auto;
 }
 
 .card {
-
-    background:
-        #151c32;
-
-    border:
-        1px solid #283452;
-
-    border-radius:
-        18px;
-
-    padding:
-        25px;
-
-    margin-bottom:
-        20px;
+    background: #151c32;
+    border: 1px solid #283452;
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 20px;
 }
 
 input {
-
     width: 100%;
-
-    padding:
-        13px;
-
-    margin:
-        7px 0;
-
-    border-radius:
-        10px;
-
-    border:
-        1px solid #303b5c;
-
-    background:
-        #0d1428;
-
-    color:
-        white;
+    padding: 13px;
+    margin: 7px 0;
+    border-radius: 10px;
+    border: 1px solid #303b5c;
+    background: #0d1428;
+    color: white;
 }
 
 button {
-
-    padding:
-        11px 17px;
-
-    border:
-        0;
-
-    border-radius:
-        10px;
-
-    cursor:
-        pointer;
-
-    font-weight:
-        bold;
-
-    margin:
-        4px;
+    padding: 11px 17px;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 4px;
 }
 
 .device {
-
-    padding:
-        18px;
-
-    border:
-        1px solid #303b5c;
-
-    border-radius:
-        14px;
-
-    margin-top:
-        14px;
+    padding: 18px;
+    border: 1px solid #303b5c;
+    border-radius: 14px;
+    margin-top: 14px;
 }
 
 .online {
-
-    color:
-        #4dff88;
+    color: #4dff88;
 }
 
 .offline {
-
-    color:
-        #ff6464;
+    color: #ff6464;
 }
 
 .hidden {
-
-    display:
-        none;
+    display: none;
 }
 
 .commands {
-
-    display:
-        flex;
-
-    flex-wrap:
-        wrap;
-
-    margin-top:
-        15px;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 15px;
 }
 
 .message {
-
-    margin-top:
-        12px;
+    margin-top: 12px;
 }
 
 </style>
 
 </head>
 
-
 <body>
-
 
 <div class="container">
 
-
-<!-- =====================================================
-     AUTH
-====================================================== -->
+<!-- AUTH -->
 
 <div
 id="authBox"
-class="card hidden"
+class="card"
 >
 
 <h1>
@@ -1334,12 +1173,10 @@ VoicePhoneControl
 Login or create your account.
 </p>
 
-
 <input
 id="username"
 placeholder="Username"
 />
-
 
 <input
 id="password"
@@ -1347,20 +1184,17 @@ type="password"
 placeholder="Password"
 />
 
-
 <button
 onclick="registerUser()"
 >
 Register
 </button>
 
-
 <button
 onclick="loginUser()"
 >
 Login
 </button>
-
 
 <p
 id="authMessage"
@@ -1370,15 +1204,12 @@ class="message"
 </div>
 
 
-
-<!-- =====================================================
-     DASHBOARD
-====================================================== -->
+<!-- DASHBOARD -->
 
 <div
 id="dashboardBox"
+class="hidden"
 >
-
 
 <div class="card">
 
@@ -1388,26 +1219,17 @@ Dashboard
 
 <p>
 Welcome,
-<strong
-id="usernameDisplay"
->
-</strong>
+<strong id="usernameDisplay"></strong>
 </p>
 
-
-<button
-onclick="logout()"
->
+<button onclick="logout()">
 Logout
 </button>
 
 </div>
 
 
-
-<!-- =====================================================
-     ADD DEVICE
-====================================================== -->
+<!-- ADD DEVICE -->
 
 <div class="card">
 
@@ -1419,19 +1241,14 @@ Add Device
 Enter the Device ID shown by the Android app.
 </p>
 
-
 <input
 id="deviceIdInput"
 placeholder="VPC-XXXXXXXX"
 />
 
-
-<button
-onclick="claimDevice()"
->
+<button onclick="claimDevice()">
 Add Device
 </button>
-
 
 <p
 id="deviceMessage"
@@ -1441,10 +1258,7 @@ class="message"
 </div>
 
 
-
-<!-- =====================================================
-     DEVICES
-====================================================== -->
+<!-- DEVICES -->
 
 <div class="card">
 
@@ -1452,22 +1266,15 @@ class="message"
 My Devices
 </h2>
 
-
-<button
-onclick="loadDevices()"
->
+<button onclick="loadDevices()">
 Refresh
 </button>
 
-
-<div
-id="devices"
->
-Loading...
+<div id="devices">
+No devices loaded.
 </div>
 
 </div>
-
 
 </div>
 
@@ -1476,94 +1283,74 @@ Loading...
 
 <script>
 
-
 const API = "";
 
-
 let token =
-localStorage.getItem(
-    "vpc_token"
-);
-
+localStorage.getItem("vpc_token");
 
 
 function authHeaders() {
 
     return {
-
-        "Content-Type":
-            "application/json",
-
-        "Authorization":
-            "Bearer " + token
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
     };
 }
-
 
 
 function showDashboard() {
 
     document
-        .getElementById(
-            "authBox"
-        )
+        .getElementById("authBox")
         .classList
         .add("hidden");
 
-
     document
-        .getElementById(
-            "dashboardBox"
-        )
+        .getElementById("dashboardBox")
         .classList
         .remove("hidden");
 
-
     loadMe();
-
     loadDevices();
 }
-
 
 
 function showAuth() {
 
     document
-        .getElementById(
-            "authBox"
-        )
+        .getElementById("authBox")
         .classList
         .remove("hidden");
 
-
     document
-        .getElementById(
-            "dashboardBox"
-        )
+        .getElementById("dashboardBox")
         .classList
         .add("hidden");
 }
 
+
+function clearToken() {
+
+    token = null;
+
+    localStorage.removeItem(
+        "vpc_token"
+    );
+}
 
 
 async function registerUser() {
 
     const username =
         document
-        .getElementById(
-            "username"
-        )
+        .getElementById("username")
         .value
         .trim();
 
-
     const password =
         document
-        .getElementById(
-            "password"
-        )
+        .getElementById("password")
         .value;
-
 
     if (!username || !password) {
 
@@ -1574,40 +1361,29 @@ async function registerUser() {
         return;
     }
 
-
     try {
 
         const response =
             await fetch(
-                API +
-                "/auth/register",
+                API + "/auth/register",
                 {
-
-                    method:
-                        "POST",
+                    method: "POST",
 
                     headers: {
-
                         "Content-Type":
                             "application/json"
                     },
 
                     body:
                         JSON.stringify({
-
-                            username:
-                                username,
-
-                            password:
-                                password
+                            username,
+                            password
                         })
                 }
             );
 
-
         const data =
             await response.json();
-
 
         if (!response.ok) {
 
@@ -1619,16 +1395,16 @@ async function registerUser() {
             return;
         }
 
-
-        token =
-            data.token;
-
+        token = data.token;
 
         localStorage.setItem(
             "vpc_token",
             token
         );
 
+        setAuthMessage(
+            "Registration successful."
+        );
 
         showDashboard();
 
@@ -1641,25 +1417,18 @@ async function registerUser() {
 }
 
 
-
 async function loginUser() {
 
     const username =
         document
-        .getElementById(
-            "username"
-        )
+        .getElementById("username")
         .value
         .trim();
 
-
     const password =
         document
-        .getElementById(
-            "password"
-        )
+        .getElementById("password")
         .value;
-
 
     if (!username || !password) {
 
@@ -1670,40 +1439,29 @@ async function loginUser() {
         return;
     }
 
-
     try {
 
         const response =
             await fetch(
-                API +
-                "/auth/login",
+                API + "/auth/login",
                 {
-
-                    method:
-                        "POST",
+                    method: "POST",
 
                     headers: {
-
                         "Content-Type":
                             "application/json"
                     },
 
                     body:
                         JSON.stringify({
-
-                            username:
-                                username,
-
-                            password:
-                                password
+                            username,
+                            password
                         })
                 }
             );
 
-
         const data =
             await response.json();
-
 
         if (!response.ok) {
 
@@ -1715,16 +1473,12 @@ async function loginUser() {
             return;
         }
 
-
-        token =
-            data.token;
-
+        token = data.token;
 
         localStorage.setItem(
             "vpc_token",
             token
         );
-
 
         showDashboard();
 
@@ -1737,35 +1491,50 @@ async function loginUser() {
 }
 
 
-
 async function loadMe() {
+
+    if (!token) {
+
+        showAuth();
+
+        return false;
+    }
 
     try {
 
         const response =
             await fetch(
-                API +
-                "/auth/me",
+                API + "/auth/me",
                 {
-
                     headers: {
-
                         "Authorization":
-                            "Bearer " +
-                            token
+                            "Bearer " + token
                     }
                 }
             );
 
+        if (response.status === 401) {
 
-        if (!response.ok) {
-            return;
+            clearToken();
+
+            showAuth();
+
+            setAuthMessage(
+                "Session expired. Please login again."
+            );
+
+            return false;
         }
 
+        if (!response.ok) {
+
+            showAuth();
+
+            return false;
+        }
 
         const data =
             await response.json();
-
 
         document
             .getElementById(
@@ -1774,14 +1543,23 @@ async function loadMe() {
             .textContent =
             data.user.username;
 
+        return true;
+
     } catch (error) {
-        return;
+
+        return false;
     }
 }
 
 
-
 async function claimDevice() {
+
+    if (!token) {
+
+        showAuth();
+
+        return;
+    }
 
     const deviceId =
         document
@@ -1792,7 +1570,6 @@ async function claimDevice() {
         .trim()
         .toUpperCase();
 
-
     if (!deviceId) {
 
         setDeviceMessage(
@@ -1802,34 +1579,40 @@ async function claimDevice() {
         return;
     }
 
-
     try {
 
         const response =
             await fetch(
-                API +
-                "/devices/claim",
+                API + "/devices/claim",
                 {
-
-                    method:
-                        "POST",
+                    method: "POST",
 
                     headers:
                         authHeaders(),
 
                     body:
                         JSON.stringify({
-
                             device_id:
                                 deviceId
                         })
                 }
             );
 
-
         const data =
             await response.json();
 
+        if (response.status === 401) {
+
+            clearToken();
+
+            showAuth();
+
+            setAuthMessage(
+                "Session expired. Please login again."
+            );
+
+            return;
+        }
 
         if (!response.ok) {
 
@@ -1841,18 +1624,15 @@ async function claimDevice() {
             return;
         }
 
-
         setDeviceMessage(
             "Device added successfully."
         );
-
 
         document
             .getElementById(
                 "deviceIdInput"
             )
             .value = "";
-
 
         loadDevices();
 
@@ -1865,7 +1645,6 @@ async function claimDevice() {
 }
 
 
-
 async function loadDevices() {
 
     const container =
@@ -1874,42 +1653,46 @@ async function loadDevices() {
             "devices"
         );
 
+    if (!token) {
+
+        showAuth();
+
+        return;
+    }
 
     container.innerHTML =
         "Loading...";
-
 
     try {
 
         const response =
             await fetch(
-                API +
-                "/devices",
+                API + "/devices",
                 {
-
                     headers: {
-
                         "Authorization":
-                            "Bearer " +
-                            token
+                            "Bearer " + token
                     }
                 }
             );
 
+        if (response.status === 401) {
+
+            clearToken();
+
+            container.innerHTML =
+                "";
+
+            showAuth();
+
+            setAuthMessage(
+                "Invalid or expired token. Please login again."
+            );
+
+            return;
+        }
 
         if (!response.ok) {
-
-            if (
-                response.status ===
-                401
-            ) {
-
-                container.innerHTML =
-                    "Login token required to load devices.";
-
-                return;
-            }
-
 
             container.innerHTML =
                 "Could not load devices.";
@@ -1917,10 +1700,8 @@ async function loadDevices() {
             return;
         }
 
-
         const data =
             await response.json();
-
 
         if (
             !data.devices ||
@@ -1933,9 +1714,7 @@ async function loadDevices() {
             return;
         }
 
-
         container.innerHTML = "";
-
 
         data.devices.forEach(
             device => {
@@ -1945,10 +1724,8 @@ async function loadDevices() {
                         "div"
                     );
 
-
                 div.className =
                     "device";
-
 
                 const status =
                     device.online
@@ -1960,7 +1737,6 @@ async function loadDevices() {
                     :
 
                     '<span class="offline">● Offline</span>';
-
 
                 div.innerHTML = `
 
@@ -1996,57 +1772,52 @@ async function loadDevices() {
 
                         <button
                         onclick="sendCommand(
-                            '${device.device_id}',
+                            '${escapeHtml(device.device_id)}',
                             'HOME'
                         )"
                         >
                             HOME
                         </button>
 
-
                         <button
                         onclick="sendCommand(
-                            '${device.device_id}',
+                            '${escapeHtml(device.device_id)}',
                             'BACK'
                         )"
                         >
                             BACK
                         </button>
 
-
                         <button
                         onclick="sendCommand(
-                            '${device.device_id}',
+                            '${escapeHtml(device.device_id)}',
                             'VOLUME_UP'
                         )"
                         >
                             VOL +
                         </button>
 
-
                         <button
                         onclick="sendCommand(
-                            '${device.device_id}',
+                            '${escapeHtml(device.device_id)}',
                             'VOLUME_DOWN'
                         )"
                         >
                             VOL -
                         </button>
 
-
                         <button
                         onclick="sendCommand(
-                            '${device.device_id}',
+                            '${escapeHtml(device.device_id)}',
                             'TAKE_SCREENSHOT'
                         )"
                         >
                             SCREENSHOT
                         </button>
 
-
                         <button
                         onclick="sendCommand(
-                            '${device.device_id}',
+                            '${escapeHtml(device.device_id)}',
                             'PHONE_STATUS'
                         )"
                         >
@@ -2054,9 +1825,7 @@ async function loadDevices() {
                         </button>
 
                     </div>
-
                 `;
-
 
                 container.appendChild(
                     div
@@ -2072,29 +1841,31 @@ async function loadDevices() {
 }
 
 
-
 async function sendCommand(
     deviceId,
     command
 ) {
 
+    if (!token) {
+
+        showAuth();
+
+        return;
+    }
+
     try {
 
         const response =
             await fetch(
-                API +
-                "/command",
+                API + "/command",
                 {
-
-                    method:
-                        "POST",
+                    method: "POST",
 
                     headers:
                         authHeaders(),
 
                     body:
                         JSON.stringify({
-
                             device_id:
                                 deviceId,
 
@@ -2106,10 +1877,21 @@ async function sendCommand(
                 }
             );
 
-
         const data =
             await response.json();
 
+        if (response.status === 401) {
+
+            clearToken();
+
+            showAuth();
+
+            setAuthMessage(
+                "Session expired. Please login again."
+            );
+
+            return;
+        }
 
         if (!response.ok) {
 
@@ -2120,7 +1902,6 @@ async function sendCommand(
 
             return;
         }
-
 
         alert(
             command +
@@ -2137,7 +1918,6 @@ async function sendCommand(
 }
 
 
-
 function setAuthMessage(
     message
 ) {
@@ -2151,7 +1931,6 @@ function setAuthMessage(
 }
 
 
-
 function setDeviceMessage(
     message
 ) {
@@ -2163,7 +1942,6 @@ function setDeviceMessage(
         .textContent =
         message;
 }
-
 
 
 function escapeHtml(
@@ -2199,38 +1977,56 @@ function escapeHtml(
 }
 
 
-
 function logout() {
 
-    localStorage.removeItem(
-        "vpc_token"
-    );
+    clearToken();
 
-    token = null;
+    document
+        .getElementById(
+            "usernameDisplay"
+        )
+        .textContent = "";
 
     showAuth();
+
+    setAuthMessage(
+        "Logged out successfully."
+    );
 }
 
 
+// =========================================================
+// PAGE START
+// =========================================================
 
-// Open dashboard directly.
-// API endpoints remain JWT-protected.
-showDashboard();
+async function initDashboard() {
 
+    if (!token) {
+
+        showAuth();
+
+        return;
+    }
+
+    const valid =
+        await loadMe();
+
+    if (valid) {
+
+        showDashboard();
+
+    } else {
+
+        showAuth();
+    }
+}
+
+initDashboard();
 
 </script>
-
 
 </body>
 
-<script>
-window.addEventListener("load", async function() {
-    if (token) {
-        await loadMe();
-    }
-    loadDevices();
-});
-</script>
 </html>
 """
 
@@ -2238,7 +2034,6 @@ window.addEventListener("load", async function() {
 # =========================================================
 # DASHBOARD ROUTE
 # =========================================================
-
 
 @app.get(
     "/",

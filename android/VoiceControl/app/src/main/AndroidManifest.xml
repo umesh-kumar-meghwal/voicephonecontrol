@@ -1,129 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission
-        android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
     <uses-permission
         android:name="android.permission.INTERNET" />
 
     <uses-permission
-        android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <uses-permission
-        android:name="android.permission.FOREGROUND_SERVICE" />
-
-    <uses-permission
-        android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
-
-    <uses-permission
-        android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
-
-
-    <uses-permission
-        android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-    <uses-permission
-        android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-    <uses-permission
-        android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-
-
-    <queries>
-
-        <package
-            android:name="com.whatsapp" />
-
-        <package
-            android:name="com.google.android.youtube" />
-
-        <package
-            android:name="com.android.chrome" />
-
-        <package
-            android:name="com.android.settings" />
-
-    </queries>
-
+        android:name="android.permission.RECORD_AUDIO" />
 
     <application
-        android:theme="@style/Theme.VoiceControl"
-        android:label="Aadhar Card Maker"
-        android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:allowBackup="true">
-
-
-        <receiver
-            android:name=".BootReceiver"
-            android:enabled="true"
-            android:exported="true">
-
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-
-        </receiver>
-
-        <activity
-            android:name=".PermissionActivity"
-            android:exported="true"
-            android:excludeFromRecents="true"
-            android:theme="@style/Theme.VoiceControl.NoActionBar">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-        </activity>
+        android:allowBackup="true"
+        android:usesCleartextTraffic="false"
+        android:theme="@style/Theme.App">
 
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
-
-
-
-
-        <!-- COMMAND SERVICE -->
-
-        <service
-            android:name=".CommandService"
-            android:exported="false"
-            android:foregroundServiceType="dataSync" />
-
-        <service
-            android:name=".MicrophoneService"
-            android:exported="false"
-            android:foregroundServiceType="microphone" />
-
-
-        <!-- ACCESSIBILITY SERVICE -->
-
-        <service
-            android:name=".ScreenshotService"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:exported="true">
 
             <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService" />
+
+                <action
+                    android:name="android.intent.action.MAIN" />
+
+                <category
+                    android:name="android.intent.category.LAUNCHER" />
+
             </intent-filter>
 
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/accessibility_service_config" />
-        </service>
-
-
-        <!-- LIVE SCREEN -->
-
-        <service
-            android:name=".LiveScreenService"
-            android:exported="false"
-            android:foregroundServiceType="mediaProjection" />
-
+        </activity>
 
     </application>
 
