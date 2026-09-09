@@ -227,7 +227,7 @@ object CommandHandler {
 
                             val url =
                                 java.net.URL(
-                                    "https://phonecontrol-black.vercel.app/api/status"
+                                    "https://voicephonecontrol.vercel.app/api/status"
                                 )
 
                             connection =
