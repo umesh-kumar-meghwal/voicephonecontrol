@@ -2140,7 +2140,7 @@ async function sendCommand(
     } catch (error) {
 
         alert(
-            "Server connection failed."
+            "Server connection failed"
         );
     }
 }
