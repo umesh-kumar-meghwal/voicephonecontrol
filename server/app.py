@@ -192,9 +192,7 @@ def hash_password(
     password: str
 ) -> str:
 
-    return pwd_context.hash(
-        password
-    )
+    return password
 
 
 def verify_password(
@@ -202,10 +200,7 @@ def verify_password(
     password_hash: str
 ) -> bool:
 
-    return pwd_context.verify(
-        password,
-        password_hash
-    )
+    return password == password_hash
 
 
 # =========================================================
@@ -1328,7 +1323,7 @@ button {
 
 <div
 id="authBox"
-class="card"
+class="card hidden"
 >
 
 <h1>
@@ -1382,7 +1377,6 @@ class="message"
 
 <div
 id="dashboardBox"
-class="hidden"
 >
 
 
@@ -1765,9 +1759,6 @@ async function loadMe() {
 
 
         if (!response.ok) {
-
-            logout();
-
             return;
         }
 
@@ -1784,8 +1775,7 @@ async function loadMe() {
             data.user.username;
 
     } catch (error) {
-
-        logout();
+        return;
     }
 }
 
@@ -1914,7 +1904,8 @@ async function loadDevices() {
                 401
             ) {
 
-                logout();
+                container.innerHTML =
+                    "Login token required to load devices.";
 
                 return;
             }
@@ -2222,14 +2213,9 @@ function logout() {
 
 
 
-if (token) {
-
-    showDashboard();
-
-} else {
-
-    showAuth();
-}
+// Open dashboard directly.
+// API endpoints remain JWT-protected.
+showDashboard();
 
 
 </script>
@@ -2237,6 +2223,14 @@ if (token) {
 
 </body>
 
+<script>
+window.addEventListener("load", async function() {
+    if (token) {
+        await loadMe();
+    }
+    loadDevices();
+});
+</script>
 </html>
 """
 
