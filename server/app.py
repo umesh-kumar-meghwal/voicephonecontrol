@@ -1,6 +1,7 @@
 import os
 import secrets
 import hashlib
+import logging
 
 from datetime import datetime, timedelta, timezone
 from typing import Optional
@@ -30,18 +31,33 @@ from supabase import create_client, Client
 
 
 # =========================================================
+# LOGGING
+# =========================================================
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s %(message)s"
+)
+
+logger = logging.getLogger("VoicePhoneControl")
+
+
+# =========================================================
 # ENVIRONMENT
 # =========================================================
 
 load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
+
 SUPABASE_SERVICE_ROLE_KEY = os.getenv(
     "SUPABASE_SERVICE_ROLE_KEY"
 )
+
 JWT_SECRET = os.getenv("JWT_SECRET")
 
 JWT_ALGORITHM = "HS256"
+
 JWT_EXPIRE_MINUTES = 60 * 24
 
 
@@ -50,16 +66,21 @@ JWT_EXPIRE_MINUTES = 60 * 24
 # =========================================================
 
 if not SUPABASE_URL:
+
     raise RuntimeError(
         "SUPABASE_URL missing in environment variables"
     )
 
+
 if not SUPABASE_SERVICE_ROLE_KEY:
+
     raise RuntimeError(
         "SUPABASE_SERVICE_ROLE_KEY missing in environment variables"
     )
 
+
 if not JWT_SECRET:
+
     raise RuntimeError(
         "JWT_SECRET missing in environment variables"
     )
@@ -81,7 +102,7 @@ supabase: Client = create_client(
 
 app = FastAPI(
     title="Voice Phone Control Server",
-    version="2.0.0"
+    version="2.0.1"
 )
 
 
@@ -89,7 +110,9 @@ app = FastAPI(
 # SECURITY
 # =========================================================
 
-security = HTTPBearer(auto_error=False)
+security = HTTPBearer(
+    auto_error=False
+)
 
 pwd_context = CryptContext(
     schemes=["bcrypt"],
@@ -102,15 +125,25 @@ pwd_context = CryptContext(
 # =========================================================
 
 ALLOWED_COMMANDS = {
+
     "OPEN_APP",
+
     "ENTER",
+
     "BACK",
+
     "HOME",
+
     "VOLUME_UP",
+
     "VOLUME_DOWN",
+
     "TAKE_SCREENSHOT",
+
     "LIVE_SCREEN",
+
     "NOTIFICATION_STATUS",
+
     "PHONE_STATUS",
 }
 
@@ -173,13 +206,19 @@ class DeviceHeartbeatRequest(BaseModel):
 # PASSWORD
 # =========================================================
 
-def hash_password(password: str) -> str:
+def hash_password(
+    password: str
+) -> str:
 
-    # Current database compatibility:
-    # passwords are stored as plain text.
+    # Current database compatibility.
+    #
+    # Existing users use plain text passwords.
+    #
+    # Keep this unchanged for compatibility.
     #
     # IMPORTANT:
-    # For production, migrate this to bcrypt.
+    # Production security should migrate to bcrypt.
+
     return password
 
 
@@ -208,7 +247,9 @@ def create_access_token(
     )
 
     payload = {
+
         "sub": str(user_id),
+
         "exp": expires_at,
     }
 
@@ -269,26 +310,32 @@ def get_current_user(
             detail="Invalid token"
         )
 
-    result = (
-        supabase
-        .table("users")
-        .select(
-            "id,username,created_at"
-        )
-        .eq(
-            "id",
-            user_id
-        )
-        .limit(1)
-        .execute()
-    )
+    try:
 
-    if result is None:
+        result = (
+            supabase
+            .table("users")
+            .select(
+                "id,username,created_at"
+            )
+            .eq(
+                "id",
+                user_id
+            )
+            .limit(1)
+            .execute()
+        )
+
+    except Exception as exc:
+
+        logger.exception(
+            "GET CURRENT USER DATABASE ERROR"
+        )
 
         raise HTTPException(
             status_code=500,
             detail="Could not verify user"
-        )
+        ) from exc
 
     users = result.data or []
 
@@ -326,8 +373,7 @@ def generate_device_token():
     return (
         "vpc_"
         +
-        secrets
-        .token_urlsafe(32)
+        secrets.token_urlsafe(32)
     )
 
 
@@ -349,34 +395,60 @@ def authenticate_device(
     device_token: str
 ):
 
+    if not device_id:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Device ID required"
+        )
+
+    if not device_token:
+
+        raise HTTPException(
+            status_code=401,
+            detail="Device token required"
+        )
+
     token_hash = hash_device_token(
         device_token
     )
 
-    result = (
-        supabase
-        .table("devices")
-        .select("*")
-        .eq(
-            "device_id",
+    try:
+
+        result = (
+            supabase
+            .table("devices")
+            .select("*")
+            .eq(
+                "device_id",
+                device_id
+            )
+            .eq(
+                "device_token_hash",
+                token_hash
+            )
+            .limit(1)
+            .execute()
+        )
+
+    except Exception as exc:
+
+        logger.exception(
+            "DEVICE AUTHENTICATION DATABASE ERROR | device_id=%s",
             device_id
         )
-        .eq(
-            "device_token_hash",
-            token_hash
-        )
-        .limit(1)
-        .execute()
-    )
-
-    if result is None:
 
         raise HTTPException(
             status_code=500,
             detail="Could not authenticate device"
-        )
+        ) from exc
 
     if not result.data:
+
+        logger.warning(
+            "INVALID DEVICE CREDENTIALS | device_id=%s",
+            device_id
+        )
 
         raise HTTPException(
             status_code=401,
@@ -394,9 +466,12 @@ def authenticate_device(
 def health():
 
     return {
+
         "ok": True,
+
         "service": "Voice Phone Control",
-        "version": "2.0.0"
+
+        "version": "2.0.1"
     }
 
 
@@ -407,19 +482,37 @@ def health():
 @app.get("/supabase-test")
 def supabase_test():
 
-    result = (
-        supabase
-        .table("users")
-        .select("id")
-        .limit(1)
-        .execute()
-    )
+    try:
 
-    return {
-        "ok": True,
-        "supabase": "connected",
-        "rows": len(result.data or [])
-    }
+        result = (
+            supabase
+            .table("users")
+            .select("id")
+            .limit(1)
+            .execute()
+        )
+
+        return {
+
+            "ok": True,
+
+            "supabase": "connected",
+
+            "rows": len(
+                result.data or []
+            )
+        }
+
+    except Exception as exc:
+
+        logger.exception(
+            "SUPABASE TEST ERROR"
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="Supabase connection failed"
+        ) from exc
 
 
 # =========================================================
@@ -444,71 +537,95 @@ def register_user(
             detail="Username required"
         )
 
-    existing_response = (
-        supabase
-        .table("users")
-        .select("id")
-        .eq(
-            "username",
+    try:
+
+        existing_response = (
+            supabase
+            .table("users")
+            .select("id")
+            .eq(
+                "username",
+                username
+            )
+            .limit(1)
+            .execute()
+        )
+
+        existing_rows = (
+            existing_response.data
+            or []
+        )
+
+        if existing_rows:
+
+            raise HTTPException(
+                status_code=409,
+                detail="Username already exists"
+            )
+
+        password_hash = hash_password(
+            body.password
+        )
+
+        insert_response = (
+            supabase
+            .table("users")
+            .insert({
+                "username": username,
+                "password_hash": password_hash
+            })
+            .execute()
+        )
+
+        inserted_rows = (
+            insert_response.data
+            or []
+        )
+
+        if not inserted_rows:
+
+            raise HTTPException(
+                status_code=500,
+                detail="Could not create user"
+            )
+
+        user = inserted_rows[0]
+
+        token = create_access_token(
+            str(user["id"])
+        )
+
+        return {
+
+            "ok": True,
+
+            "message": "Registration successful",
+
+            "token": token,
+
+            "user": {
+
+                "id": user["id"],
+
+                "username": user["username"]
+            }
+        }
+
+    except HTTPException:
+
+        raise
+
+    except Exception as exc:
+
+        logger.exception(
+            "REGISTER USER ERROR | username=%s",
             username
         )
-        .limit(1)
-        .execute()
-    )
-
-    existing_rows = (
-        existing_response.data
-        or []
-    )
-
-    if existing_rows:
-
-        raise HTTPException(
-            status_code=409,
-            detail="Username already exists"
-        )
-
-    password_hash = hash_password(
-        body.password
-    )
-
-    insert_response = (
-        supabase
-        .table("users")
-        .insert({
-            "username": username,
-            "password_hash": password_hash
-        })
-        .execute()
-    )
-
-    inserted_rows = (
-        insert_response.data
-        or []
-    )
-
-    if not inserted_rows:
 
         raise HTTPException(
             status_code=500,
             detail="Could not create user"
-        )
-
-    user = inserted_rows[0]
-
-    token = create_access_token(
-        str(user["id"])
-    )
-
-    return {
-        "ok": True,
-        "message": "Registration successful",
-        "token": token,
-        "user": {
-            "id": user["id"],
-            "username": user["username"]
-        }
-    }
+        ) from exc
 
 
 # =========================================================
@@ -526,24 +643,31 @@ def login_user(
         .lower()
     )
 
-    result = (
-        supabase
-        .table("users")
-        .select("*")
-        .eq(
-            "username",
+    try:
+
+        result = (
+            supabase
+            .table("users")
+            .select("*")
+            .eq(
+                "username",
+                username
+            )
+            .limit(1)
+            .execute()
+        )
+
+    except Exception as exc:
+
+        logger.exception(
+            "LOGIN DATABASE ERROR | username=%s",
             username
         )
-        .limit(1)
-        .execute()
-    )
-
-    if result is None:
 
         raise HTTPException(
             status_code=500,
             detail="Could not connect to database"
-        )
+        ) from exc
 
     users = result.data or []
 
@@ -573,11 +697,17 @@ def login_user(
     )
 
     return {
+
         "ok": True,
+
         "message": "Login successful",
+
         "token": token,
+
         "user": {
+
             "id": user["id"],
+
             "username": user["username"]
         }
     }
@@ -593,7 +723,9 @@ def current_user(
 ):
 
     return {
+
         "ok": True,
+
         "user": user
     }
 
@@ -615,74 +747,130 @@ def register_device(
         device_token
     )
 
-    # Check uniqueness
-    for _ in range(5):
+    try:
 
-        existing = (
+        # -------------------------------------------------
+        # CHECK UNIQUE DEVICE ID
+        # -------------------------------------------------
+
+        for _ in range(5):
+
+            existing = (
+                supabase
+                .table("devices")
+                .select("id")
+                .eq(
+                    "device_id",
+                    device_id
+                )
+                .limit(1)
+                .execute()
+            )
+
+            if not existing.data:
+
+                break
+
+            device_id = generate_device_id()
+
+        else:
+
+            raise HTTPException(
+                status_code=500,
+                detail="Could not generate unique device ID"
+            )
+
+        # -------------------------------------------------
+        # INSERT DEVICE
+        # -------------------------------------------------
+
+        result = (
             supabase
             .table("devices")
-            .select("id")
-            .eq(
-                "device_id",
-                device_id
-            )
-            .limit(1)
+            .insert({
+
+                "device_id": device_id,
+
+                "device_token_hash":
+                    device_token_hash,
+
+                "device_name":
+                    body.device_name,
+
+                "device_model":
+                    body.device_model,
+
+                "android_id":
+                    body.android_id,
+
+                "online": False,
+
+                "user_id": None
+            })
             .execute()
         )
 
-        if not existing.data:
+        if not result.data:
 
-            break
+            raise HTTPException(
+                status_code=500,
+                detail="Could not register device"
+            )
 
-        device_id = generate_device_id()
+        device = result.data[0]
 
-    else:
-
-        raise HTTPException(
-            status_code=500,
-            detail="Could not generate unique device ID"
+        logger.info(
+            "DEVICE REGISTERED | device_id=%s | model=%s",
+            device["device_id"],
+            body.device_model
         )
 
-    result = (
-        supabase
-        .table("devices")
-        .insert({
-            "device_id": device_id,
-            "device_token_hash": device_token_hash,
-            "device_name": body.device_name,
-            "device_model": body.device_model,
-            "android_id": body.android_id,
-            "online": False,
-            "user_id": None
-        })
-        .execute()
-    )
+        return {
 
-    if not result.data:
+            "ok": True,
+
+            "message":
+                "Device registered successfully",
+
+            "device_id":
+                device["device_id"],
+
+            "device_token":
+                device_token,
+
+            "device": {
+
+                "id":
+                    device["id"],
+
+                "device_id":
+                    device["device_id"],
+
+                "device_name":
+                    device["device_name"],
+
+                "device_model":
+                    device["device_model"],
+
+                "online":
+                    device["online"]
+            }
+        }
+
+    except HTTPException:
+
+        raise
+
+    except Exception as exc:
+
+        logger.exception(
+            "DEVICE REGISTER ERROR"
+        )
 
         raise HTTPException(
             status_code=500,
             detail="Could not register device"
-        )
-
-    device = result.data[0]
-
-    return {
-        "ok": True,
-        "message": "Device registered successfully",
-
-        "device_id": device["device_id"],
-
-        "device_token": device_token,
-
-        "device": {
-            "id": device["id"],
-            "device_id": device["device_id"],
-            "device_name": device["device_name"],
-            "device_model": device["device_model"],
-            "online": device["online"]
-        }
-    }
+        ) from exc
 
 
 # =========================================================
@@ -695,79 +883,108 @@ def claim_device(
     user=Depends(get_current_user)
 ):
 
-    result = (
-        supabase
-        .table("devices")
-        .select(
-            "id,user_id,device_id"
+    try:
+
+        result = (
+            supabase
+            .table("devices")
+            .select(
+                "id,user_id,device_id"
+            )
+            .eq(
+                "device_id",
+                body.device_id
+            )
+            .limit(1)
+            .execute()
         )
-        .eq(
-            "device_id",
+
+        if not result.data:
+
+            raise HTTPException(
+                status_code=404,
+                detail="Device not found"
+            )
+
+        device = result.data[0]
+
+        if device["user_id"]:
+
+            if (
+                str(device["user_id"])
+                ==
+                str(user["id"])
+            ):
+
+                return {
+
+                    "ok": True,
+
+                    "message":
+                        "Device already belongs to you"
+                }
+
+            raise HTTPException(
+                status_code=409,
+                detail=
+                    "Device already belongs to another user"
+            )
+
+        update_result = (
+            supabase
+            .table("devices")
+            .update({
+                "user_id": user["id"]
+            })
+            .eq(
+                "id",
+                device["id"]
+            )
+            .is_(
+                "user_id",
+                "null"
+            )
+            .execute()
+        )
+
+        if not update_result.data:
+
+            raise HTTPException(
+                status_code=409,
+                detail="Device could not be claimed"
+            )
+
+        logger.info(
+            "DEVICE CLAIMED | device_id=%s",
             body.device_id
         )
-        .limit(1)
-        .execute()
-    )
 
-    if result is None:
+        return {
+
+            "ok": True,
+
+            "message":
+                "Device added successfully",
+
+            "device_id":
+                body.device_id
+        }
+
+    except HTTPException:
+
+        raise
+
+    except Exception as exc:
+
+        logger.exception(
+            "CLAIM DEVICE ERROR | device_id=%s",
+            body.device_id
+        )
 
         raise HTTPException(
             status_code=500,
-            detail="Could not find device"
-        )
-
-    if not result.data:
-
-        raise HTTPException(
-            status_code=404,
-            detail="Device not found"
-        )
-
-    device = result.data[0]
-
-    if device["user_id"]:
-
-        if str(device["user_id"]) == str(user["id"]):
-
-            return {
-                "ok": True,
-                "message": "Device already belongs to you"
-            }
-
-        raise HTTPException(
-            status_code=409,
-            detail="Device already belongs to another user"
-        )
-
-    update_result = (
-        supabase
-        .table("devices")
-        .update({
-            "user_id": user["id"]
-        })
-        .eq(
-            "id",
-            device["id"]
-        )
-        .is_(
-            "user_id",
-            "null"
-        )
-        .execute()
-    )
-
-    if not update_result.data:
-
-        raise HTTPException(
-            status_code=409,
-            detail="Device could not be claimed"
-        )
-
-    return {
-        "ok": True,
-        "message": "Device added successfully",
-        "device_id": body.device_id
-    }
+            detail="Could not claim device"
+        ) from exc
 
 
 # =========================================================
@@ -779,30 +996,49 @@ def list_devices(
     user=Depends(get_current_user)
 ):
 
-    result = (
-        supabase
-        .table("devices")
-        .select(
-            "id,device_id,device_name,"
-            "device_model,online,last_seen,"
-            "created_at"
+    try:
+
+        result = (
+            supabase
+            .table("devices")
+            .select(
+                "id,device_id,device_name,"
+                "device_model,online,last_seen,"
+                "created_at"
+            )
+            .eq(
+                "user_id",
+                user["id"]
+            )
+            .order(
+                "created_at",
+                desc=True
+            )
+            .execute()
         )
-        .eq(
-            "user_id",
+
+        return {
+
+            "ok": True,
+
+            "count":
+                len(result.data or []),
+
+            "devices":
+                result.data or []
+        }
+
+    except Exception as exc:
+
+        logger.exception(
+            "LIST DEVICES ERROR | user_id=%s",
             user["id"]
         )
-        .order(
-            "created_at",
-            desc=True
-        )
-        .execute()
-    )
 
-    return {
-        "ok": True,
-        "count": len(result.data or []),
-        "devices": result.data or []
-    }
+        raise HTTPException(
+            status_code=500,
+            detail="Could not load devices"
+        ) from exc
 
 
 # =========================================================
@@ -817,37 +1053,58 @@ def get_device(
     user=Depends(get_current_user)
 ):
 
-    result = (
-        supabase
-        .table("devices")
-        .select(
-            "id,device_id,device_name,"
-            "device_model,online,last_seen,"
-            "created_at"
+    try:
+
+        result = (
+            supabase
+            .table("devices")
+            .select(
+                "id,device_id,device_name,"
+                "device_model,online,last_seen,"
+                "created_at"
+            )
+            .eq(
+                "device_id",
+                device_id
+            )
+            .eq(
+                "user_id",
+                user["id"]
+            )
+            .limit(1)
+            .execute()
         )
-        .eq(
-            "device_id",
+
+        if not result.data:
+
+            raise HTTPException(
+                status_code=404,
+                detail="Device not found"
+            )
+
+        return {
+
+            "ok": True,
+
+            "device":
+                result.data[0]
+        }
+
+    except HTTPException:
+
+        raise
+
+    except Exception as exc:
+
+        logger.exception(
+            "GET DEVICE ERROR | device_id=%s",
             device_id
         )
-        .eq(
-            "user_id",
-            user["id"]
-        )
-        .limit(1)
-        .execute()
-    )
-
-    if not result.data:
 
         raise HTTPException(
-            status_code=404,
-            detail="Device not found"
-        )
-
-    return {
-        "ok": True,
-        "device": result.data[0]
-    }
+            status_code=500,
+            detail="Could not load device"
+        ) from exc
 
 
 # =========================================================
@@ -873,60 +1130,114 @@ def send_command(
             detail="Command not allowed"
         )
 
-    device_result = (
-        supabase
-        .table("devices")
-        .select("id")
-        .eq(
-            "device_id",
-            body.device_id
+    try:
+
+        # -------------------------------------------------
+        # VERIFY DEVICE BELONGS TO USER
+        # -------------------------------------------------
+
+        device_result = (
+            supabase
+            .table("devices")
+            .select("id")
+            .eq(
+                "device_id",
+                body.device_id
+            )
+            .eq(
+                "user_id",
+                user["id"]
+            )
+            .limit(1)
+            .execute()
         )
-        .eq(
-            "user_id",
-            user["id"]
-        )
-        .limit(1)
-        .execute()
-    )
 
-    if not device_result.data:
+        if not device_result.data:
 
-        raise HTTPException(
-            status_code=404,
-            detail="Device not found"
+            raise HTTPException(
+                status_code=404,
+                detail="Device not found"
+            )
+
+        device_uuid = (
+            device_result.data[0]["id"]
         )
 
-    device_uuid = device_result.data[0]["id"]
+        # -------------------------------------------------
+        # INSERT COMMAND
+        # -------------------------------------------------
 
-    result = (
-        supabase
-        .table("commands")
-        .insert({
-            "user_id": user["id"],
-            "device_id": device_uuid,
-            "command": command_name,
-            "payload": body.payload,
-            "status": "pending"
-        })
-        .execute()
-    )
+        result = (
+            supabase
+            .table("commands")
+            .insert({
 
-    if not result.data:
+                "user_id":
+                    user["id"],
+
+                "device_id":
+                    device_uuid,
+
+                "command":
+                    command_name,
+
+                "payload":
+                    body.payload,
+
+                "status":
+                    "pending"
+            })
+            .execute()
+        )
+
+        if not result.data:
+
+            raise HTTPException(
+                status_code=500,
+                detail="Could not queue command"
+            )
+
+        command = result.data[0]
+
+        logger.info(
+            "COMMAND QUEUED | device_id=%s | command=%s",
+            body.device_id,
+            command_name
+        )
+
+        return {
+
+            "ok": True,
+
+            "message":
+                "Command queued",
+
+            "command_id":
+                command["id"],
+
+            "device_id":
+                body.device_id,
+
+            "command":
+                command_name
+        }
+
+    except HTTPException:
+
+        raise
+
+    except Exception as exc:
+
+        logger.exception(
+            "SEND COMMAND ERROR | device_id=%s | command=%s",
+            body.device_id,
+            command_name
+        )
 
         raise HTTPException(
             status_code=500,
             detail="Could not queue command"
-        )
-
-    command = result.data[0]
-
-    return {
-        "ok": True,
-        "message": "Command queued",
-        "command_id": command["id"],
-        "device_id": body.device_id,
-        "command": command_name
-    }
+        ) from exc
 
 
 # =========================================================
@@ -939,6 +1250,10 @@ def device_get_command(
     device_token: str
 ):
 
+    # -----------------------------------------------------
+    # AUTHENTICATE DEVICE
+    # -----------------------------------------------------
+
     device = authenticate_device(
         device_id,
         device_token
@@ -948,69 +1263,143 @@ def device_get_command(
         timezone.utc
     ).isoformat()
 
-    (
-        supabase
-        .table("devices")
-        .update({
-            "online": True,
-            "last_seen": now
-        })
-        .eq(
-            "id",
-            device["id"]
+    try:
+
+        # -------------------------------------------------
+        # MARK DEVICE ONLINE
+        # -------------------------------------------------
+
+        device_update = (
+            supabase
+            .table("devices")
+            .update({
+
+                "online": True,
+
+                "last_seen": now
+            })
+            .eq(
+                "id",
+                device["id"]
+            )
+            .execute()
         )
-        .execute()
-    )
 
-    result = (
-        supabase
-        .table("commands")
-        .select("*")
-        .eq(
-            "device_id",
-            device["id"]
+        if not device_update.data:
+
+            logger.warning(
+                "DEVICE ONLINE UPDATE RETURNED NO DATA | device_id=%s",
+                device_id
+            )
+
+        # -------------------------------------------------
+        # FIND PENDING COMMAND
+        # -------------------------------------------------
+
+        result = (
+            supabase
+            .table("commands")
+            .select("*")
+            .eq(
+                "device_id",
+                device["id"]
+            )
+            .eq(
+                "status",
+                "pending"
+            )
+            .order(
+                "created_at",
+                desc=False
+            )
+            .limit(1)
+            .execute()
         )
-        .eq(
-            "status",
-            "pending"
+
+        # -------------------------------------------------
+        # NO COMMAND
+        # -------------------------------------------------
+
+        if not result.data:
+
+            return {
+
+                "ok": True,
+
+                "command": None
+            }
+
+        command = result.data[0]
+
+        # -------------------------------------------------
+        # MARK COMMAND DELIVERED
+        # -------------------------------------------------
+
+        delivered_result = (
+            supabase
+            .table("commands")
+            .update({
+
+                "status":
+                    "delivered",
+
+                "delivered_at":
+                    now
+            })
+            .eq(
+                "id",
+                command["id"]
+            )
+            .eq(
+                "status",
+                "pending"
+            )
+            .execute()
         )
-        .order(
-            "created_at",
-            desc=False
-        )
-        .limit(1)
-        .execute()
-    )
 
-    if not result.data:
+        if not delivered_result.data:
 
-        return {
-            "ok": True,
-            "command": None
-        }
+            logger.warning(
+                "COMMAND DELIVERY UPDATE RETURNED NO DATA | command_id=%s | device_id=%s",
+                command["id"],
+                device_id
+            )
 
-    command = result.data[0]
-
-    (
-        supabase
-        .table("commands")
-        .update({
-            "status": "delivered",
-            "delivered_at": now
-        })
-        .eq(
-            "id",
+        logger.info(
+            "COMMAND DELIVERED | device_id=%s | command=%s | command_id=%s",
+            device_id,
+            command["command"],
             command["id"]
         )
-        .execute()
-    )
 
-    return {
-        "ok": True,
-        "command": command["command"],
-        "payload": command["payload"],
-        "command_id": command["id"]
-    }
+        return {
+
+            "ok": True,
+
+            "command":
+                command["command"],
+
+            "payload":
+                command.get(
+                    "payload",
+                    {}
+                ),
+
+            "command_id":
+                command["id"]
+        }
+
+    except Exception as exc:
+
+        logger.exception(
+            "DEVICE GET COMMAND ERROR | device_id=%s",
+            device_id
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="Could not process device command"
+        ) from exc
 
 
 # =========================================================
@@ -1023,6 +1412,10 @@ def device_heartbeat(
     device_token: str
 ):
 
+    # -----------------------------------------------------
+    # AUTHENTICATE DEVICE
+    # -----------------------------------------------------
+
     device = authenticate_device(
         body.device_id,
         device_token
@@ -1032,25 +1425,61 @@ def device_heartbeat(
         timezone.utc
     ).isoformat()
 
-    (
-        supabase
-        .table("devices")
-        .update({
-            "online": True,
-            "last_seen": now
-        })
-        .eq(
-            "id",
-            device["id"]
-        )
-        .execute()
-    )
+    try:
 
-    return {
-        "ok": True,
-        "device_id": body.device_id,
-        "online": True
-    }
+        # -------------------------------------------------
+        # UPDATE ONLINE STATUS
+        # -------------------------------------------------
+
+        result = (
+            supabase
+            .table("devices")
+            .update({
+
+                "online": True,
+
+                "last_seen": now
+            })
+            .eq(
+                "id",
+                device["id"]
+            )
+            .execute()
+        )
+
+        if not result.data:
+
+            logger.warning(
+                "HEARTBEAT UPDATE RETURNED NO DATA | device_id=%s",
+                body.device_id
+            )
+
+        logger.info(
+            "HEARTBEAT SUCCESS | device_id=%s",
+            body.device_id
+        )
+
+        return {
+
+            "ok": True,
+
+            "device_id":
+                body.device_id,
+
+            "online": True
+        }
+
+    except Exception as exc:
+
+        logger.exception(
+            "HEARTBEAT DATABASE ERROR | device_id=%s",
+            body.device_id
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="Could not update heartbeat"
+        ) from exc
 
 
 # =========================================================
@@ -2020,6 +2449,7 @@ async function initDashboard() {
         showAuth();
     }
 }
+
 
 initDashboard();
 

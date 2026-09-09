@@ -17,19 +17,15 @@ object ApiClient {
     // SERVER
     // =========================================================
 
+    /*
+     * Current FastAPI / Vercel server
+     *
+     * IMPORTANT:
+     * Agar tumhara latest Vercel deployment kisi aur URL par hai,
+     * sirf is URL ko change karna.
+     */
     private const val SERVER_URL =
         "https://voicephonecontrol.vercel.app/"
-
-    /*
-     * IMPORTANT:
-     * Ye server-side API token hai.
-     *
-     * Production APK ke andar permanent secret rakhna secure nahi hai.
-     * Filhaal existing project ke server ke saath compatibility ke liye
-     * same token use kiya gaya hai.
-     */
-    private const val API_TOKEN =
-        "VPC-a8F3xK91-pQ7L2mZ6-4NwR8tY5U"
 
 
     // =========================================================
@@ -156,16 +152,17 @@ object ApiClient {
         context: Context
     ): String? {
 
+        // -----------------------------------------------------
+        // CHECK EXISTING CREDENTIALS
+        // -----------------------------------------------------
+
         val existingDeviceId =
             getSavedDeviceId(context)
 
         val existingDeviceToken =
             getSavedDeviceToken(context)
 
-        /*
-         * Agar phone pehle se registered hai,
-         * dobara new device create nahi karna.
-         */
+
         if (
             !existingDeviceId.isNullOrBlank() &&
             !existingDeviceToken.isNullOrBlank()
@@ -188,17 +185,32 @@ object ApiClient {
         var connection:
                 HttpURLConnection? = null
 
+
         try {
+
+            Log.d(
+                TAG,
+                "================================"
+            )
 
             Log.d(
                 TAG,
                 "REGISTERING DEVICE..."
             )
 
+            Log.d(
+                TAG,
+                "SERVER = $SERVER_URL"
+            )
+
+
+            // -------------------------------------------------
+            // URL
+            // -------------------------------------------------
 
             val url =
                 URL(
-                    "$SERVER_URL/device/register"
+                    "${SERVER_URL}device/register"
                 )
 
 
@@ -207,31 +219,38 @@ object ApiClient {
                         as HttpURLConnection
 
 
+            // -------------------------------------------------
+            // HTTP CONFIG
+            // -------------------------------------------------
+
             connection.requestMethod =
                 "POST"
 
             connection.doOutput =
                 true
 
+            connection.useCaches =
+                false
+
             connection.connectTimeout =
-                10000
+                15000
 
             connection.readTimeout =
-                10000
+                15000
 
 
             // -------------------------------------------------
             // HEADERS
             // -------------------------------------------------
 
-            connection.setRequestProperty(
-                "Authorization",
-                "Bearer $API_TOKEN"
-            )
+            /*
+             * Current FastAPI /device/register endpoint
+             * API_TOKEN nahi maangta.
+             */
 
             connection.setRequestProperty(
                 "Content-Type",
-                "application/json"
+                "application/json; charset=UTF-8"
             )
 
             connection.setRequestProperty(
@@ -246,16 +265,40 @@ object ApiClient {
 
             val manufacturer =
                 Build.MANUFACTURER
+                    .orEmpty()
+                    .trim()
 
             val model =
                 Build.MODEL
+                    .orEmpty()
+                    .trim()
 
             val deviceName =
-                "$manufacturer $model"
+                if (manufacturer.isNotBlank()) {
+                    "$manufacturer $model".trim()
+                } else {
+                    model
+                }
 
 
             val androidId =
                 getAndroidId(context)
+
+
+            Log.d(
+                TAG,
+                "DEVICE NAME = $deviceName"
+            )
+
+            Log.d(
+                TAG,
+                "DEVICE MODEL = $model"
+            )
+
+            Log.d(
+                TAG,
+                "ANDROID ID = $androidId"
+            )
 
 
             // -------------------------------------------------
@@ -264,6 +307,7 @@ object ApiClient {
 
             val json =
                 JSONObject()
+
 
             json.put(
                 "device_name",
@@ -281,14 +325,13 @@ object ApiClient {
             )
 
 
-            Log.d(
-                TAG,
-                "DEVICE NAME = $deviceName"
-            )
+            val requestBody =
+                json.toString()
+
 
             Log.d(
                 TAG,
-                "DEVICE MODEL = $model"
+                "REGISTER REQUEST = $requestBody"
             )
 
 
@@ -298,14 +341,14 @@ object ApiClient {
 
             connection
                 .outputStream
-                .bufferedWriter()
-                .use {
+                .bufferedWriter(Charsets.UTF_8)
+                .use { writer ->
 
-                    it.write(
-                        json.toString()
+                    writer.write(
+                        requestBody
                     )
 
-                    it.flush()
+                    writer.flush()
                 }
 
 
@@ -324,32 +367,58 @@ object ApiClient {
 
 
             // -------------------------------------------------
-            // ERROR RESPONSE
+            // READ RESPONSE
+            // -------------------------------------------------
+
+            val responseBody =
+                if (responseCode in 200..299) {
+
+                    connection
+                        .inputStream
+                        .bufferedReader(Charsets.UTF_8)
+                        .use {
+                            it.readText()
+                        }
+
+                } else {
+
+                    connection
+                        .errorStream
+                        ?.bufferedReader(Charsets.UTF_8)
+                        ?.use {
+                            it.readText()
+                        }
+                        ?: ""
+                }
+
+
+            Log.d(
+                TAG,
+                "REGISTER RESPONSE = $responseBody"
+            )
+
+
+            // -------------------------------------------------
+            // HTTP ERROR
             // -------------------------------------------------
 
             if (
                 responseCode !in 200..299
             ) {
 
-                val errorBody =
-                    try {
-
-                        connection
-                            .errorStream
-                            ?.bufferedReader()
-                            ?.use {
-                                it.readText()
-                            }
-
-                    } catch (_: Exception) {
-
-                        null
-                    }
-
+                Log.e(
+                    TAG,
+                    "REGISTER FAILED"
+                )
 
                 Log.e(
                     TAG,
-                    "REGISTER FAILED = $errorBody"
+                    "HTTP CODE = $responseCode"
+                )
+
+                Log.e(
+                    TAG,
+                    "ERROR BODY = $responseBody"
                 )
 
                 return null
@@ -357,38 +426,16 @@ object ApiClient {
 
 
             // -------------------------------------------------
-            // SUCCESS RESPONSE
+            // EMPTY RESPONSE
             // -------------------------------------------------
 
-            val response =
-                connection
-                    .inputStream
-                    .bufferedReader()
-                    .use {
-                        it.readText()
-                    }
-
-
-            Log.d(
-                TAG,
-                "REGISTER RESPONSE = $response"
-            )
-
-
-            val result =
-                JSONObject(response)
-
-
             if (
-                !result.optBoolean(
-                    "ok",
-                    false
-                )
+                responseBody.isBlank()
             ) {
 
                 Log.e(
                     TAG,
-                    "REGISTER RESPONSE NOT OK"
+                    "REGISTER RESPONSE EMPTY"
                 )
 
                 return null
@@ -396,26 +443,81 @@ object ApiClient {
 
 
             // -------------------------------------------------
-            // GET DEVICE ID
+            // PARSE JSON
+            // -------------------------------------------------
+
+            val result =
+                try {
+
+                    JSONObject(
+                        responseBody
+                    )
+
+                } catch (e: Exception) {
+
+                    Log.e(
+                        TAG,
+                        "REGISTER JSON PARSE ERROR",
+                        e
+                    )
+
+                    return null
+                }
+
+
+            // -------------------------------------------------
+            // CHECK OK
+            // -------------------------------------------------
+
+            val ok =
+                result.optBoolean(
+                    "ok",
+                    false
+                )
+
+
+            if (!ok) {
+
+                Log.e(
+                    TAG,
+                    "REGISTER RESPONSE NOT OK"
+
+                )
+
+                Log.e(
+                    TAG,
+                    "SERVER RESPONSE = $responseBody"
+                )
+
+                return null
+            }
+
+
+            // -------------------------------------------------
+            // DEVICE ID
             // -------------------------------------------------
 
             val deviceId =
                 result.optString(
                     "device_id",
                     ""
-                )
+                ).trim()
 
 
             // -------------------------------------------------
-            // GET DEVICE TOKEN
+            // DEVICE TOKEN
             // -------------------------------------------------
 
             val deviceToken =
                 result.optString(
                     "device_token",
                     ""
-                )
+                ).trim()
 
+
+            // -------------------------------------------------
+            // VALIDATE DEVICE ID
+            // -------------------------------------------------
 
             if (
                 deviceId.isBlank()
@@ -429,6 +531,10 @@ object ApiClient {
                 return null
             }
 
+
+            // -------------------------------------------------
+            // VALIDATE DEVICE TOKEN
+            // -------------------------------------------------
 
             if (
                 deviceToken.isBlank()
@@ -453,6 +559,10 @@ object ApiClient {
                 deviceToken
             )
 
+
+            // -------------------------------------------------
+            // SUCCESS
+            // -------------------------------------------------
 
             Log.d(
                 TAG,
@@ -504,18 +614,20 @@ object ApiClient {
         context: Context
     ): JSONObject? {
 
-        /*
-         * Device ID nahi hai to automatically register.
-         */
+        // -----------------------------------------------------
+        // GET DEVICE ID
+        // -----------------------------------------------------
+
         val deviceId =
             getSavedDeviceId(context)
                 ?: registerDevice(context)
                 ?: return null
 
 
-        /*
-         * Device token required.
-         */
+        // -----------------------------------------------------
+        // GET DEVICE TOKEN
+        // -----------------------------------------------------
+
         val deviceToken =
             getSavedDeviceToken(context)
                 ?: return null
@@ -526,6 +638,10 @@ object ApiClient {
 
 
         try {
+
+            // -------------------------------------------------
+            // URL ENCODING
+            // -------------------------------------------------
 
             val encodedDeviceId =
                 URLEncoder.encode(
@@ -541,9 +657,13 @@ object ApiClient {
                 )
 
 
+            // -------------------------------------------------
+            // URL
+            // -------------------------------------------------
+
             val url =
                 URL(
-                    "$SERVER_URL/device/command" +
+                    "${SERVER_URL}device/command" +
                             "?device_id=$encodedDeviceId" +
                             "&device_token=$encodedToken"
                 )
@@ -554,6 +674,10 @@ object ApiClient {
                         as HttpURLConnection
 
 
+            // -------------------------------------------------
+            // HTTP CONFIG
+            // -------------------------------------------------
+
             connection.requestMethod =
                 "GET"
 
@@ -563,12 +687,23 @@ object ApiClient {
             connection.readTimeout =
                 10000
 
+            connection.useCaches =
+                false
+
+
+            // -------------------------------------------------
+            // HEADERS
+            // -------------------------------------------------
 
             connection.setRequestProperty(
                 "Accept",
                 "application/json"
             )
 
+
+            // -------------------------------------------------
+            // RESPONSE
+            // -------------------------------------------------
 
             val responseCode =
                 connection.responseCode
@@ -580,19 +715,34 @@ object ApiClient {
             )
 
 
-            if (responseCode != 200) {
+            // -------------------------------------------------
+            // ERROR
+            // -------------------------------------------------
+
+            if (
+                responseCode !in 200..299
+            ) {
 
                 val errorBody =
                     try {
+
                         connection
                             .errorStream
-                            ?.bufferedReader()
+                            ?.bufferedReader(Charsets.UTF_8)
                             ?.use {
                                 it.readText()
                             }
+
                     } catch (e: Exception) {
+
                         "Unable to read error body: ${e.message}"
                     }
+
+
+                Log.e(
+                    TAG,
+                    "COMMAND FAILED"
+                )
 
                 Log.e(
                     TAG,
@@ -613,10 +763,14 @@ object ApiClient {
             }
 
 
+            // -------------------------------------------------
+            // SUCCESS RESPONSE
+            // -------------------------------------------------
+
             val response =
                 connection
                     .inputStream
-                    .bufferedReader()
+                    .bufferedReader(Charsets.UTF_8)
                     .use {
                         it.readText()
                     }
@@ -630,15 +784,38 @@ object ApiClient {
             }
 
 
-            val result =
-                JSONObject(response)
+            // -------------------------------------------------
+            // PARSE JSON
+            // -------------------------------------------------
 
+            val result =
+                try {
+
+                    JSONObject(
+                        response
+                    )
+
+                } catch (e: Exception) {
+
+                    Log.e(
+                        TAG,
+                        "COMMAND JSON PARSE ERROR",
+                        e
+                    )
+
+                    return null
+                }
+
+
+            // -------------------------------------------------
+            // COMMAND
+            // -------------------------------------------------
 
             val command =
                 result.optString(
                     "command",
                     ""
-                )
+                ).trim()
 
 
             if (
@@ -684,11 +861,19 @@ object ApiClient {
         context: Context
     ) {
 
+        // -----------------------------------------------------
+        // GET DEVICE ID
+        // -----------------------------------------------------
+
         val deviceId =
             getSavedDeviceId(context)
                 ?: registerDevice(context)
                 ?: return
 
+
+        // -----------------------------------------------------
+        // GET DEVICE TOKEN
+        // -----------------------------------------------------
 
         val deviceToken =
             getSavedDeviceToken(context)
@@ -703,6 +888,10 @@ object ApiClient {
 
             try {
 
+                // -------------------------------------------------
+                // ENCODE TOKEN
+                // -------------------------------------------------
+
                 val encodedToken =
                     URLEncoder.encode(
                         deviceToken,
@@ -710,20 +899,13 @@ object ApiClient {
                     )
 
 
-                /*
-                 * Current FastAPI endpoint:
-                 *
-                 * POST /device/heartbeat
-                 * Body:
-                 * {
-                 *   "device_id": "..."
-                 * }
-                 *
-                 * Token query parameter mein.
-                 */
+                // -------------------------------------------------
+                // URL
+                // -------------------------------------------------
+
                 val url =
                     URL(
-                        "$SERVER_URL/device/heartbeat" +
+                        "${SERVER_URL}device/heartbeat" +
                                 "?device_token=$encodedToken"
                     )
 
@@ -733,6 +915,10 @@ object ApiClient {
                             as HttpURLConnection
 
 
+                // -------------------------------------------------
+                // HTTP CONFIG
+                // -------------------------------------------------
+
                 connection.requestMethod =
                     "POST"
 
@@ -740,15 +926,22 @@ object ApiClient {
                     true
 
                 connection.connectTimeout =
-                    5000
+                    10000
 
                 connection.readTimeout =
-                    5000
+                    10000
 
+                connection.useCaches =
+                    false
+
+
+                // -------------------------------------------------
+                // HEADERS
+                // -------------------------------------------------
 
                 connection.setRequestProperty(
                     "Content-Type",
-                    "application/json"
+                    "application/json; charset=UTF-8"
                 )
 
                 connection.setRequestProperty(
@@ -756,6 +949,10 @@ object ApiClient {
                     "application/json"
                 )
 
+
+                // -------------------------------------------------
+                // REQUEST JSON
+                // -------------------------------------------------
 
                 val json =
                     JSONObject()
@@ -767,18 +964,30 @@ object ApiClient {
                 )
 
 
+                val requestBody =
+                    json.toString()
+
+
+                // -------------------------------------------------
+                // SEND
+                // -------------------------------------------------
+
                 connection
                     .outputStream
-                    .bufferedWriter()
-                    .use {
+                    .bufferedWriter(Charsets.UTF_8)
+                    .use { writer ->
 
-                        it.write(
-                            json.toString()
+                        writer.write(
+                            requestBody
                         )
 
-                        it.flush()
+                        writer.flush()
                     }
 
+
+                // -------------------------------------------------
+                // RESPONSE
+                // -------------------------------------------------
 
                 val responseCode =
                     connection.responseCode
@@ -790,20 +999,64 @@ object ApiClient {
                 )
 
 
+                // -------------------------------------------------
+                // SUCCESS
+                // -------------------------------------------------
+
                 if (
-                    responseCode == 200
+                    responseCode in 200..299
                 ) {
+
+                    val responseBody =
+                        connection
+                            .inputStream
+                            .bufferedReader(Charsets.UTF_8)
+                            .use {
+                                it.readText()
+                            }
+
 
                     Log.d(
                         TAG,
                         "HEARTBEAT SUCCESS"
                     )
 
+                    Log.d(
+                        TAG,
+                        "HEARTBEAT RESPONSE = $responseBody"
+                    )
+
                 } else {
+
+                    val errorBody =
+                        try {
+
+                            connection
+                                .errorStream
+                                ?.bufferedReader(Charsets.UTF_8)
+                                ?.use {
+                                    it.readText()
+                                }
+
+                        } catch (e: Exception) {
+
+                            null
+                        }
+
 
                     Log.e(
                         TAG,
                         "HEARTBEAT FAILED"
+                    )
+
+                    Log.e(
+                        TAG,
+                        "HEARTBEAT HTTP = $responseCode"
+                    )
+
+                    Log.e(
+                        TAG,
+                        "HEARTBEAT ERROR = $errorBody"
                     )
                 }
 
@@ -831,14 +1084,15 @@ object ApiClient {
     // =========================================================
 
     /*
-     * Development/testing ke liye.
+     * DEVELOPMENT / TESTING ONLY
      *
-     * Agar phone ko fresh registration karwana ho:
+     * Isse phone ke local SharedPreferences se
+     * device_id aur device_token delete ho jayenge.
      *
-     * ApiClient.clearDeviceCredentials(context)
-     *
-     * Next request par new device registration hogi.
+     * Next registerDevice() call par server se
+     * fresh registration request jayegi.
      */
+
     fun clearDeviceCredentials(
         context: Context
     ) {
@@ -860,7 +1114,22 @@ object ApiClient {
 
         Log.d(
             TAG,
+            "================================"
+        )
+
+        Log.d(
+            TAG,
             "DEVICE CREDENTIALS CLEARED"
+        )
+
+        Log.d(
+            TAG,
+            "NEXT REGISTRATION WILL BE FRESH"
+        )
+
+        Log.d(
+            TAG,
+            "================================"
         )
     }
 }

