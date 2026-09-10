@@ -244,7 +244,6 @@ def upload_screenshot(
 # =========================================================
 # LATEST SCREENSHOT
 # =========================================================
-
 @app.get("/api/screenshot/latest")
 def latest_screenshot(
     current_user=Depends(get_current_user)
@@ -260,33 +259,25 @@ def latest_screenshot(
             )
             .eq("user_id", user["id"])
             .order("created_at", desc=True)
-            .limit(1)
+            .limit(50)
             .execute()
         )
 
-        if not rows.data:
-            return {
-                "ok": True,
-                "screenshot": None
-            }
-
         return {
             "ok": True,
-            "screenshot": rows.data[0]
+            "screenshots": rows.data or []
         }
 
     except Exception as e:
         print(
-            "[LATEST SCREENSHOT ERROR]",
+            "[LATEST SCREENSHOTS ERROR]",
             repr(e)
         )
 
         raise HTTPException(
             status_code=500,
-            detail="Failed to fetch screenshot"
+            detail="Failed to fetch screenshots"
         )
-
-
 # =========================================================
 # LATEST PHONE STATUS
 # =========================================================
