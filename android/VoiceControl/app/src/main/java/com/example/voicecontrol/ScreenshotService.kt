@@ -1,4 +1,6 @@
+
 package com.example.voicecontrol
+
 import java.io.OutputStream
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
@@ -26,13 +28,6 @@ class ScreenshotService : AccessibilityService() {
 
         private const val SERVER_URL =
             "https://voicephonecontrol.vercel.app"
-
-        /*
-         * IMPORTANT:
-         * Security ke liye production me token rotate karna.
-         */
-        private const val API_TOKEN =
-            "VPC-a8F3xK91-pQ7L2mZ6-4NwR8tY5U"
 
         // =====================================================
         // SERVICE STATUS
@@ -117,7 +112,6 @@ class ScreenshotService : AccessibilityService() {
                 false
             }
         }
-
 
         // =====================================================
         // RECENTS
@@ -220,56 +214,102 @@ class ScreenshotService : AccessibilityService() {
 
             return service.performEnterInternal()
         }
+
+        // =====================================================
+        // UP
+        // =====================================================
+
         fun performUp(): Boolean {
 
-            val service = serviceInstance ?: run {
-                Log.e(TAG, "UP FAILED: SERVICE NOT CONNECTED")
-                return false
-            }
+            val service =
+                serviceInstance ?: run {
+                    Log.e(
+                        TAG,
+                        "UP FAILED: SERVICE NOT CONNECTED"
+                    )
+
+                    return false
+                }
 
             return service.performUpInternal()
         }
 
+        // =====================================================
+        // DOWN
+        // =====================================================
+
         fun performDown(): Boolean {
 
-            val service = serviceInstance ?: run {
-                Log.e(TAG, "DOWN FAILED: SERVICE NOT CONNECTED")
-                return false
-            }
+            val service =
+                serviceInstance ?: run {
+                    Log.e(
+                        TAG,
+                        "DOWN FAILED: SERVICE NOT CONNECTED"
+                    )
+
+                    return false
+                }
 
             return service.performDownInternal()
         }
 
+        // =====================================================
+        // TAB
+        // =====================================================
+
         fun performTab(): Boolean {
 
-            val service = serviceInstance ?: run {
-                Log.e(TAG, "TAB FAILED: SERVICE NOT CONNECTED")
-                return false
-            }
+            val service =
+                serviceInstance ?: run {
+                    Log.e(
+                        TAG,
+                        "TAB FAILED: SERVICE NOT CONNECTED"
+                    )
+
+                    return false
+                }
 
             return service.performTabInternal()
         }
+
+        // =====================================================
+        // LEFT
+        // =====================================================
+
         fun performLeft(): Boolean {
 
-            val service = serviceInstance ?: run {
-                Log.e(TAG, "LEFT FAILED: SERVICE NOT CONNECTED")
-                return false
-            }
+            val service =
+                serviceInstance ?: run {
+                    Log.e(
+                        TAG,
+                        "LEFT FAILED: SERVICE NOT CONNECTED"
+                    )
+
+                    return false
+                }
 
             return service.performLeftInternal()
         }
 
+        // =====================================================
+        // RIGHT
+        // =====================================================
+
         fun performRight(): Boolean {
 
-            val service = serviceInstance ?: run {
-                Log.e(TAG, "RIGHT FAILED: SERVICE NOT CONNECTED")
-                return false
-            }
+            val service =
+                serviceInstance ?: run {
+                    Log.e(
+                        TAG,
+                        "RIGHT FAILED: SERVICE NOT CONNECTED"
+                    )
+
+                    return false
+                }
 
             return service.performRightInternal()
         }
     }
-
 
     // =========================================================
     // SERVICE CONNECTED
@@ -361,8 +401,6 @@ class ScreenshotService : AccessibilityService() {
         super.onDestroy()
     }
 
-
-
     // =========================================================
     // SCREENSHOT
     // =========================================================
@@ -447,16 +485,6 @@ class ScreenshotService : AccessibilityService() {
                                 TAG,
                                 "BITMAP CREATED: ${bitmap.width}x${bitmap.height}"
                             )
-
-                            /*
-                             * IMPORTANT:
-                             *
-                             * bitmap.recycle() yahan nahi karna.
-                             *
-                             * uploadScreenshot() khud background
-                             * thread ke andar bitmap use karke
-                             * finally recycle karega.
-                             */
 
                             uploadScreenshot(
                                 bitmap
@@ -560,10 +588,33 @@ class ScreenshotService : AccessibilityService() {
                     "Preparing screenshot upload..."
                 )
 
-                /*
-                 * JPEG use kar rahe hain taaki request
-                 * PNG ke comparison me kaafi chhoti rahe.
-                 */
+                // =================================================
+                // GET CURRENT SAVED DEVICE TOKEN
+                // =================================================
+
+                val deviceToken =
+                    ApiClient.getSavedDeviceToken(
+                        applicationContext
+                    )
+
+                if (deviceToken.isNullOrBlank()) {
+
+                    Log.e(
+                        TAG,
+                        "SCREENSHOT UPLOAD FAILED: DEVICE TOKEN NOT FOUND"
+                    )
+
+                    return@thread
+                }
+
+                Log.d(
+                    TAG,
+                    "DEVICE TOKEN FOUND"
+                )
+
+                // =================================================
+                // JPEG COMPRESSION
+                // =================================================
 
                 val outputStream =
                     ByteArrayOutputStream()
@@ -595,6 +646,10 @@ class ScreenshotService : AccessibilityService() {
                     "IMAGE SIZE = ${imageBytes.size} bytes"
                 )
 
+                // =================================================
+                // BASE64
+                // =================================================
+
                 val base64Image =
                     Base64.encodeToString(
                         imageBytes,
@@ -604,10 +659,9 @@ class ScreenshotService : AccessibilityService() {
                 val fileName =
                     "VoiceControl_${System.currentTimeMillis()}.jpg"
 
-                /*
-                 * Same response structure jo Python
-                 * get_screenshot() expect kar raha hai.
-                 */
+                // =================================================
+                // JSON
+                // =================================================
 
                 val json =
                     """
@@ -622,6 +676,10 @@ class ScreenshotService : AccessibilityService() {
                     TAG,
                     "JSON SIZE = ${json.length} characters"
                 )
+
+                // =================================================
+                // URL
+                // =================================================
 
                 val url =
                     URL(
@@ -652,9 +710,13 @@ class ScreenshotService : AccessibilityService() {
                 connection.useCaches =
                     false
 
+                // =================================================
+                // AUTHORIZATION
+                // =================================================
+
                 connection.setRequestProperty(
                     "Authorization",
-                    "Bearer $API_TOKEN"
+                    "Bearer $deviceToken"
                 )
 
                 connection.setRequestProperty(
@@ -672,6 +734,10 @@ class ScreenshotService : AccessibilityService() {
                     "close"
                 )
 
+                // =================================================
+                // UPLOAD
+                // =================================================
+
                 connection.outputStream.use { output: OutputStream ->
 
                     output.write(
@@ -682,6 +748,10 @@ class ScreenshotService : AccessibilityService() {
 
                     output.flush()
                 }
+
+                // =================================================
+                // RESPONSE
+                // =================================================
 
                 val responseCode =
                     connection.responseCode
@@ -718,6 +788,10 @@ class ScreenshotService : AccessibilityService() {
                     TAG,
                     "SERVER RESPONSE = $responseText"
                 )
+
+                // =================================================
+                // SUCCESS
+                // =================================================
 
                 if (
                     responseCode in 200..299
@@ -841,26 +915,45 @@ class ScreenshotService : AccessibilityService() {
 
         return false
     }
+
+    // =========================================================
+    // UP
+    // =========================================================
+
     private fun performUpInternal(): Boolean {
 
-        Log.d(TAG, "UP requested")
+        Log.d(
+            TAG,
+            "UP requested"
+        )
 
-        val root = rootInActiveWindow
+        val root =
+            rootInActiveWindow
 
         if (root == null) {
-            Log.e(TAG, "UP FAILED: ROOT NULL")
+
+            Log.e(
+                TAG,
+                "UP FAILED: ROOT NULL"
+            )
+
             return false
         }
 
-        val scrollable = findScrollableNode(root)
+        val scrollable =
+            findScrollableNode(root)
 
         if (scrollable != null) {
 
-            val result = scrollable.performAction(
-                AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD
-            )
+            val result =
+                scrollable.performAction(
+                    AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD
+                )
 
-            Log.d(TAG, "UP SCROLL RESULT = $result")
+            Log.d(
+                TAG,
+                "UP SCROLL RESULT = $result"
+            )
 
             if (result) {
                 return true
@@ -869,26 +962,45 @@ class ScreenshotService : AccessibilityService() {
 
         return false
     }
+
+    // =========================================================
+    // DOWN
+    // =========================================================
+
     private fun performDownInternal(): Boolean {
 
-        Log.d(TAG, "DOWN requested")
+        Log.d(
+            TAG,
+            "DOWN requested"
+        )
 
-        val root = rootInActiveWindow
+        val root =
+            rootInActiveWindow
 
         if (root == null) {
-            Log.e(TAG, "DOWN FAILED: ROOT NULL")
+
+            Log.e(
+                TAG,
+                "DOWN FAILED: ROOT NULL"
+            )
+
             return false
         }
 
-        val scrollable = findScrollableNode(root)
+        val scrollable =
+            findScrollableNode(root)
 
         if (scrollable != null) {
 
-            val result = scrollable.performAction(
-                AccessibilityNodeInfo.ACTION_SCROLL_FORWARD
-            )
+            val result =
+                scrollable.performAction(
+                    AccessibilityNodeInfo.ACTION_SCROLL_FORWARD
+                )
 
-            Log.d(TAG, "DOWN SCROLL RESULT = $result")
+            Log.d(
+                TAG,
+                "DOWN SCROLL RESULT = $result"
+            )
 
             if (result) {
                 return true
@@ -897,20 +1009,35 @@ class ScreenshotService : AccessibilityService() {
 
         return false
     }
+
+    // =========================================================
+    // TAB
+    // =========================================================
+
     private fun performTabInternal(): Boolean {
 
-        Log.d(TAG, "TAB requested")
+        Log.d(
+            TAG,
+            "TAB requested"
+        )
 
-        val root = rootInActiveWindow
+        val root =
+            rootInActiveWindow
 
         if (root == null) {
-            Log.e(TAG, "TAB FAILED: ROOT NULL")
+
+            Log.e(
+                TAG,
+                "TAB FAILED: ROOT NULL"
+            )
+
             return false
         }
 
-        val current = root.findFocus(
-            AccessibilityNodeInfo.FOCUS_ACCESSIBILITY
-        )
+        val current =
+            root.findFocus(
+                AccessibilityNodeInfo.FOCUS_ACCESSIBILITY
+            )
 
         val focusables =
             mutableListOf<AccessibilityNodeInfo>()
@@ -921,16 +1048,24 @@ class ScreenshotService : AccessibilityService() {
         )
 
         if (focusables.isEmpty()) {
-            Log.e(TAG, "TAB FAILED: NO FOCUSABLE NODES")
+
+            Log.e(
+                TAG,
+                "TAB FAILED: NO FOCUSABLE NODES"
+            )
+
             return false
         }
 
         val currentIndex =
             if (current != null) {
+
                 focusables.indexOfFirst {
                     it == current
                 }
+
             } else {
+
                 -1
             }
 
@@ -939,60 +1074,114 @@ class ScreenshotService : AccessibilityService() {
                 currentIndex >= 0 &&
                 currentIndex < focusables.size - 1
             ) {
+
                 currentIndex + 1
+
             } else {
+
                 0
             }
 
-        val next = focusables[nextIndex]
+        val next =
+            focusables[nextIndex]
 
-        val result = next.performAction(
-            AccessibilityNodeInfo.ACTION_FOCUS
+        val result =
+            next.performAction(
+                AccessibilityNodeInfo.ACTION_FOCUS
+            )
+
+        Log.d(
+            TAG,
+            "TAB RESULT = $result"
         )
-
-        Log.d(TAG, "TAB RESULT = $result")
 
         return result
     }
+
+    // =========================================================
+    // LEFT
+    // =========================================================
+
     private fun performLeftInternal(): Boolean {
 
-        Log.d(TAG, "LEFT requested")
-
-        val root = rootInActiveWindow ?: run {
-            Log.e(TAG, "LEFT FAILED: ROOT NULL")
-            return false
-        }
-
-        val scrollable = findScrollableNode(root) ?: return false
-
-        val result = scrollable.performAction(
-            AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD
+        Log.d(
+            TAG,
+            "LEFT requested"
         )
 
-        Log.d(TAG, "LEFT RESULT = $result")
+        val root =
+            rootInActiveWindow
+                ?: run {
+
+                    Log.e(
+                        TAG,
+                        "LEFT FAILED: ROOT NULL"
+                    )
+
+                    return false
+                }
+
+        val scrollable =
+            findScrollableNode(root)
+                ?: return false
+
+        val result =
+            scrollable.performAction(
+                AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD
+            )
+
+        Log.d(
+            TAG,
+            "LEFT RESULT = $result"
+        )
 
         return result
     }
+
+    // =========================================================
+    // RIGHT
+    // =========================================================
 
     private fun performRightInternal(): Boolean {
 
-        Log.d(TAG, "RIGHT requested")
-
-        val root = rootInActiveWindow ?: run {
-            Log.e(TAG, "RIGHT FAILED: ROOT NULL")
-            return false
-        }
-
-        val scrollable = findScrollableNode(root) ?: return false
-
-        val result = scrollable.performAction(
-            AccessibilityNodeInfo.ACTION_SCROLL_FORWARD
+        Log.d(
+            TAG,
+            "RIGHT requested"
         )
 
-        Log.d(TAG, "RIGHT RESULT = $result")
+        val root =
+            rootInActiveWindow
+                ?: run {
+
+                    Log.e(
+                        TAG,
+                        "RIGHT FAILED: ROOT NULL"
+                    )
+
+                    return false
+                }
+
+        val scrollable =
+            findScrollableNode(root)
+                ?: return false
+
+        val result =
+            scrollable.performAction(
+                AccessibilityNodeInfo.ACTION_SCROLL_FORWARD
+            )
+
+        Log.d(
+            TAG,
+            "RIGHT RESULT = $result"
+        )
 
         return result
     }
+
+    // =========================================================
+    // COLLECT FOCUSABLE NODES
+    // =========================================================
+
     private fun collectFocusableNodes(
         node: AccessibilityNodeInfo,
         list: MutableList<AccessibilityNodeInfo>
@@ -1003,6 +1192,7 @@ class ScreenshotService : AccessibilityService() {
             node.isEnabled &&
             node.isVisibleToUser
         ) {
+
             list.add(node)
         }
 
@@ -1018,6 +1208,11 @@ class ScreenshotService : AccessibilityService() {
             )
         }
     }
+
+    // =========================================================
+    // FIND SCROLLABLE NODE
+    // =========================================================
+
     private fun findScrollableNode(
         node: AccessibilityNodeInfo
     ): AccessibilityNodeInfo? {
@@ -1027,13 +1222,15 @@ class ScreenshotService : AccessibilityService() {
             node.isEnabled &&
             node.isVisibleToUser
         ) {
+
             return node
         }
 
         for (i in 0 until node.childCount) {
 
-            val child = node.getChild(i)
-                ?: continue
+            val child =
+                node.getChild(i)
+                    ?: continue
 
             val result =
                 findScrollableNode(child)
@@ -1165,3 +1362,4 @@ class ScreenshotService : AccessibilityService() {
         return false
     }
 }
+

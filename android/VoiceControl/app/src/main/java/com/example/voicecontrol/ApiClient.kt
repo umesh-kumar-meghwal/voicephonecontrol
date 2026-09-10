@@ -66,7 +66,7 @@ object ApiClient {
     // GET SAVED DEVICE TOKEN
     // =========================================================
 
-    private fun getSavedDeviceToken(
+    fun getSavedDeviceToken(
         context: Context
     ): String? {
 

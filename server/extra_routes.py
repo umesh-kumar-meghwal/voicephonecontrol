@@ -1,5 +1,7 @@
 from typing import Optional
 import hashlib
+import base64
+import uuid
 
 from fastapi import Header, HTTPException
 from pydantic import BaseModel
@@ -89,19 +91,104 @@ def upload_screenshot(
         )
 
     try:
+        # -------------------------------------------------
+        # Separate base64 data from data URL
+        # -------------------------------------------------
+
+        if "," not in image:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid image format"
+            )
+
+        header, encoded_image = image.split(",", 1)
+
+        # -------------------------------------------------
+        # Decode base64
+        # -------------------------------------------------
+
+        image_bytes = base64.b64decode(encoded_image)
+
+        if not image_bytes:
+            raise HTTPException(
+                status_code=400,
+                detail="Empty screenshot"
+            )
+
+        # -------------------------------------------------
+        # Generate unique Storage path
+        # -------------------------------------------------
+
+        extension = "jpg"
+
+        if "png" in header.lower():
+            extension = "png"
+
+        storage_filename = (
+            f"{device['device_id']}/"
+            f"{uuid.uuid4().hex}.{extension}"
+        )
+
+        # -------------------------------------------------
+        # Upload to Supabase Storage
+        # -------------------------------------------------
+
+        content_type = (
+            "image/png"
+            if extension == "png"
+            else "image/jpeg"
+        )
+
+        storage_result = (
+            supabase
+            .storage
+            .from_("screenshots")
+            .upload(
+                storage_filename,
+                image_bytes,
+                {
+                    "content-type": content_type,
+                    "upsert": "false"
+                }
+            )
+        )
+
+        print(
+            "[SCREENSHOT STORAGE UPLOAD]",
+            storage_filename
+        )
+
+        # -------------------------------------------------
+        # Get public URL
+        # -------------------------------------------------
+
+        public_url = (
+            supabase
+            .storage
+            .from_("screenshots")
+            .get_public_url(storage_filename)
+        )
+
+        # -------------------------------------------------
+        # Save URL in database
+        # -------------------------------------------------
+
         result = (
             supabase
             .table("screenshots")
             .insert({
                 "filename": data.filename,
-                "image": image,
+                "image": public_url,
                 "user_id": device["user_id"],
                 "device_id": device["device_id"],
             })
             .execute()
         )
 
+        # -------------------------------------------------
         # Keep latest 10 screenshots for this device
+        # -------------------------------------------------
+
         old_rows = (
             supabase
             .table("screenshots")
@@ -114,29 +201,39 @@ def upload_screenshot(
         rows = old_rows.data or []
 
         if len(rows) > 10:
+
             delete_ids = [
                 row["id"]
                 for row in rows[10:]
                 if row.get("id") is not None
             ]
 
-            if delete_ids:
-                for screenshot_id in delete_ids:
-                    supabase \
-                        .table("screenshots") \
-                        .delete() \
-                        .eq("id", screenshot_id) \
-                        .execute()
+            for screenshot_id in delete_ids:
+                (
+                    supabase
+                    .table("screenshots")
+                    .delete()
+                    .eq("id", screenshot_id)
+                    .execute()
+                )
 
         return {
             "ok": True,
-            "message": "Screenshot uploaded",
+            "message": "Screenshot uploaded to Storage",
             "filename": data.filename,
+            "storage_path": storage_filename,
+            "image_url": public_url,
             "saved": bool(result.data),
         }
 
+    except HTTPException:
+        raise
+
     except Exception as e:
-        print("[SCREENSHOT UPLOAD ERROR]", repr(e))
+        print(
+            "[SCREENSHOT UPLOAD ERROR]",
+            repr(e)
+        )
 
         raise HTTPException(
             status_code=500,
@@ -182,7 +279,10 @@ def latest_screenshot(
         }
 
     except Exception as e:
-        print("[LATEST SCREENSHOT ERROR]", repr(e))
+        print(
+            "[LATEST SCREENSHOT ERROR]",
+            repr(e)
+        )
 
         raise HTTPException(
             status_code=500,
@@ -226,7 +326,10 @@ def latest_phone_status(
         }
 
     except Exception as e:
-        print("[PHONE STATUS ERROR]", repr(e))
+        print(
+            "[PHONE STATUS ERROR]",
+            repr(e)
+        )
 
         raise HTTPException(
             status_code=500,
