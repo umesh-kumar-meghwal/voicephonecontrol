@@ -20,6 +20,10 @@ object CommandHandler {
         command: String,
         payload: Map<String, String>
     ) {
+        Log.e(
+            "TEST_COMMAND",
+            "CommandHandler.handle() CALLED | command=[$command] | payload=$payload"
+        )
 
         Log.d(
             TAG,

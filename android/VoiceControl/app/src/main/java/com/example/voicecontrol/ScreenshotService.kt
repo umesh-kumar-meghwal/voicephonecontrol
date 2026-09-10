@@ -25,7 +25,7 @@ class ScreenshotService : AccessibilityService() {
         private var serviceInstance: ScreenshotService? = null
 
         private const val SERVER_URL =
-            "https://phonecontrol-black.vercel.app"
+            "https://voicephonecontrol.vercel.app"
 
         /*
          * IMPORTANT:
