@@ -2305,7 +2305,7 @@ async function loadLatestScreenshot() {
     }
 
     container.innerHTML =
-        "Loading screenshot...";
+        "Loading screenshots...";
 
     try {
 
@@ -2334,55 +2334,106 @@ async function loadLatestScreenshot() {
         if (!response.ok) {
 
             container.innerHTML =
-                "<p>Could not load screenshot.</p>";
+                "<p>Could not load screenshots.</p>";
 
             return;
         }
 
-        if (
-            !data.screenshot ||
-            !data.screenshot.image
-        ) {
+        const screenshots =
+            data.screenshots || [];
+
+        if (screenshots.length === 0) {
 
             container.innerHTML =
-                "<p>📱 No screenshot available.</p>";
+                "<p>📱 No screenshots available.</p>";
 
             return;
         }
 
-        const screenshot =
-            data.screenshot;
-
         container.innerHTML = `
+            <div style="
+                display:grid;
+                grid-template-columns:
+                    repeat(auto-fit, minmax(220px, 1fr));
+                gap:20px;
+                margin-top:20px;
+            ">
 
-            <img
-                src="${escapeHtml(screenshot.image)}"
-                alt="Latest phone screenshot"
-                style="
-                    max-width: 100%;
-                    max-height: 650px;
-                    border-radius: 14px;
-                    border: 1px solid #303b5c;
-                    object-fit: contain;
-                    background: #000;
-                "
-            >
+                ${screenshots.map((screenshot, index) => `
+
+                    <div style="
+                        background:#111827;
+                        border:1px solid #303b5c;
+                        border-radius:14px;
+                        padding:12px;
+                    ">
+
+                        <img
+                            src="${escapeHtml(screenshot.image)}"
+                            alt="Phone Screenshot ${index + 1}"
+                            style="
+                                width:100%;
+                                max-height:450px;
+                                object-fit:contain;
+                                border-radius:10px;
+                                background:#000;
+                                display:block;
+                            "
+                        >
+
+                        <div style="
+                            margin-top:10px;
+                            font-size:13px;
+                            opacity:0.8;
+                        ">
+
+                            <div>
+                                📸 ${escapeHtml(
+                                    screenshot.filename ||
+                                    "Screenshot"
+                                )}
+                            </div>
+
+                            <div style="
+                                margin-top:5px;
+                            ">
+                                📱 Device:
+                                ${escapeHtml(
+                                    screenshot.device_id ||
+                                    "Unknown"
+                                )}
+                            </div>
+
+                            <div style="
+                                margin-top:5px;
+                            ">
+                                🕒 ${escapeHtml(
+                                    screenshot.created_at ||
+                                    ""
+                                )}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `).join("")}
+
+            </div>
 
             <p style="
-                margin-top: 10px;
-                opacity: 0.75;
+                text-align:center;
+                margin-top:15px;
+                opacity:0.7;
             ">
-                ${escapeHtml(
-                    screenshot.filename || "Screenshot"
-                )}
+                Showing ${screenshots.length} screenshot(s)
             </p>
-
         `;
 
     } catch (error) {
 
         console.error(
-            "SCREENSHOT LOAD ERROR",
+            "SCREENSHOTS LOAD ERROR",
             error
         );
 
@@ -2390,7 +2441,6 @@ async function loadLatestScreenshot() {
             "<p>Server connection failed.</p>";
     }
 }
-
 
 async function sendCommand(
     deviceId,
