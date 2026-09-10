@@ -2504,11 +2504,7 @@ async function sendCommand(
             return;
         }
 
-        alert(
-            command +
-            " queued for " +
-            deviceId
-        );
+        
 
     } catch (error) {
 
