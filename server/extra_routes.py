@@ -3,7 +3,7 @@ import hashlib
 import base64
 import uuid
 
-from fastapi import Header, HTTPException
+from fastapi import Header, HTTPException, Depends
 from pydantic import BaseModel
 
 from server.app import app, get_current_user, supabase
@@ -247,10 +247,7 @@ def upload_screenshot(
 
 @app.get("/api/screenshot/latest")
 def latest_screenshot(
-    current_user=__import__(
-        "server.app",
-        fromlist=["get_current_user"]
-    ).get_current_user
+    current_user=Depends(get_current_user)
 ):
     try:
         user = current_user
@@ -296,10 +293,7 @@ def latest_screenshot(
 
 @app.get("/api/phone-status/latest")
 def latest_phone_status(
-    current_user=__import__(
-        "server.app",
-        fromlist=["get_current_user"]
-    ).get_current_user
+    current_user=Depends(get_current_user)
 ):
     try:
         user = current_user

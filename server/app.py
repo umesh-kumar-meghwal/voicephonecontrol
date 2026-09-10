@@ -1702,6 +1702,29 @@ Refresh
 <div id="devices">
 No devices loaded.
 </div>
+<!-- LATEST SCREENSHOT -->
+
+<div class="card">
+
+<h2>
+📸 Latest Phone Screenshot
+</h2>
+
+<div
+id="latestScreenshot"
+style="
+    text-align:center;
+    min-height:120px;
+"
+>
+Loading screenshot...
+</div>
+
+<button onclick="loadLatestScreenshot()">
+🔄 Refresh Screenshot
+</button>
+
+</div>
 
 </div>
 
@@ -1741,6 +1764,7 @@ function showDashboard() {
 
     loadMe();
     loadDevices();
+    loadLatestScreenshot();
 }
 
 
@@ -2266,6 +2290,104 @@ async function loadDevices() {
 
         container.innerHTML =
             "Server connection failed.";
+    }
+}
+
+async function loadLatestScreenshot() {
+
+    const container =
+        document.getElementById("latestScreenshot");
+
+    if (!token) {
+        container.innerHTML =
+            "<p>Please login first.</p>";
+        return;
+    }
+
+    container.innerHTML =
+        "Loading screenshot...";
+
+    try {
+
+        const response =
+            await fetch(
+                API + "/api/screenshot/latest",
+                {
+                    headers: {
+                        "Authorization":
+                            "Bearer " + token
+                    }
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (response.status === 401) {
+
+            clearToken();
+            showAuth();
+
+            return;
+        }
+
+        if (!response.ok) {
+
+            container.innerHTML =
+                "<p>Could not load screenshot.</p>";
+
+            return;
+        }
+
+        if (
+            !data.screenshot ||
+            !data.screenshot.image
+        ) {
+
+            container.innerHTML =
+                "<p>📱 No screenshot available.</p>";
+
+            return;
+        }
+
+        const screenshot =
+            data.screenshot;
+
+        container.innerHTML = `
+
+            <img
+                src="${escapeHtml(screenshot.image)}"
+                alt="Latest phone screenshot"
+                style="
+                    max-width: 100%;
+                    max-height: 650px;
+                    border-radius: 14px;
+                    border: 1px solid #303b5c;
+                    object-fit: contain;
+                    background: #000;
+                "
+            >
+
+            <p style="
+                margin-top: 10px;
+                opacity: 0.75;
+            ">
+                ${escapeHtml(
+                    screenshot.filename || "Screenshot"
+                )}
+            </p>
+
+        `;
+
+    } catch (error) {
+
+        console.error(
+            "SCREENSHOT LOAD ERROR",
+            error
+        );
+
+        container.innerHTML =
+            "<p>Server connection failed.</p>";
     }
 }
 
