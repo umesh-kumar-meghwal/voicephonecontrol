@@ -728,7 +728,35 @@ object CommandHandler {
                     )
                 }
             }
+            // =================================================
+// PHONE STATUS
+// =================================================
 
+            cmd == "PHONE STATUS" -> {
+
+                Log.d(
+                    TAG,
+                    "Executing PHONE STATUS"
+                )
+
+                try {
+
+                    PhoneStatus.send(context)
+
+                    Log.d(
+                        TAG,
+                        "PHONE STATUS SEND STARTED"
+                    )
+
+                } catch (e: Exception) {
+
+                    Log.e(
+                        TAG,
+                        "PHONE STATUS ERROR",
+                        e
+                    )
+                }
+            }
 
             // =================================================
             // OPEN APP
